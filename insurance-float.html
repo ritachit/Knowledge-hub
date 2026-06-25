@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Float — A Field Guide to Insurance Economics</title>
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --ink:#16130d;        /* near-black warm ink */
+  --ink-2:#2c2618;
+  --parch:#ece3d0;      /* aged paper */
+  --parch-2:#e3d8c0;
+  --parch-3:#d8cab0;
+  --line:#b9a87f;       /* ledger rule */
+  --line-soft:#cabd9c;
+  --vermilion:#c8412a;  /* the ONE accent — reserved for float */
+  --verm-deep:#9c2f1d;
+  --teal:#1f5e5b;       /* secondary data only */
+  --gold:#a67c2e;
+  --paper-shadow:rgba(22,19,13,.12);
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --grot:"Helvetica Neue",Arial,"Segoe UI",system-ui,sans-serif;
+  --mono:"SF Mono",ui-monospace,"Cascadia Mono","Roboto Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--parch);
+  color:var(--ink);
+  font-family:var(--serif);
+  line-height:1.62;
+  font-size:18px;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(166,124,46,.05), transparent 40%),
+    radial-gradient(circle at 88% 92%, rgba(31,94,91,.04), transparent 40%);
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+
+/* ============ TYPE SCALE ============ */
+h1,h2,h3,h4{font-family:var(--grot);font-weight:800;letter-spacing:-.02em;line-height:1.05}
+.num,.data,.stat-big,.metric{font-family:var(--grot);font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.label{font-family:var(--grot);text-transform:uppercase;letter-spacing:.18em;font-weight:700;font-size:.66rem}
+.mono{font-family:var(--mono)}
+
+/* ============ LAYOUT ============ */
+.wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+section{padding:76px 0;border-bottom:1px solid var(--line-soft)}
+.sec-num{color:var(--vermilion);font-family:var(--grot);font-weight:800;font-size:.8rem;letter-spacing:.1em}
+
+/* ============ HERO ============ */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+  padding:60px 0 50px;position:relative;border-bottom:2px solid var(--ink);
+}
+.hero-eyebrow{display:flex;gap:14px;align-items:center;margin-bottom:34px;flex-wrap:wrap}
+.hero-eyebrow .label{color:var(--ink-2)}
+.hero-eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--vermilion)}
+.hero h1{
+  font-size:clamp(3.2rem,9vw,7.4rem);line-height:.92;margin-bottom:8px;
+}
+.hero h1 .em{font-family:var(--serif);font-style:italic;font-weight:500;letter-spacing:-.01em;color:var(--vermilion)}
+.hero-sub{
+  font-size:clamp(1.1rem,2.2vw,1.5rem);max-width:30ch;margin:28px 0 0;color:var(--ink-2);
+  font-style:italic;
+}
+.hero-def{
+  margin-top:54px;padding:26px 30px;background:rgba(22,19,13,.04);
+  border-left:3px solid var(--vermilion);max-width:62ch;
+}
+.hero-def .label{color:var(--vermilion);display:block;margin-bottom:10px}
+.hero-def p{font-size:1.12rem}
+.hero-def .src{font-family:var(--grot);font-size:.72rem;color:#7a6f55;margin-top:12px;letter-spacing:.02em}
+.scroll-hint{margin-top:auto;padding-top:48px;display:flex;align-items:center;gap:12px;color:#8a7d60}
+.scroll-hint .label{color:#8a7d60}
+.scroll-arrow{animation:bob 2s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+/* ============ THE SIGNATURE: TIME-GAP BAR ============ */
+.timegap{margin:30px 0;font-family:var(--grot)}
+.timegap-track{
+  display:flex;height:54px;border:1.5px solid var(--ink);border-radius:3px;overflow:hidden;
+  position:relative;background:var(--parch-2);
+}
+.tg-seg{display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.08em;position:relative;transition:flex .6s cubic-bezier(.2,.7,.3,1)}
+.tg-premium{background:var(--ink);color:var(--parch);flex:0 0 110px}
+.tg-float{background:var(--vermilion);color:#fff;flex:1;position:relative;overflow:hidden}
+.tg-float::after{
+  content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(45deg,transparent,transparent 9px,rgba(255,255,255,.09) 9px,rgba(255,255,255,.09) 18px);
+}
+.tg-claim{background:var(--ink-2);color:var(--parch);flex:0 0 110px}
+.tg-labels{display:flex;justify-content:space-between;margin-top:8px;font-size:.64rem;color:#7a6f55;letter-spacing:.04em}
+
+/* ============ TYPOGRAPHY BLOCKS ============ */
+.kicker{display:flex;gap:16px;align-items:baseline;margin-bottom:30px}
+h2.head{font-size:clamp(2rem,4.5vw,3.1rem);margin-bottom:4px}
+.standfirst{font-size:1.28rem;color:var(--ink-2);max-width:60ch;margin-bottom:34px;font-style:italic;line-height:1.5}
+p.body{margin-bottom:20px;max-width:68ch}
+p.body strong{font-weight:700;font-family:var(--grot);font-size:.95em;letter-spacing:-.01em}
+.lead-in{float:left;font-family:var(--grot);font-weight:800;font-size:3.3rem;line-height:.8;
+  padding:6px 14px 0 0;color:var(--vermilion)}
+a.ref{color:var(--verm-deep);text-decoration:none;border-bottom:1px dotted var(--line);font-style:normal}
+a.ref:hover{border-bottom-style:solid}
+
+/* depth marker — flags the 5 deep sections */
+.depth-flag{display:inline-flex;align-items:center;gap:7px;font-family:var(--grot);font-size:.6rem;
+  font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--verm-deep);
+  background:rgba(200,65,42,.1);padding:4px 10px;border-radius:20px;vertical-align:middle}
+.depth-flag::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--vermilion)}
+
+/* ============ PULL FACTS / CARDS ============ */
+.factgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;
+  background:var(--line-soft);border:1px solid var(--line-soft);margin:34px 0}
+.fact{background:var(--parch);padding:24px 22px}
+.fact .stat-big{font-size:2.5rem;color:var(--ink);display:block;line-height:1}
+.fact .stat-big .unit{font-size:1.1rem;color:var(--vermilion)}
+.fact .label{color:#7a6f55;margin-top:10px;display:block}
+.fact .fnote{font-family:var(--serif);font-size:.84rem;color:var(--ink-2);margin-top:8px;font-style:italic}
+
+.callout{background:var(--ink);color:var(--parch);padding:34px 36px;margin:38px 0;border-radius:4px;position:relative}
+.callout .label{color:var(--vermilion);display:block;margin-bottom:14px}
+.callout p{max-width:64ch;font-size:1.08rem}
+.callout.verm{background:var(--vermilion);color:#fff}
+.callout.verm .label{color:var(--ink)}
+.callout .who{font-family:var(--grot);font-size:.78rem;margin-top:16px;opacity:.8;letter-spacing:.03em}
+
+.myth{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);margin:30px 0;border:1px solid var(--line)}
+.myth>div{background:var(--parch);padding:22px 24px}
+.myth .m-claim{background:var(--parch-3)}
+.myth .label{margin-bottom:10px}
+.myth .m-claim .label{color:var(--verm-deep)}
+.myth .m-real .label{color:var(--teal)}
+
+/* two-col editorial */
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin:30px 0}
+@media(max-width:760px){.cols2{grid-template-columns:1fr;gap:24px}.myth{grid-template-columns:1fr}}
+
+/* India / US compare */
+.versus{display:grid;grid-template-columns:1fr auto 1fr;gap:0;margin:34px 0;align-items:stretch;
+  border:1.5px solid var(--ink);border-radius:4px;overflow:hidden}
+.versus .side{padding:24px 26px}
+.versus .v-in{background:rgba(31,94,91,.07)}
+.versus .v-us{background:rgba(166,124,46,.07)}
+.versus .v-mid{background:var(--ink);color:var(--parch);display:flex;align-items:center;
+  justify-content:center;writing-mode:vertical-rl;text-orientation:mixed;
+  font-family:var(--grot);font-weight:800;font-size:.7rem;letter-spacing:.2em;padding:0 8px}
+.versus h4{font-size:1.05rem;margin-bottom:6px}
+.versus .flagline{font-family:var(--grot);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;
+  font-weight:700;margin-bottom:16px}
+.versus .v-in .flagline{color:var(--teal)}
+.versus .v-us .flagline{color:var(--gold)}
+.versus .vrow{display:flex;justify-content:space-between;gap:12px;padding:9px 0;
+  border-top:1px solid var(--line-soft);font-size:.92rem}
+.versus .vrow:first-of-type{border-top:none}
+.versus .vk{color:#7a6f55;font-family:var(--grot);font-size:.74rem;letter-spacing:.03em}
+.versus .vv{font-family:var(--grot);font-weight:700;text-align:right}
+@media(max-width:760px){.versus{grid-template-columns:1fr}.versus .v-mid{writing-mode:horizontal-tb;padding:8px}}
+
+/* ============ INTERACTIVES ============ */
+.tool{background:var(--ink);color:var(--parch);border-radius:6px;padding:0;margin:42px 0;
+  overflow:hidden;box-shadow:0 18px 40px -20px rgba(22,19,13,.6)}
+.tool-head{padding:24px 30px;border-bottom:1px solid #34302330;display:flex;
+  justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap}
+.tool-head .label{color:var(--vermilion)}
+.tool-head h3{color:var(--parch);font-size:1.35rem;margin-top:6px}
+.tool-head p{color:#a89c80;font-size:.9rem;max-width:48ch;margin-top:8px;font-family:var(--serif)}
+.tool-badge{font-family:var(--grot);font-size:.6rem;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink);background:var(--vermilion);padding:5px 11px;border-radius:20px;white-space:nowrap}
+.tool-body{padding:30px}
+.tool-controls{display:grid;gap:22px;margin-bottom:28px}
+@media(min-width:680px){.tool-controls.c3{grid-template-columns:repeat(3,1fr)}
+  .tool-controls.c2{grid-template-columns:repeat(2,1fr)}
+  .tool-controls.c4{grid-template-columns:repeat(2,1fr)}}
+.ctrl label{display:flex;justify-content:space-between;font-family:var(--grot);font-size:.74rem;
+  letter-spacing:.04em;margin-bottom:10px;color:#bdb094;text-transform:uppercase;font-weight:700}
+.ctrl .val{color:var(--parch);font-size:.92rem}
+.ctrl .val.hot{color:var(--vermilion)}
+input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:4px;
+  background:#3a3424;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:var(--vermilion);border:3px solid var(--ink);cursor:pointer;box-shadow:0 0 0 1px var(--vermilion)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--vermilion);
+  border:3px solid var(--ink);cursor:pointer}
+.ctrl .hint{font-family:var(--serif);font-style:italic;font-size:.78rem;color:#8a7d60;margin-top:8px}
+
+.readout{display:grid;gap:1px;background:#34302a;border:1px solid #34302a;border-radius:4px;overflow:hidden}
+@media(min-width:560px){.readout.r3{grid-template-columns:repeat(3,1fr)}.readout.r2{grid-template-columns:repeat(2,1fr)}
+  .readout.r4{grid-template-columns:repeat(4,1fr)}}
+.ro{background:#1c1810;padding:18px 20px}
+.ro .label{color:#8a7d60;display:block;margin-bottom:8px}
+.ro .metric{font-size:1.9rem;color:var(--parch);display:block;line-height:1}
+.ro .metric.good{color:#5fb89a}
+.ro .metric.bad{color:#e0654a}
+.ro .metric.hot{color:var(--vermilion)}
+.ro .sub{font-family:var(--serif);font-size:.78rem;color:#8a7d60;margin-top:6px;font-style:italic}
+
+.verdict{margin-top:22px;padding:18px 22px;border-radius:4px;font-family:var(--serif);font-size:1rem;
+  background:rgba(200,65,42,.12);border-left:3px solid var(--vermilion);color:var(--parch)}
+.verdict.pos{background:rgba(95,184,154,.12);border-left-color:#5fb89a}
+.verdict strong{font-family:var(--grot);font-size:.92em}
+
+/* canvas chart */
+.chart-wrap{margin-top:26px;background:#1c1810;border-radius:4px;padding:20px;border:1px solid #34302a}
+canvas{width:100%;display:block}
+.chart-legend{display:flex;gap:20px;flex-wrap:wrap;margin-top:14px;font-family:var(--grot);font-size:.72rem;color:#a89c80}
+.chart-legend span{display:flex;align-items:center;gap:7px}
+.chart-legend i{width:14px;height:3px;border-radius:2px;display:inline-block}
+
+/* timeline (short/long tail tool) */
+.tail-track{position:relative;height:auto;margin-top:10px}
+.tail-row{display:flex;align-items:center;gap:14px;margin:14px 0}
+.tail-name{flex:0 0 130px;font-family:var(--grot);font-size:.78rem;font-weight:700;color:var(--parch);text-align:right}
+.tail-bar-area{flex:1;position:relative;height:30px;background:#2a2418;border-radius:3px;overflow:hidden}
+.tail-bar{position:absolute;left:0;top:0;bottom:0;border-radius:3px;display:flex;align-items:center;
+  padding-left:10px;font-family:var(--grot);font-size:.66rem;font-weight:700;color:#fff;
+  transition:width .7s cubic-bezier(.2,.7,.3,1);white-space:nowrap}
+.tail-dur{flex:0 0 64px;font-family:var(--grot);font-size:.82rem;font-weight:700;color:var(--vermilion);text-align:left}
+
+/* ============ TOC / PROGRESS ============ */
+.progress{position:fixed;top:0;left:0;height:3px;background:var(--vermilion);z-index:100;width:0;transition:width .1s}
+.toc{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:90;display:flex;
+  flex-direction:column;gap:9px}
+.toc a{width:9px;height:9px;border-radius:50%;background:var(--line);border:1.5px solid transparent;
+  transition:all .25s;position:relative}
+.toc a:hover,.toc a.on{background:var(--vermilion);transform:scale(1.3)}
+.toc a::after{content:attr(data-t);position:absolute;right:18px;top:50%;transform:translateY(-50%);
+  font-family:var(--grot);font-size:.66rem;font-weight:700;letter-spacing:.04em;color:var(--ink);
+  background:var(--parch-2);padding:3px 9px;border-radius:3px;white-space:nowrap;opacity:0;pointer-events:none;
+  transition:opacity .2s;box-shadow:0 2px 8px var(--paper-shadow)}
+.toc a:hover::after{opacity:1}
+@media(max-width:920px){.toc{display:none}}
+
+/* footnotes / refs */
+.endnotes{padding:60px 0 90px}
+.endnotes h3{font-size:1.1rem;margin-bottom:20px;color:var(--ink-2)}
+.endnotes ol{list-style:none;counter-reset:n}
+.endnotes li{counter-increment:n;font-size:.84rem;color:var(--ink-2);padding:8px 0 8px 38px;
+  position:relative;border-top:1px solid var(--line-soft);max-width:80ch}
+.endnotes li::before{content:counter(n);position:absolute;left:0;top:8px;font-family:var(--grot);
+  font-weight:800;color:var(--vermilion);font-size:.8rem}
+.endnotes a{color:var(--verm-deep);word-break:break-word}
+
+.disclaim{font-family:var(--grot);font-size:.72rem;color:#8a7d60;letter-spacing:.02em;
+  max-width:70ch;margin-top:30px;line-height:1.7}
+
+/* misc */
+.divider-glyph{text-align:center;color:var(--line);font-size:1.4rem;letter-spacing:1rem;margin:10px 0}
+.tag-row{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.tag{font-family:var(--grot);font-size:.64rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  padding:5px 11px;border:1px solid var(--line);border-radius:3px;color:var(--ink-2)}
+.tag.hot{border-color:var(--vermilion);color:var(--verm-deep);background:rgba(200,65,42,.06)}
+
+ul.clean{list-style:none;margin:18px 0;max-width:68ch}
+ul.clean li{padding:10px 0 10px 26px;position:relative;border-top:1px solid var(--line-soft)}
+ul.clean li::before{content:"";position:absolute;left:0;top:18px;width:8px;height:8px;
+  background:var(--vermilion);border-radius:1px;transform:rotate(45deg)}
+ul.clean li strong{font-family:var(--grot);font-size:.92em}
+
+.section-intro-rule{width:60px;height:3px;background:var(--vermilion);margin-bottom:30px}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<nav class="toc" id="toc"></nav>
+
+<!-- ========================= HERO ========================= -->
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="hero-eyebrow">
+      <span class="label">A Field Guide to Insurance Economics</span>
+      <span class="dot"></span>
+      <span class="label">India &amp; United States</span>
+      <span class="dot"></span>
+      <span class="label">Est. from first principles</span>
+    </div>
+    <h1>The&nbsp;<span class="em">Float</span></h1>
+    <p class="hero-sub">How the oldest financial trade in the world turns other people's money into the most patient capital on earth.</p>
+
+    <div class="hero-def">
+      <span class="label">float · noun</span>
+      <p>Money an insurer <em>holds but does not own</em> — collected as premiums today, owed as claims tomorrow. In the gap between the two, it is yours to invest.</p>
+      <p class="src">— W. Buffett, Berkshire Hathaway Shareholder Letter, 2002</p>
+    </div>
+
+    <div class="scroll-hint">
+      <span class="scroll-arrow">↓</span>
+      <span class="label">13 chapters · 4 working models · ~35 min</span>
+    </div>
+  </div>
+</header>
+
+<!-- ========================= 01 · WHAT IT IS ========================= -->
+<section id="s1">
+  <div class="wrap">
+    <div class="kicker">
+      <span class="sec-num">01</span>
+      <span class="label" style="color:#7a6f55">The Two Engines</span>
+    </div>
+    <h2 class="head">An insurer is two businesses wearing one coat</h2>
+    <div class="section-intro-rule"></div>
+    <p class="standfirst">Every insurance company on earth runs two engines at once. Almost everyone — including most people who own insurance stocks — only watches one of them.</p>
+
+    <p class="body"><span class="lead-in">T</span>he first engine is <strong>underwriting</strong>: the craft of selecting which risks to accept and pricing them so that, across thousands of policies, the premiums collected exceed the claims paid. The second engine is <strong>investing</strong>: taking the pile of cash that accumulates between collecting premiums and paying claims, and putting it to work. The genius of the business model — and the entire reason Warren Buffett spent six decades buying insurers — lives in the relationship between these two engines.</p>
+
+    <p class="body">Here is the sequence that makes insurance unlike almost any other business. A customer pays you <em>first</em>. You provide the product — a promise to pay if something goes wrong — and you deliver on that promise <em>later</em>. Sometimes years later. Sometimes decades later. In the meantime, you are sitting on their money.</p>
+
+    <div class="timegap">
+      <div class="timegap-track" id="heroGap">
+        <div class="tg-seg tg-premium">Premium in</div>
+        <div class="tg-seg tg-float">FLOAT — invested for your benefit</div>
+        <div class="tg-seg tg-claim">Claim out</div>
+      </div>
+      <div class="tg-labels">
+        <span>Day 0 · cash arrives</span>
+        <span>↑ this gap is the whole business ↑</span>
+        <span>Day N · cash leaves</span>
+      </div>
+    </div>
+
+    <p class="body">That middle band — the money in suspension — is the <strong>float</strong>. It appears on the balance sheet as a liability, because legally the insurer may have to pay it out. But functionally it behaves like an interest-free loan from policyholders that, in aggregate, never has to be fully repaid: as old claims are settled, new premiums replace the cash, so the pool stays roughly stable or grows. <a href="#s3" class="ref">Section 3</a> is devoted entirely to it, because it is the single most important idea in the document.</p>
+
+    <div class="factgrid">
+      <div class="fact">
+        <span class="stat-big">2</span>
+        <span class="label">Engines</span>
+        <span class="fnote">Underwriting + investing. Profit can come from either, or both.</span>
+      </div>
+      <div class="fact">
+        <span class="stat-big">~$171<span class="unit">B</span></span>
+        <span class="label">Berkshire float · 2024</span>
+        <span class="fnote">From a few million dollars in 1967.<sup>1</sup></span>
+      </div>
+      <div class="fact">
+        <span class="stat-big">&lt;100<span class="unit">%</span></span>
+        <span class="label">The magic number</span>
+        <span class="fnote">A combined ratio below 100 means underwriting itself is profitable — before a rupee of investment income.</span>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="label">The one-sentence version</span>
+      <p>An insurer collects money now, pays it out later, and keeps the investment returns on the gap. If it can also break even — or profit — on the underwriting itself, it has built a machine that is <em>paid to borrow money</em>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= 02 · HISTORY ========================= -->
+<section id="s2">
+  <div class="wrap">
+    <div class="kicker">
+      <span class="sec-num">02</span>
+      <span class="label" style="color:#7a6f55">Origins &amp; Evolution</span>
+    </div>
+    <h2 class="head">From a coffee house to a trillion-dollar idea</h2>
+    <div class="section-intro-rule"></div>
+    <p class="standfirst">Insurance is older than the corporation, older than the stock exchange, older than modern banking. Its lessons were learned the hard way — usually after someone went bankrupt.</p>
+
+    <div class="cols2">
+      <div>
+        <p class="body"><strong>1688 · Lloyd's.</strong> In Edward Lloyd's London coffee house, ship owners and wealthy individuals met to share the risk of sea voyages. An owner would write the details of a voyage on a slip; backers would each write their name <em>under</em> the risk they would cover — literally <em>under-writing</em> it. This is the origin of both the word and the trade.</p>
+
+        <p class="body"><strong>1693 · The first correlated-risk disaster.</strong> French privateers attacked an Anglo-Dutch merchant fleet, causing roughly £1 million in losses. The catastrophe wasn't that a few underwriters had backed the fleet — it was that <em>a large part of the entire market</em> had. Thirty-three underwriters went bankrupt at once.<sup>2</sup> Parliament considered, and rejected, a bailout. The lesson — that risks which look independent can all fail together — is the same lesson AIG taught the world in 2008.</p>
+      </div>
+      <div>
+        <p class="body"><strong>1956 · India nationalises life.</strong> Some 245 life insurers were merged into a single state entity — the Life Insurance Corporation of India (LIC). The general (non-life) sector followed in 1972, consolidated under the General Insurance Corporation (GIC). The goal: deepen penetration and stop mismanagement.<sup>3</sup></p>
+
+        <p class="body"><strong>1999 · India re-opens.</strong> Following the Malhotra Committee, the Insurance Regulatory and Development Authority of India (IRDAI) was created and private players were let back in. HDFC Life, ICICI Prudential, SBI Life and others were born.</p>
+
+        <p class="body"><strong>2022 · LIC goes public.</strong> The largest IPO in Indian history, and the sixth-largest globally that year — a state monopoly born in 1956, now answerable to public shareholders.<sup>3</sup></p>
+      </div>
+    </div>
+
+    <div class="callout verm">
+      <span class="label">Why the history matters</span>
+      <p>The structure of every insurance market today is downstream of these choices. India consolidated, then liberalised — which is why one state insurer still holds ~60% of the life market while nimble private players fight for the rest. The US never nationalised — which is why it has thousands of insurers regulated state-by-state. Same product, opposite institutional DNA.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= 03 · THE FLOAT (DEEP) ========================= -->
+<section id="s3">
+  <div class="wrap">
+    <div class="kicker">
+      <span class="sec-num">03</span>
+      <span class="label" style="color:#7a6f55">The Engine Room</span>
+      <span class="depth-flag">Deep dive</span>
+    </div>
+    <h2 class="head">The float, and the only number that matters: its cost</h2>
+    <div class="section-intro-rule"></div>
+    <p class="standfirst">Float is not free money by default. Whether it is a gift or a tax depends entirely on one figure — the cost of float — and understanding it is the difference between admiring Buffett and understanding him.</p>
+
+    <p class="body"><span class="lead-in">M</span>ost people stop at "insurers get to invest other people's money." True, but incomplete, and the incompleteness is where fortunes are made and lost. The premiums an insurer collects usually do <em>not</em> cover the claims and expenses it eventually pays. That shortfall is an <strong>underwriting loss</strong> — and that loss is the <strong>cost of the float</strong>. It is the interest rate the insurer is effectively paying to hold policyholders' money.</p>
+
+    <div class="myth">
+      <div class="m-claim">
+        <span class="label">The myth</span>
+        <p>"Insurance float is free money. That's Buffett's secret."</p>
+      </div>
+      <div class="m-real">
+        <span class="label">The reality</span>
+        <p>Float has a cost equal to the underwriting loss. For the P&amp;C industry <em>as a whole</em>, that cost is usually positive — premiums have been inadequate to cover claims plus expenses for decades, and the industry's return on equity has trailed the S&amp;P 500.<sup>4</sup> Cost-free float is the <em>exception</em>. Buffett's edge is that his insurers achieve it; most cannot.</p>
+      </div>
+    </div>
+
+    <p class="body">So there are three regimes, and they hinge on the <strong>combined ratio</strong> — claims plus expenses, divided by premiums earned:</p>
+
+    <ul class="clean">
+      <li><strong>Combined ratio &gt; 100% — positive cost of float.</strong> The insurer loses money underwriting. The float carries a cost, like interest on a loan. It can still be profitable overall <em>if</em> investment income exceeds that underwriting loss.</li>
+      <li><strong>Combined ratio = 100% — zero cost.</strong> Underwriting breaks even. The float is genuinely free. Every rupee of investment income on it is pure profit.</li>
+      <li><strong>Combined ratio &lt; 100% — negative cost of float.</strong> The insurer earns an underwriting <em>profit</em> and gets to invest the float on top. It is being paid to hold other people's money. This is the holy grail.<sup>5</sup></li>
+    </ul>
+
+    <div class="callout">
+      <span class="label">Buffett, 2016 letter</span>
+      <p>This collect-now, pay-later model leaves P&amp;C companies holding large sums — float — that will eventually go to others. Meanwhile, insurers get to invest it for their own benefit. Though individual policies come and go, the amount of float usually stays stable relative to premium volume.</p>
+      <p class="who">Berkshire achieved a ~$9B underwriting <em>gain</em> in 2024 — meaning negative-cost float on ~$171B.<sup>1,5</sup></p>
+    </div>
+
+    <p class="body">Now make it concrete. The reason this matters isn't the float in any single year — it's what happens when you compound negative-cost float for decades. Larger float generates more investment income, which builds surplus, which supports writing more policies, which generates more float. A flywheel. The model below lets you turn the dials yourself.</p>
+
+    <!-- ===== INTERACTIVE 1: FLOAT COMPOUNDING SIMULATOR ===== -->
+    <div class="tool" id="tool1">
+      <div class="tool-head">
+        <div>
+          <span class="label">Interactive Model · 01</span>
+          <h3>The Float Flywheel</h3>
+          <p>Watch float and book value compound over 30 years. The lesson hides in the gap between the two lines.</p>
+        </div>
+        <span class="tool-badge">Drag to explore</span>
+      </div>
+      <div class="tool-body">
+        <div class="tool-controls c4">
+          <div class="ctrl">
+            <label>Starting float <span class="val" id="t1-f-v">$10.0B</span></label>
+            <input type="range" id="t1-float" min="1" max="50" step="1" value="10">
+            <div class="hint">The pool you begin with.</div>
+          </div>
+          <div class="ctrl">
+            <label>Annual premium growth <span class="val" id="t1-g-v">8%</span></label>
+            <input type="range" id="t1-growth" min="0" max="20" step="1" value="8">
+            <div class="hint">How fast you write new business → grows float.</div>
+          </div>
+          <div class="ctrl">
+            <label>Combined ratio <span class="val hot" id="t1-cr-v">96%</span></label>
+            <input type="range" id="t1-cr" min="88" max="112" step="1" value="96">
+            <div class="hint">Below 100 = underwriting profit = negative-cost float.</div>
+          </div>
+          <div class="ctrl">
+            <label>Investment return on float <span class="val" id="t1-r-v">7%</span></label>
+            <input type="range" id="t1-ret" min="2" max="12" step="1" value="7">
+            <div class="hint">Bonds ≈ 3–5%. Buffett ran equities ≈ 9–10%.</div>
+          </div>
+        </div>
+
+        <div class="readout r3">
+          <div class="ro">
+            <span class="label">Float · year 30</span>
+            <span class="metric hot" id="t1-out-float">—</span>
+            <span class="sub" id="t1-out-floatx">—</span>
+          </div>
+          <div class="ro">
+            <span class="label">Cumulative value created</span>
+            <span class="metric" id="t1-out-value">—</span>
+            <span class="sub">Underwriting P/L + investment income, compounded</span>
+          </div>
+          <div class="ro">
+            <span class="label">Effective cost of float</span>
+            <span class="metric" id="t1-out-cost">—</span>
+            <span class="sub" id="t1-out-costnote">—</span>
+          </div>
+        </div>
+
+        <div class="chart-wrap">
+          <canvas id="t1-chart" height="300"></canvas>
+          <div class="chart-legend">
+            <span><i style="background:#c8412a"></i> Float (capital you control)</span>
+            <span><i style="background:#5fb89a"></i> Cumulative value created for shareholders</span>
+            <span><i style="background:#8a7d60"></i> If float earned 0% (the dead-money line)</span>
+          </div>
+        </div>
+
+        <div class="verdict" id="t1-verdict">—</div>
+      </div>
+    </div>
+
+    <p class="body">Try setting the combined ratio to 108% with a 4% return — the profile of a mediocre insurer holding bonds. Then drop the ratio to 94% and raise the return to 9% — Buffett's profile. The starting float is the same. Thirty years later, the outcomes are not in the same universe. <strong>That gap is the entire argument for why insurance, done well, is one of the best businesses ever devised — and why, done averagely, it is one of the most disappointing.</strong></p>
+
+  </div>
+</section>
+
+<!-- ========================= 04 · THE MATH (DEEP) ========================= -->
+<section id="s4">
+  <div class="wrap">
+    <div class="kicker">
+      <span class="sec-num">04</span>
+      <span class="label" style="color:#7a6f55">Risk, Reserves &amp; The Math</span>
+      <span class="depth-flag">Deep dive</span>
+    </div>
+    <h2 class="head">The arithmetic of a promise</h2>
+    <div class="section-intro-rule"></div>
+    <p class="standfirst">Underwriting looks like intuition and ends up as arithmetic. And buried inside that arithmetic is the single largest act of judgement on the entire balance sheet — one the insurer gets to make itself.</p>
+
+    <p class="body"><span class="lead-in">T</span>he foundation is the <strong>law of large numbers</strong>. You cannot predict whether <em>one</em> house will burn down. But across a hundred thousand similar houses, the fraction that burn each year is remarkably stable. Insurance converts individual uncertainty into collective near-certainty, charges a premium slightly above the expected loss, and pockets the difference. That difference, scaled, is underwriting profit.</p>
+
+    <h3 style="font-size:1.3rem;margin:30px 0 16px;color:var(--ink-2)">The combined ratio, decomposed</h3>
+    <p class="body">The combined ratio is the report card. It splits into two parts, and knowing which part is moving tells you what kind of company you're looking at:</p>
+
+    <ul class="clean">
+      <li><strong>Loss ratio</strong> = claims paid ÷ premiums earned. The cost of the risk itself. A motor insurer running an 80% loss ratio pays ₹80 in claims for every ₹100 of premium.</li>
+      <li><strong>Expense ratio</strong> = costs of acquiring and servicing policies ÷ premiums. Commissions, marketing, salaries, the agent's cut. This is where distribution (<a href="#s7" class="ref">Section 7</a>) shows up in the numbers — GEICO's direct model wins by crushing this ratio.</li>
+      <li><strong>Combined ratio = loss ratio + expense ratio.</strong> Below 100, you profit on underwriting alone.</li>
+    </ul>
+
+    <p class="body">Two enemies sit underneath the loss ratio, and every underwriter fights them daily. <strong>Adverse selection</strong>: the people most eager to buy insurance are often the ones most likely to claim (the sick rush to buy health cover). <strong>Moral hazard</strong>: having insurance changes behaviour (an insured driver may drive less carefully). Price and policy design — deductibles, co-pays, exclusions — exist largely to fight these two forces.</p>
+
+    <!-- ===== INTERACTIVE 2: COMBINED RATIO + COST OF FLOAT ===== -->
+    <div class="tool" id="tool2">
+      <div class="tool-head">
+        <div>
+          <span class="label">Interactive Model · 02</span>
+          <h3>Combined Ratio &amp; The Cost of Float</h3>
+          <p>Move the two halves of the ratio and watch underwriting profit flip — then see what it does to the effective interest rate on the float.</p>
+        </div>
+        <span class="tool-badge">Drag to explore</span>
+      </div>
+      <div class="tool-body">
+        <div class="tool-controls c3">
+          <div class="ctrl">
+            <label>Loss ratio <span class="val" id="t2-l-v">68%</span></label>
+            <input type="range" id="t2-loss" min="40" max="100" step="1" value="68">
+            <div class="hint">Claims ÷ premiums earned.</div>
+          </div>
+          <div class="ctrl">
+            <label>Expense ratio <span class="val" id="t2-e-v">28%</span></label>
+            <input type="range" id="t2-exp" min="10" max="45" step="1" value="28">
+            <div class="hint">Commissions + operating costs ÷ premiums.</div>
+          </div>
+          <div class="ctrl">
+            <label>Investment yield on float <span class="val" id="t2-y-v">6%</span></label>
+            <input type="range" id="t2-yield" min="0" max="12" step="1" value="6">
+            <div class="hint">What the held float earns per year.</div>
+          </div>
+        </div>
+
+        <!-- live ratio bar -->
+        <div style="margin:8px 0 22px">
+          <div style="display:flex;height:46px;border:1.5px solid #34302a;border-radius:4px;overflow:hidden;font-family:var(--grot);font-size:.7rem;font-weight:700">
+            <div id="t2-bar-loss" style="background:#1f5e5b;color:#fff;display:flex;align-items:center;justify-content:center;transition:width .4s">Loss</div>
+            <div id="t2-bar-exp" style="background:#a67c2e;color:#fff;display:flex;align-items:center;justify-content:center;transition:width .4s">Expense</div>
+            <div id="t2-bar-profit" style="background:#5fb89a;color:#16130d;display:flex;align-items:center;justify-content:center;transition:width .4s">Profit</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:7px;font-family:var(--grot);font-size:.62rem;color:#8a7d60">
+            <span>0%</span><span id="t2-100mark">← 100% line: break-even on underwriting →</span><span>premium = 100%</span>
+          </div>
+        </div>
+
+        <div class="readout r3">
+          <div class="ro">
+            <span class="label">Combined ratio</span>
+            <span class="metric" id="t2-out-cr">—</span>
+            <span class="sub" id="t2-out-crnote">—</span>
+          </div>
+          <div class="ro">
+            <span class="label">Cost of float</span>
+            <span class="metric" id="t2-out-cost">—</span>
+            <span class="sub">The "interest rate" on policyholder money</span>
+          </div>
+          <div class="ro">
+            <span class="label">Net margin (per ₹100 premium)</span>
+            <span class="metric" id="t2-out-net">—</span>
+            <span class="sub">Underwriting + investment income combined</span>
+          </div>
+        </div>
+
+        <div class="verdict" id="t2-verdict">—</div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1.3rem;margin:38px 0 16px;color:var(--ink-2)">Reserving: where management chooses its own earnings</h3>
+    <p class="body">Here is the part outsiders almost never see, and insiders obsess over. When an insurer earns a premium, it must immediately set aside a <strong>reserve</strong> — its best estimate of the claims that premium will eventually have to pay. But "eventually" can be years away, and the true number is unknowable at the time. So the reserve is an <em>estimate</em>. And estimates are choices.</p>
+
+    <p class="body">The largest and most subjective piece is <strong>IBNR — Incurred But Not Reported</strong>. These are claims for events that have <em>already happened</em> but that nobody has filed yet. A car crash on December 31st whose claim arrives in March; an asbestos exposure in 1975 whose cancer surfaces in 2010. The actuary must reserve for losses that exist but are invisible. The tools — the <strong>chain-ladder method</strong>, the <strong>Bornhuetter-Ferguson method</strong> — project ultimate losses from how past claims "developed" over time in a triangle of accident-year-by-payment-year data.</p>
+
+    <div class="callout verm">
+      <span class="label">The lever nobody talks about</span>
+      <p>Because reserves are estimates, they are the most powerful legal earnings-management tool in the industry. <em>Over-reserve</em> in a good year (hiding profit, building a cushion), then <em>release</em> reserves in a weak year (when prior-year claims come in below estimate, the surplus flows straight to current earnings). Analysts scrutinise "prior-year reserve development" precisely because a company can flatter today's results by quietly releasing yesterday's conservatism. Strong, consistent reserve releases can signal prudence — or a company running out of road.</p>
+    </div>
+
+    <p class="body">This is why Buffett harps on <strong>reserve discipline</strong> and why he had to <em>fix</em> General Re after acquiring it in 1998 — its reserving had grown loose (<a href="#s6" class="ref">Section 6</a>). An insurer that under-reserves looks brilliantly profitable right up until the claims actually arrive and bankrupt it. The graveyard is full of them (<a href="#s12" class="ref">Section 12</a>).</p>
+  </div>
+</section>
+
+<!-- ========================= 05 · SHORT vs LONG TAIL ========================= -->
+<section id="s5">
+  <div class="wrap">
+    <div class="kicker">
+      <span class="sec-num">05</span>
+      <span class="label" style="color:#7a6f55">The Shape of Time</span>
+    </div>
+    <h2 class="head">Why some premiums stay investable for 40 years</h2>
+    <div class="section-intro-rule"></div>
+    <p class="standfirst">Not all float is created equal. The single variable that decides how valuable a line of insurance is to a float-investor is how <em>long</em> the money sits before it leaves.</p>
+
+    <p class="body"><span class="lead-in">A</span>n insurer's lines are described by their <strong>tail</strong> — the lag between collecting the premium and paying the claim. <strong>Short-tail</strong> lines settle fast: a motor crash or a stolen phone is reported and paid within months. <strong>Long-tail</strong> lines settle slowly: a workers' compensation injury, a professional-liability suit, or asbestos exposure can pay out over decades. Buffett explicitly prized this — in extreme cases like asbestos, "payments can stretch over many decades," which means the float from those policies is investable for that entire span.<sup>1</sup></p>
+
+    <p class="body">The trade-off: long-tail float is more valuable (you hold it longer) but also more dangerous (you must reserve accurately for claims you won't truly understand for years — see <a href="#s4" class="ref">reserving</a>). The slider below shows roughly how long ₹100 of premium remains in the float across different lines.</p>
+
+    <!-- ===== INTERACTIVE 4 (placed here): TAIL TIMELINE ===== -->
+    <div class="tool" id="tool4">
+      <div class="tool-head">
+        <div>
+          <span class="label">Interactive Model · 03</span>
+          <h3>The Tail Visualiser</h3>
+          <p>How long does a rupee of premium stay investable? Set an investment yield and see the lifetime float income each line throws off.</p>
+        </div>
+        <span class="tool-badge">Drag to explore</span>
+      </div>
+      <div class="tool-body">
+        <div class="tool-controls c2">
+          <div class="ctrl">
+            <label>Investment yield on held float <span class="val" id="t4-y-v">7%</span></label>
+            <input type="range" id="t4-yield" min="2" max="12" step="1" value="7">
+            <div class="hint">Applied for the full duration the float is held.</div>
+          </div>
+          <div class="ctrl">
+            <label>Premium written <span class="val" id="t4-p-v">₹100</span></label>
+            <input type="range" id="t4-prem" min="100" max="1000" step="100" value="100">
+            <div class="hint">Scales the absolute income figures.</div>
+          </div>
+        </div>
+
+        <div class="tail-track" id="t4-track"></div>
+
+        <div class="verdict" id="t4-verdict" style="margin-top:26px">—</div>
+      </div>
+    </div>
+
+    <p class="body">This is why a reinsurer writing long-tail casualty risk, or a specialty insurer in workers' comp, can be a more powerful float engine than a fast-churning motor book — provided it reserves honestly. It is also why <strong>life insurance</strong> is the longest-tail business of all: premiums collected from a 30-year-old may not pay a death benefit for fifty years. The entire Indian life-insurance valuation framework (<a href="#s10" class="ref">Section 10</a>) is built around this multi-decade float.</p>
+  </div>
+</section>
+
+<!-- ========================= 06 · HOW BUFFETT BUILT IT ========================= -->
+<section id="s6">
+  <div class="wrap">
+    <div class="kicker">
+      <span class="sec-num">06</span>
+      <span class="label" style="color:#7a6f55">The Builder</span>
+    </div>
+    <h2 class="head">How one man turned float into Berkshire</h2>
+    <div class="section-intro-rule"></div>
+    <p class="standfirst">Buffett didn't invent float. He understood it more clearly than anyone alive, then spent fifty-seven years assembling the machine that exploits it best.</p>
+
+    <p class="body"><span class="lead-in">T</span>he sequence is worth knowing because each acquisition added a different kind of float:</p>
+
+    <ul class="clean">
+      <li><strong>1967 · National Indemnity.</strong> Buffett's first insurer, bought for Berkshire. A specialist in unusual risks others wouldn't price. This was the seed.<sup>5</sup></li>
+      <li><strong>GEICO.</strong> The direct-to-consumer auto insurer with a structural cost advantage — no agents, so a permanently lower expense ratio. Buffett began buying in and eventually owned it whole. Distribution as moat (<a href="#s7" class="ref">Section 7</a>).</li>
+      <li><strong>1998 · General Re.</strong> A major global reinsurer that hugely expanded the float pool. But it came with <em>undisciplined underwriting and reserving</em> that Buffett had to spend years correcting. Once fixed, it became a powerful contributor. The cautionary half of the story.<sup>5</sup></li>
+      <li><strong>Berkshire Hathaway Reinsurance Group (BHRG).</strong> Buffett's in-house engine for writing the largest, strangest, most complex risks on earth — catastrophe covers and retroactive loss-portfolio transfers with limits above $10B that no one else will touch. Enormous, long-tail, high-value float.<sup>5</sup></li>
+    </ul>
+
+    <div class="callout">
+      <span class="label">Buffett's Alpha · the academic verdict</span>
+      <p>A landmark paper by Frazzini, Kabiller and Pedersen found Buffett's returns were "neither luck nor magic" but a reward for buying safe, high-quality stocks <em>and applying leverage of about 1.6-to-1</em>. That leverage came largely from insurance float. Their blunt conclusion: without the leverage, his returns would be nowhere near as good.<sup>6</sup></p>
+      <p class="who">Stock-picking mattered. But float was the force multiplier.</p>
+    </div>
+
+    <p class="body">The deepest insight is structural. Most insurers invest their float almost entirely in bonds, because regulators want the money safe and liquid. Berkshire was allowed to invest the <em>bulk in equities</em> — and even to buy whole companies. Why the latitude? Because even if the entire float were wiped out tomorrow, Berkshire still owns a giant railroad, a giant utility, and dozens of other businesses. Regulators care that liabilities can be met; Berkshire's non-insurance empire is the buffer that lets it take more risk with the float than any ordinary insurer ever could.<sup>7</sup> The float advantage compounds the equity advantage. That is the whole trick, and it is nearly impossible to copy.</p>
+  </div>
+</section>
+
+<!-- ========================= 07 · DISTRIBUTION (DEEP) ========================= -->
+<section id="s7">
+  <div class="wrap">
+    <div class="kicker">
+      <span class="sec-num">07</span>
+      <span class="label" style="color:#7a6f55">Who Owns the Customer</span>
+      <span class="depth-flag">Deep dive</span>
+    </div>
+    <h2 class="head">Distribution is the business; the product is a commodity</h2>
+    <div class="section-intro-rule"></div>
+    <p class="standfirst">Anyone can design an insurance policy. The hard part — the part that builds durable moats and decides who wins — is getting it into customers' hands cheaply. In insurance, whoever controls distribution controls the economics.</p>
+
+    <p class="body"><span class="lead-in">A</span>n insurance policy is one of the most commoditised products in finance. Two motor policies, two term-life plans, are nearly identical. So competition doesn't happen mainly on the product — it happens on <strong>distribution</strong>, and distribution shows up directly in the expense ratio (<a href="#s4" class="ref">Section 4</a>). There are four main channels, and the choice between them defines the company:</p>
+
+    <ul class="clean">
+      <li><strong>Agency.</strong> Individual agents sell on commission. High-touch, high-cost, deep in rural and relationship-driven markets. LIC's army of agents is the largest such force in the world and remains its core moat.</li>
+      <li><strong>Bancassurance.</strong> Banks sell insurance to their own account holders. This is the decisive channel in India — and it explains the entire competitive structure of Indian private life insurance. <strong>SBI Life</strong> (State Bank of India), <strong>HDFC Life</strong> (HDFC Bank) and <strong>ICICI Prudential</strong> (ICICI Bank) dominate precisely because they were born attached to the country's largest bank branch networks. The bank <em>is</em> the moat.</li>
+      <li><strong>Direct.</strong> No intermediary — the customer buys online or by phone. Lowest cost, structurally lower expense ratio. <strong>GEICO</strong> built its entire US advantage on this; it is also the model behind digital-first insurers like Lemonade and Acko.</li>
+      <li><strong>Broker.</strong> Independent brokers represent the customer across multiple insurers — dominant in commercial and corporate lines, and in US large-account business.</li>
+    </ul>
+
+    <div class="callout verm">
+      <span class="label">The insider's lens</span>
+      <p>When you evaluate an insurer, ask first: <em>who owns its distribution?</em> A life insurer with a captive bancassurance pipeline (SBI Life) has a fundamentally cheaper, more durable customer-acquisition engine than one buying business through open-market agents. A motor insurer going direct (GEICO) can underprice the agent-laden incumbents and still profit. Distribution explains more about long-run insurance returns than product design ever will — and it is why the Zurich–Kotak and Bajaj–Allianz deals were really fights over <em>access to customers</em>, not over underwriting talent.</p>
+    </div>
+
+    <p class="body">This is also why "InsurTech" disruption has been harder than promised. A clever app can improve the <em>buying experience</em>, but it still has to solve the brutal economics of acquiring each customer for less than that customer is worth — and incumbents with bank branches or agent armies already have that solved. Distribution is the wall most disruptors break against.</p>
+  </div>
+</section>
+
+<!-- ========================= 08 · INDIA vs US (DEEP) ========================= -->
+<section id="s8">
+  <div class="wrap">
+    <div class="kicker">
+      <span class="sec-num">08</span>
+      <span class="label" style="color:#7a6f55">Two Markets, Two Maturities</span>
+      <span class="depth-flag">Deep dive</span>
+    </div>
+    <h2 class="head">India vs the United States</h2>
+    <div class="section-intro-rule"></div>
+    <p class="standfirst">The same business model, at two completely different points on the development curve — and priced by the market in two completely different ways. Confusing the two is the most common analytical error.</p>
+
+    <p class="body"><span class="lead-in">S</span>tart with penetration — premiums as a share of GDP. It is the cleanest single measure of how mature an insurance market is, and the gap is enormous.</p>
+
+    <div class="versus">
+      <div class="side v-in">
+        <div class="flagline">🇮🇳 India · FY25</div>
+        <h4>The growth story</h4>
+        <div class="vrow"><span class="vk">Penetration (premiums/GDP)</span><span class="vv">3.7%</span></div>
+        <div class="vrow"><span class="vk">Density (premium/person)</span><span class="vv">~$97</span></div>
+        <div class="vrow"><span class="vk">Life vs non-life</span><span class="vv">2.7% / 1.0%</span></div>
+        <div class="vrow"><span class="vk">Largest life insurer</span><span class="vv">LIC ~60%</span></div>
+        <div class="vrow"><span class="vk">Global rank by premium</span><span class="vv">10th</span></div>
+        <div class="vrow"><span class="vk">Regulator</span><span class="vv">IRDAI (single, national)</span></div>
+        <div class="vrow"><span class="vk">Life insurer valuation</span><span class="vv">7–10× P/B</span></div>
+      </div>
+      <div class="v-mid">VERSUS</div>
+      <div class="side v-us">
+        <div class="flagline">🇺🇸 United States</div>
+        <h4>The mature market</h4>
+        <div class="vrow"><span class="vk">Penetration (premiums/GDP)</span><span class="vv">~11.3%</span></div>
+        <div class="vrow"><span class="vk">Density (premium/person)</span><span class="vv">thousands $</span></div>
+        <div class="vrow"><span class="vk">Structure</span><span class="vv">Thousands of insurers</span></div>
+        <div class="vrow"><span class="vk">Market leaders</span><span class="vv">Highly fragmented</span></div>
+        <div class="vrow"><span class="vk">Global rank by premium</span><span class="vv">1st</span></div>
+        <div class="vrow"><span class="vk">Regulator</span><span class="vv">State-by-state + NAIC</span></div>
+        <div class="vrow"><span class="vk">P&amp;C insurer valuation</span><span class="vv">~1–2× P/B</span></div>
+      </div>
+    </div>
+    <p class="body" style="font-size:.82rem;color:#7a6f55;font-style:italic;margin-top:-14px">Sources: IBEF / IRDAI FY25; Swiss Re Sigma; McKinsey India insurance.<sup>8,9,10</sup> US penetration per Swiss Re comparative data.</p>
+
+    <p class="body" style="margin-top:30px">Three differences matter most for anyone trying to <em>understand</em> — not just admire — these markets:</p>
+
+    <ul class="clean">
+      <li><strong>Maturity &amp; headroom.</strong> India's low penetration is not a weakness — it is the entire bull case. McKinsey describes the country as sitting at the foot of an insurance "S-curve," with rapid growth ahead as incomes rise.<sup>10</sup> The US is a saturated, slow-growth, share-stealing market. Indian premiums are projected to grow fastest among G20 nations.<sup>9</sup></li>
+      <li><strong>Regulatory architecture.</strong> India has <em>one</em> regulator (IRDAI) setting national rules — recently raising FDI to 100%, launching the Bima Sugam digital marketplace, and targeting "Insurance for All by 2047."<sup>8</sup> The US has <em>fifty</em> state regulators coordinated loosely through the NAIC, so an insurer operating nationally navigates fifty rulebooks.</li>
+      <li><strong>How the market prices them.</strong> This is the subtle one. Indian <em>life</em> insurers trade at a premium of <strong>seven to ten times book value</strong> — because the market is paying for decades of future growth in embedded value (<a href="#s10" class="ref">Section 10</a>).<sup>10</sup> US <em>P&amp;C</em> insurers typically trade near <strong>one to two times book</strong>, valued on current returns. Applying a US P&amp;C mental model to an Indian life insurer (or vice versa) will give you a wildly wrong answer. They are different instruments.</li>
+    </ul>
+
+    <div class="callout">
+      <span class="label">The bridge an analyst must build</span>
+      <p>You cannot compare an Indian insurer's reported profit to a US insurer's directly. India reports on IRDAI statutory / Ind-AS bases; US insurers on US GAAP; and from 2023 the global IFRS-17 standard rewrote how insurers everywhere recognise profit (<a href="#s9" class="ref">Section 9</a>). Add embedded-value accounting for life insurers on top. "Profit" means a different thing in each frame. The competent analyst always asks <em>which accounting basis</em> before comparing two numbers.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= 09 · COMPLIANCE & ACCOUNTING ========================= -->
+<section id="s9">
+  <div class="wrap">
+    <div class="kicker">
+      <span class="sec-num">09</span>
+      <span class="label" style="color:#7a6f55">Rules, Capital &amp; Accounting</span>
+    </div>
+    <h2 class="head">The constraints that decide how the float can be used</h2>
+    <div class="section-intro-rule"></div>
+    <p class="standfirst">Regulation isn't a footnote to the float story — it is the cage the float lives in. The rules on capital and accounting determine how aggressively any insurer can invest, and how its profits even get counted.</p>
+
+    <p class="body"><span class="lead-in">T</span>he regulator's core job is solvency: making sure the insurer can pay claims even after a bad year. The main instrument is a <strong>capital requirement</strong> — the insurer must hold a buffer of capital above its liabilities. In Europe this is <strong>Solvency II</strong>; India is moving toward a <strong>risk-based capital (RBC)</strong> regime; the US uses RBC standards coordinated by the NAIC. The more risk you take with the float, the more capital you must hold against it. <em>This is the real reason most insurers hold bonds, not equities</em> — equities demand far more regulatory capital. Berkshire's latitude to hold equities (<a href="#s6" class="ref">Section 6</a>) is the exception that proves the rule.</p>
+
+    <div class="cols2">
+      <div>
+        <h3 style="font-size:1.15rem;margin-bottom:12px;color:var(--ink-2)">IFRS-17: the quiet earthquake (2023)</h3>
+        <p class="body">In 2023, a new global accounting standard — <strong>IFRS-17</strong> — came into force, rewriting how insurers worldwide recognise profit from contracts. Instead of booking premium as revenue when received, insurers now release profit as they deliver service over the life of the contract (via a "contractual service margin"). The practical effect: reported profits for the same underlying business can look completely different pre- and post-IFRS-17, and cross-border comparisons got harder, not easier. Any comparison spanning 2023 must account for it.</p>
+      </div>
+      <div>
+        <h3 style="font-size:1.15rem;margin-bottom:12px;color:var(--ink-2)">Statutory vs GAAP vs EV</h3>
+        <p class="body">An insurer can report three different "profits" for the same year. <strong>Statutory</strong> accounting (what regulators see) is deliberately conservative — built to test solvency. <strong>GAAP / IFRS</strong> (what investors see) aims to match revenue and cost economically. <strong>Embedded value</strong> (life insurers) adds the present value of future profits already locked into in-force policies. The classic illustration: an insurer's IFRS profit and its embedded-value profit can differ by roughly 2× in the same year.<sup>11</sup> None is "the truth" — each answers a different question.</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:1.2rem;margin:30px 0 14px;color:var(--ink-2)">Health insurance — a third animal</h3>
+    <p class="body">Life and P&amp;C get the attention, but in India <strong>health insurance is now the largest non-life segment — about 41% of non-life premium in FY25</strong>, overtaking motor, driven by rising medical costs and post-pandemic awareness.<sup>8</sup> It behaves like neither life nor traditional P&amp;C. Its defining dynamics: the <strong>medical loss ratio</strong> (share of premium paid out as medical claims), the economics of <strong>cashless networks</strong> and third-party administrators, and a relentless <strong>claims-inflation treadmill</strong> as healthcare costs outrun premium increases. A health insurer that misprices medical inflation can run a great-looking book straight into a wall.</p>
+
+    <div class="tag-row">
+      <span class="tag hot">Solvency II</span><span class="tag hot">RBC</span><span class="tag">NAIC</span>
+      <span class="tag hot">IFRS-17</span><span class="tag">Statutory vs GAAP</span><span class="tag">Embedded value</span>
+      <span class="tag">Medical loss ratio</span><span class="tag">Solvency margin</span>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= 10 · VALUATION (DEEP) ========================= -->
+<section id="s10">
+  <div class="wrap">
+    <div class="kicker">
+      <span class="sec-num">10</span>
+      <span class="label" style="color:#7a6f55">Putting a Price on It</span>
+      <span class="depth-flag">Deep dive</span>
+    </div>
+    <h2 class="head">How to value an insurer (and why P/E lies)</h2>
+    <div class="section-intro-rule"></div>
+    <p class="standfirst">Valuing an insurer with the tools you'd use for a normal company will mislead you. The cash flows are muddied, the earnings are reserve-dependent, and the right lens depends on whether you're looking at life or non-life.</p>
+
+    <p class="body"><span class="lead-in">W</span>hy does the standard <strong>P/E ratio fail</strong> for insurers? Two reasons. First, a large share of reported profit comes from contracts signed in <em>prior</em> years — an insurer could write zero new policies this year and still report a profit, so this year's earnings say little about the franchise's health.<sup>12</sup> Second, earnings are hostage to reserve estimates (<a href="#s4" class="ref">Section 4</a>), which management can flex. And <strong>DCF struggles</strong> too: the investment portfolio's cash flows swamp the operating cash flows, so it's hard to isolate what the insurance business itself is generating.<sup>13</sup></p>
+
+    <p class="body">So professionals reach for a different toolkit:</p>
+
+    <ul class="clean">
+      <li><strong>Price-to-Book (P/B) + Return on Equity (ROE).</strong> The workhorse pair. Because an insurer's assets are mostly marketable securities, book value is reasonably "real." The key relationship: a higher sustainable ROE justifies a higher P/B. An ROE around 10% covers the cost of capital; mid-teens is a well-run insurer.<sup>13</sup> You buy a high-ROE insurer at a reasonable P/B — and avoid paying a high P/B for a low-ROE one.</li>
+      <li><strong>Combined ratio.</strong> The qualitative gate for P&amp;C. No durable underwriting profit, no premium multiple.</li>
+      <li><strong>Embedded Value (EV) &amp; Value of In-Force (VIF).</strong> The standard for <em>life</em> insurers. EV = net asset value + the present value of future profits from policies already written. Life insurers are then valued on a <strong>Price / EV</strong> multiple. A P/EV above 1 means the market expects future <em>new</em> business to add value beyond the existing book — which is exactly the bet embedded in those 7–10× <em>P/B</em> Indian life valuations.<sup>11</sup></li>
+      <li><strong>Other Comprehensive Income (OCI).</strong> Where unrealised investment gains/losses hide. Ignoring it means missing what the float portfolio is actually doing to book value.<sup>13</sup></li>
+    </ul>
+
+    <!-- ===== INTERACTIVE 5 (4th tool): VALUATION SANDBOX ===== -->
+    <div class="tool" id="tool5">
+      <div class="tool-head">
+        <div>
+          <span class="label">Interactive Model · 04</span>
+          <h3>Build-Your-Own-Insurer Valuation Sandbox</h3>
+          <p>Reverse-engineer why the market pays 8× book for an Indian life insurer and 1.3× for a US P&amp;C name. Set the fundamentals; watch the justified multiple move.</p>
+        </div>
+        <span class="tool-badge">The capstone</span>
+      </div>
+      <div class="tool-body">
+        <div class="tool-controls c4">
+          <div class="ctrl">
+            <label>Book value (equity) <span class="val" id="t5-b-v">₹100B</span></label>
+            <input type="range" id="t5-book" min="10" max="500" step="10" value="100">
+            <div class="hint">Net assets — the starting point.</div>
+          </div>
+          <div class="ctrl">
+            <label>Sustainable ROE <span class="val hot" id="t5-roe-v">15%</span></label>
+            <input type="range" id="t5-roe" min="4" max="25" step="1" value="15">
+            <div class="hint">The single biggest driver of multiple.</div>
+          </div>
+          <div class="ctrl">
+            <label>Growth rate <span class="val" id="t5-g-v">11%</span></label>
+            <input type="range" id="t5-grow" min="0" max="20" step="1" value="11">
+            <div class="hint">Sustainable growth in book value / new business.</div>
+          </div>
+          <div class="ctrl">
+            <label>Cost of equity <span class="val" id="t5-ke-v">13%</span></label>
+            <input type="range" id="t5-ke" min="8" max="18" step="1" value="13">
+            <div class="hint">Investors' required return. India ≈ higher.</div>
+          </div>
+        </div>
+
+        <div class="readout r4">
+          <div class="ro">
+            <span class="label">Justified P/B</span>
+            <span class="metric hot" id="t5-out-pb">—</span>
+            <span class="sub">= (ROE − g) ÷ (Ke − g)</span>
+          </div>
+          <div class="ro">
+            <span class="label">Implied valuation</span>
+            <span class="metric" id="t5-out-val">—</span>
+            <span class="sub">Book × justified P/B</span>
+          </div>
+          <div class="ro">
+            <span class="label">Implied P/E</span>
+            <span class="metric" id="t5-out-pe">—</span>
+            <span class="sub">P/B ÷ ROE</span>
+          </div>
+          <div class="ro">
+            <span class="label">Profile match</span>
+            <span class="metric" id="t5-out-profile" style="font-size:1.1rem">—</span>
+            <span class="sub" id="t5-out-profilesub">—</span>
+          </div>
+        </div>
+
+        <div class="verdict" id="t5-verdict">—</div>
+      </div>
+    </div>
+
+    <p class="body">The sandbox uses the classic <strong>justified P/B = (ROE − g) / (Ke − g)</strong> relationship. It opens on a quality grower at ~2× book. Now watch the sensitivity: nudge growth from 11% toward the 13% cost of equity and the multiple climbs steeply — that narrowing gap between growth and discount rate is precisely how a high-growth Indian life insurer earns its 7–10× tag, while a flat US P&amp;C insurer earning its cost of capital sits near 1×. The multiple isn't arbitrary; it's growth and returns, priced. But the same sensitivity is the warning: those rich valuations are <em>fragile</em> — a small slowdown in growth collapses the multiple fast. That fragility is the real risk in owning high-multiple insurers.</p>
+  </div>
+</section>
+
+<!-- ========================= 11 · HOW INSURERS FOOL YOU ========================= -->
+<section id="s11">
+  <div class="wrap">
+    <div class="kicker">
+      <span class="sec-num">11</span>
+      <span class="label" style="color:#7a6f55">The Consumer's Side</span>
+    </div>
+    <h2 class="head">How insurers fool you — and why the incentives demand it</h2>
+    <div class="section-intro-rule"></div>
+    <p class="standfirst">Once you understand float, the customer-facing tricks stop looking like isolated bad behaviour and start looking like exactly what the business model rewards. The incentives don't excuse the tactics — they explain them.</p>
+
+    <p class="body"><span class="lead-in">T</span>he most important consumer-protection idea in all of insurance: <strong>mixing insurance with investment is almost always a bad deal for you and a great deal for the seller.</strong> The flagship offender in India is the <strong>ULIP</strong> — the Unit-Linked Insurance Plan.</p>
+
+    <div class="callout verm">
+      <span class="label">The sentence that traps people</span>
+      <p>"Sir, this is like an FD, only better." Months later the document reveals the truth: ULIP, surrender charge, non-guaranteed bonus, five-year lock-in.<sup>14</sup> The pitch sells certainty; the contract delivers the opposite.</p>
+    </div>
+
+    <p class="body">Why is the ULIP mis-sold so relentlessly? Follow the money — the charges are enormous and front-loaded:</p>
+
+    <ul class="clean">
+      <li><strong>Premium allocation charges of 20–40% in year one</strong> — meaning a large slice of your first-year premium never reaches the investment at all.<sup>15</sup></li>
+      <li><strong>Fund management fees (~1.35%/yr), policy administration charges, and mortality charges</strong> that rise with age, layered on top.<sup>15</sup></li>
+      <li><strong>A five-year lock-in with surrender penalties</strong> — versus a mutual fund you can exit any day.<sup>15</sup></li>
+      <li><strong>High agent commissions</strong> — the structural reason the product is pushed so hard. The incentive to sell is baked into the charge structure.</li>
+    </ul>
+
+    <p class="body">The defences, worth knowing: the <strong>free-look period</strong> (cancel within ~15–30 days of receiving the policy for a near-full refund); keeping written proof of any false promise (WhatsApp, email, brochure, recordings); and escalation through the insurer's grievance cell, then <strong>Bima Bharosa</strong>, then the <strong>Insurance Ombudsman</strong>.<sup>14</sup> And: ignore any "IRDAI refund" call asking for a fee or OTP — those are scams.</p>
+
+    <h3 style="font-size:1.2rem;margin:32px 0 14px;color:var(--ink-2)">The claims playbook: delay, deny, defend</h3>
+    <p class="body">On the claims side, the float model creates a perverse incentive that is structural, not incidental. <strong>Every day an insurer delays paying your claim is another day it earns investment income on money that is, by then, owed to you.</strong> Testimony before US legislators put the scale starkly: a very large insurer delaying claim payments by even a single day could earn investment income reaching into the millions.<sup>16</sup> Multiply across an entire book and "slow claims" stop being an operational failure and start looking like a profit centre. Common tactics documented across markets: requesting endless documentation, undervaluing damage, leaning on technical non-disclosure to repudiate, and simply being slow.<sup>16,17</sup></p>
+
+    <div class="myth">
+      <div class="m-claim">
+        <span class="label">Marketing gimmick</span>
+        <p>"98% claim settlement ratio!" — quoted prominently in every life-insurance ad.</p>
+      </div>
+      <div class="m-real">
+        <span class="label">What to actually check</span>
+        <p>Settlement ratio by <em>count</em> can hide rejections of large or complex claims, and says nothing about <em>speed</em> or partial settlements. For health and motor, repudiation tends to cluster in exactly the high-value claims you'd most want paid. Read the ratio — but read the exclusions, the speed, and the amount-weighted record harder.<sup>18</sup></p>
+      </div>
+    </div>
+
+    <p class="body" class="disclaim" style="font-family:var(--grot);font-size:.78rem;color:#7a6f55;font-style:normal;margin-top:24px">None of this means insurance is a scam — it is one of the most useful financial inventions in history, and genuine protection (term life, real health cover, liability) is worth buying. It means you should buy <em>insurance for protection</em> and keep your <em>investing separate</em>, read the contract rather than the pitch, and treat any product blending the two with deep suspicion.</p>
+  </div>
+</section>
+
+<!-- ========================= 12 · WHEN FLOAT GOES WRONG ========================= -->
+<section id="s12">
+  <div class="wrap">
+    <div class="kicker">
+      <span class="sec-num">12</span>
+      <span class="label" style="color:#7a6f55">The Graveyard</span>
+    </div>
+    <h2 class="head">When the float turns on you</h2>
+    <div class="section-intro-rule"></div>
+    <p class="standfirst">Buffett says it himself: leverage is leverage. Float is borrowed money, and borrowed money cuts both ways. The history of insurance is also a history of spectacular collapse.</p>
+
+    <p class="body"><span class="lead-in">F</span>loat magnifies a good underwriter and destroys a bad one. Three failure modes recur, and each has a famous corpse:</p>
+
+    <ul class="clean">
+      <li><strong>The long-tail reserve time-bomb.</strong> The very long-tail lines that make float so valuable (<a href="#s5" class="ref">Section 5</a>) are the ones most easily under-reserved. <strong>Asbestos and environmental liability</strong> bankrupted insurers <em>decades</em> after they wrote the policies — claims surfaced in the 1980s–2000s for exposures dating to mid-century. The premiums were long spent; the float assumption that "we'll have the money when claims come" failed because the claims were far larger and later than anyone reserved for.</li>
+      <li><strong>Investing the float badly — the AIG lesson.</strong> In 2008, AIG nearly took down the global financial system. The fatal wound wasn't its core insurance underwriting — it was <strong>AIG Financial Products</strong>, a unit that wrote credit-default swaps and effectively bet the company's balance-sheet strength on the mortgage market. The float-backed empire was sound; the speculation attached to it was not. Lesson: <em>how you deploy the float can kill you even when the insurance is fine.</em></li>
+      <li><strong>Correlated catastrophe — the 1693 lesson, forever.</strong> When risks that looked independent all fail together, the law of large numbers breaks (<a href="#s2" class="ref">Section 2</a>). A single mega-catastrophe, or a cluster, can wipe out years of accumulated float at once. This is why reinsurance and catastrophe modelling exist (<a href="#s13" class="ref">Section 13</a>) — and why climate change is the live threat to the whole model.</li>
+    </ul>
+
+    <div class="callout">
+      <span class="label">The discipline that prevents it</span>
+      <p>Buffett's relentless emphasis on <em>underwriting discipline</em> and <em>honest reserving</em> isn't folksy conservatism — it's the only known defence against these three failure modes. He has repeatedly walked away from premium volume when prices were inadequate, accepting a smaller float rather than a mispriced one. The insurers in the graveyard chased the volume. That is the entire difference.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= 13 · THE 0.001% LAYER ========================= -->
+<section id="s13">
+  <div class="wrap">
+    <div class="kicker">
+      <span class="sec-num">13</span>
+      <span class="label" style="color:#7a6f55">What the Top 0.001% Know</span>
+    </div>
+    <h2 class="head">The deep structure</h2>
+    <div class="section-intro-rule"></div>
+    <p class="standfirst">Beyond float and combined ratios lies the machinery that actually moves global risk. These are the ideas that separate someone who understands an insurer from someone who understands the <em>insurance system</em>.</p>
+
+    <div class="cols2">
+      <div>
+        <h3 style="font-size:1.15rem;margin-bottom:12px;color:var(--ink-2)">① Reinsurance &amp; retrocession</h3>
+        <p class="body">Insurers insure people; <strong>reinsurers insure insurers.</strong> When a primary insurer doesn't want to hold all of a risk, it cedes part of the premium (and risk) to a reinsurer like Munich Re, Swiss Re, GIC Re (India's dominant reinsurer, &gt;50% of ceded premium<sup>18</sup>), or Berkshire's BHRG. Reinsurers themselves offload tail risk to <em>other</em> reinsurers — that's <strong>retrocession</strong>. The result is a global, layered web that spreads a Florida hurricane's losses across balance sheets on three continents. India is now building <strong>GIFT City</strong> as a global reinsurance hub to capture more of this flow domestically.<sup>8</sup></p>
+
+        <h3 style="font-size:1.15rem;margin:26px 0 12px;color:var(--ink-2)">② Catastrophe bonds &amp; ILS</h3>
+        <p class="body">When risks are too large even for reinsurance, they get sold to capital markets as <strong>catastrophe bonds</strong> — instruments where investors earn a high yield but lose principal if a defined catastrophe (a quake of magnitude X in region Y) occurs. This is <strong>Insurance-Linked Securities (ILS)</strong>: risk transformed into a tradeable asset, uncorrelated with stocks, that lets pension funds effectively underwrite hurricanes. The "rate-on-line" in this market is one of the truest real-time prices of global catastrophe risk.</p>
+      </div>
+      <div>
+        <h3 style="font-size:1.15rem;margin-bottom:12px;color:var(--ink-2)">③ The model-homogeneity fragility</h3>
+        <p class="body">A subtle, systemic danger. Under regimes like Solvency II, insurers must use <em>certified</em> risk models — and only a handful of vendors provide them. So much of the industry ends up pricing catastrophe risk through the <strong>same few models</strong>, which means they share the <em>same blind spots</em>. If those models are wrong in the same direction, the whole industry is mispriced simultaneously — a hidden, correlated fragility baked in by regulation meant to make the system safer.<sup>19</sup> It's the 1693 problem in modern dress: everyone underwriting the same risk the same way.</p>
+
+        <h3 style="font-size:1.15rem;margin:26px 0 12px;color:var(--ink-2)">④ Float as permanent capital — the PE play</h3>
+        <p class="body">Buffett's insight didn't stay his. Private-equity firms realised insurance float is the cheapest <strong>permanent capital</strong> in finance — money you control for years, paying near-zero to hold. The <strong>Apollo / Athene</strong> model (and KKR, Blackstone, Brookfield following) is built on acquiring or building life and annuity insurers, then investing the float into the PE firm's own higher-yielding credit strategies. It is Buffett's playbook, industrialised — and it's quietly reshaping who owns the world's retirement savings. When you see a PE giant buy an annuity provider, this is why: they're buying the float.</p>
+      </div>
+    </div>
+
+    <div class="callout verm">
+      <span class="label">The unifying idea</span>
+      <p>Every advanced concept here — reinsurance, cat bonds, the PE roll-up — is ultimately a different answer to the same two questions the Lloyd's underwriters asked in 1688: <em>how do we spread this risk so no single event ruins us</em>, and <em>how do we get paid to hold the money in between?</em> Three centuries of financial engineering, and it still comes back to the float and the time-gap.</p>
+    </div>
+
+    <div class="divider-glyph">§ &nbsp; § &nbsp; §</div>
+  </div>
+</section>
+
+<!-- ========================= CLOSE ========================= -->
+<section id="close" style="background:var(--ink);color:var(--parch);border-bottom:none">
+  <div class="wrap">
+    <div class="kicker">
+      <span class="sec-num">—</span>
+      <span class="label" style="color:#8a7d60">The Through-Line</span>
+    </div>
+    <h2 class="head" style="color:var(--parch);max-width:18ch">You now hold the thread the whole industry hangs on.</h2>
+    <div class="section-intro-rule"></div>
+    <p class="body" style="color:#bdb094;max-width:64ch;font-size:1.15rem">An insurer collects money now and pays it later. The gap is the float. Whether that float is a gift or a tax is decided by the combined ratio. Buffett's entire empire is the disciplined exploitation of negative-cost float, leveraged into equities in a way regulators let almost no one else attempt. India is that same model at the dawn of its growth curve; the US is its mature, saturated form. And every exotic instrument on top — reinsurance, cat bonds, the PE roll-up — is just a more sophisticated way of asking the two questions from the coffee house.</p>
+    <p class="body" style="color:#8a7d60;max-width:64ch;font-style:italic">The goal was never to make you an underwriter overnight. It was to let you read an insurance company — or an insurance pitch — and see the machine underneath. You can now do that.</p>
+
+    <div class="timegap" style="margin-top:40px">
+      <div class="timegap-track" style="border-color:var(--parch)">
+        <div class="tg-seg tg-premium" style="background:var(--parch);color:var(--ink)">Premium in</div>
+        <div class="tg-seg tg-float">THE FLOAT — where the entire business lives</div>
+        <div class="tg-seg tg-claim" style="background:#3a3424;color:var(--parch)">Claim out</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= ENDNOTES ========================= -->
+<section class="endnotes" style="border-bottom:none">
+  <div class="wrap">
+    <h3>Sources &amp; notes</h3>
+    <ol>
+      <li>Berkshire Hathaway Shareholder Letters (2002, 2016); FinMasters, "The Insurance Float" — Berkshire float ≈ $171B at end-2024, from a few million in 1967. <a href="https://finmasters.com/warren-buffett-insurance-float/">finmasters.com</a></li>
+      <li>Agent-based simulation of insurance, PMC — the 1693 privateer attack, ~£1M losses, 33 underwriters bankrupted. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7952833/">pmc.ncbi.nlm.nih.gov</a></li>
+      <li>IBEF, Indian insurance sector overview — LIC (1956) and GIC (1972) nationalisation; IRDAI (1999); LIC IPO (2022). <a href="https://www.ibef.org/industry/insurance-sector-india">ibef.org</a></li>
+      <li>NPR Planet Money, "Warren Buffett Explains The Genius Of The Float" — industry-wide, premiums usually inadequate; industry ROE trails the S&amp;P 500. <a href="https://www.npr.org/sections/money/2010/03/warren_buffett_explains_the_ge.html">npr.org</a></li>
+      <li>FIG IB Guide, "Insurance Float: Buffett's Favorite Concept" — three cost-of-float regimes; ~$9B 2024 underwriting gain; National Indemnity (1967), General Re (1998), BHRG. <a href="https://ibinterviewquestions.com/guides/fig-investment-banking/insurance-float-buffetts-favorite-concept">ibinterviewquestions.com</a></li>
+      <li>Frazzini, Kabiller &amp; Pedersen, "Buffett's Alpha"; via Yahoo Finance/GuruFocus — ~1.6:1 leverage from float as a core driver of returns. <a href="https://finance.yahoo.com/news/insight-buffett-used-float-leverage-162518556.html">finance.yahoo.com</a></li>
+      <li>GuruFocus, "The Brilliance of Buffett's Float Strategy" — why regulators permit Berkshire's equity-heavy float deployment. <a href="https://finance.yahoo.com/news/brilliance-buffetts-float-strategy-174213377.html">finance.yahoo.com</a></li>
+      <li>IBEF / IRDAI / PIB (FY25) — India penetration 3.7%, density $97, LIC share, 100% FDI, Bima Sugam, health = 41% of non-life, GIFT City, GIC Re. <a href="https://www.ibef.org/industry/insurance-sector-india">ibef.org</a></li>
+      <li>Swiss Re Sigma (via PIB) — India 10th-largest market, 1.8% global share; fastest-growing among major economies. <a href="https://www.pib.gov.in/PressReleasePage.aspx?PRID=2216048">pib.gov.in</a></li>
+      <li>McKinsey, "The potential of India's insurance industry" — S-curve thesis; Indian life insurers at 7–10× price-to-book. <a href="https://www.mckinsey.com/in/our-insights/steering-indian-insurance-from-growth-to-value-in-the-upcoming-techade">mckinsey.com</a></li>
+      <li>Profectus Academy / Motley Fool UK — embedded value, VIF, Price/EV; IFRS vs EV profit divergence (~2×). <a href="https://www.profectusacademy.com/post/valuation-of-insurance-companies-using-embedded-value">profectusacademy.com</a></li>
+      <li>Profectus Academy — why P/E misleads for insurers (prior-year contracts drive current profit). <a href="https://www.profectusacademy.com/post/valuation-of-insurance-companies-using-embedded-value">profectusacademy.com</a></li>
+      <li>Investopedia, "How To Value An Insurance Company" — P/B + ROE workhorse, DCF limitations, OCI, ROE benchmarks. <a href="https://www.investopedia.com/articles/investing/082813/how-value-insurance-company.asp">investopedia.com</a></li>
+      <li>RightToInformation.wiki — ULIP-as-FD mis-selling, free-look, Bima Bharosa, Ombudsman, refund scams. <a href="https://righttoinformation.wiki/insurance-mis-selling-india-ulip-endowment-refund-free-look-ombudsman">righttoinformation.wiki</a></li>
+      <li>Outlook Money, "The Great ULIP Mis-Sell" — 20–40% first-year allocation charges, ~1.35% fund fees, mortality/admin charges, 5-yr lock-in. <a href="https://www.outlookmoney.com/insurance/the-great-ulip-mis-sell-what-they-dont-tell-you">outlookmoney.com</a></li>
+      <li>Pracht Injury Lawyers — float-driven incentive to delay claims; per-day investment-income illustration (US legislative testimony). <a href="https://www.864law.com/blog/how-companies-profit-from-investment-float.cfm">864law.com</a></li>
+      <li>California Dept. of Insurance — documented claims/sales misconduct categories. <a href="https://www.insurance.ca.gov/0300-fraud/0200-invest-division-overview/10-violations/">insurance.ca.gov</a></li>
+      <li>Insillion thought-leadership — Indian settlement ratios, repudiation patterns, GIC Re's &gt;50% share of ceded reinsurance. <a href="https://insillion.com/thought-leadership/insurance-penetration-challenges">insillion.com</a></li>
+      <li>PMC agent-based simulation — Solvency II certified-model homogeneity as systemic fragility; the insurance cycle. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7952833/">pmc.ncbi.nlm.nih.gov</a></li>
+    </ol>
+    <p class="disclaim">Figures reflect sources available as of the research date and shift with markets and regulation — verify current numbers before relying on them. The "per-day float income" figure (note 16) is illustrative testimony about a large insurer broadly, not a verified Berkshire-specific statistic. The interactive models are simplified teaching tools using standard relationships (e.g. justified P/B = (ROE−g)/(Ke−g)); real valuation involves many more variables. This document is educational and is not investment, legal, or financial advice.</p>
+  </div>
+</section>
+
+<script>
+/* ============ helpers ============ */
+const $=id=>document.getElementById(id);
+const fmtB=n=>{ // money in billions, smart units
+  if(Math.abs(n)>=1000) return '$'+(n/1000).toFixed(2)+'T';
+  return '$'+n.toFixed(1)+'B';
+};
+const fmtRs=n=>{
+  if(Math.abs(n)>=1000) return '₹'+(n/1000).toFixed(2)+'T';
+  return '₹'+n.toFixed(0)+'B';
+};
+
+/* ============ PROGRESS BAR + TOC ============ */
+const secs=[...document.querySelectorAll('section[id], header[id]')];
+const tocLabels={top:'Top',s1:'Two engines',s2:'History',s3:'The float',s4:'The math',s5:'Tail',s6:'Buffett',s7:'Distribution',s8:'India v US',s9:'Rules',s10:'Valuation',s11:'Fool you',s12:'Failures',s13:'0.001%',close:'Close'};
+const toc=$('toc');
+secs.forEach(s=>{
+  if(!tocLabels[s.id])return;
+  const a=document.createElement('a');
+  a.href='#'+s.id;a.dataset.t=tocLabels[s.id];a.setAttribute('aria-label',tocLabels[s.id]);
+  toc.appendChild(a);
+});
+const tocLinks=[...toc.querySelectorAll('a')];
+function onScroll(){
+  const h=document.documentElement;
+  const sc=h.scrollTop/(h.scrollHeight-h.clientHeight);
+  $('progress').style.width=(sc*100)+'%';
+  let cur=secs[0].id;
+  for(const s of secs){ if(s.getBoundingClientRect().top<=140) cur=s.id; }
+  tocLinks.forEach(a=>a.classList.toggle('on',a.dataset.t===tocLabels[cur]));
+}
+window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+/* ===================================================================
+   INTERACTIVE 1 — FLOAT FLYWHEEL
+   =================================================================== */
+(function(){
+  const f=$('t1-float'),g=$('t1-growth'),cr=$('t1-cr'),ret=$('t1-ret');
+  const cv=$('t1-chart');const ctx=cv.getContext('2d');
+  function run(){
+    const startFloat=+f.value, growth=+g.value/100, combined=+cr.value, yield_=+ret.value/100;
+    const YEARS=30;
+    // underwriting margin as % of premium; premium roughly proportional to float
+    const uwMargin=(100-combined)/100; // +ve = profit
+    // assume premium volume ≈ float * 0.9 (rough, stable relationship)
+    let floatArr=[],valArr=[],deadArr=[];
+    let flt=startFloat, cumVal=0, cumDead=0;
+    for(let y=0;y<=YEARS;y++){
+      floatArr.push(flt);
+      valArr.push(cumVal);
+      deadArr.push(cumDead);
+      const premium=flt*0.9;
+      const uwResult=premium*uwMargin;       // underwriting profit/loss
+      const invIncome=flt*yield_;            // investment income on float
+      cumVal+=uwResult+invIncome;
+      cumDead+=uwResult;                      // dead-money line: no investment income
+      flt=flt*(1+growth)+ (uwResult>0?uwResult*0.3:0); // float grows w/ premium + retained uw profit
+    }
+    // outputs
+    const finalFloat=floatArr[YEARS];
+    $('t1-out-float').textContent=fmtB(finalFloat);
+    $('t1-out-floatx').textContent=(finalFloat/startFloat).toFixed(1)+'× starting float';
+    $('t1-out-value').textContent=fmtB(cumVal);
+    // effective cost of float = -underwriting margin (negative margin = positive cost)
+    const cost=-uwMargin*100;
+    const costEl=$('t1-out-cost');
+    costEl.textContent=(cost>0?'+':'')+cost.toFixed(1)+'%';
+    costEl.className='metric '+(cost<0?'good':cost>0?'bad':'');
+    $('t1-out-costnote').textContent=cost<0?'Paid to hold money':cost>0?'Paying to hold money':'Free float';
+    // verdict
+    const vd=$('t1-verdict');
+    if(combined<100&&yield_>=0.07){
+      vd.className='verdict pos';
+      vd.innerHTML='<strong>The Buffett zone.</strong> Negative-cost float compounded into high-yield assets. Float grew '+(finalFloat/startFloat).toFixed(1)+'× and threw off '+fmtB(cumVal)+' — the flywheel at full spin.';
+    }else if(combined>100&&yield_<0.05){
+      vd.className='verdict';
+      vd.innerHTML='<strong>The mediocre insurer.</strong> Underwriting loses money and the float sits in low-yield bonds. You\'re paying '+cost.toFixed(1)+'% to hold the float and barely earning it back. This is most of the industry.';
+    }else{
+      vd.className='verdict';
+      vd.innerHTML='Combined ratio of '+combined+'% gives a float cost of '+(cost>0?'+':'')+cost.toFixed(1)+'%, deployed at '+(yield_*100).toFixed(0)+'%. Lower the ratio below 100 and raise the yield to see the flywheel engage.';
+    }
+    drawChart(floatArr,valArr,deadArr,YEARS);
+  }
+  function drawChart(fl,vl,dd,YEARS){
+    const dpr=window.devicePixelRatio||1;
+    const W=cv.clientWidth,H=300;
+    cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+    const pad={l:54,r:14,t:16,b:26};
+    const max=Math.max(...fl,...vl)*1.08;
+    const xs=i=>pad.l+(i/YEARS)*(W-pad.l-pad.r);
+    const ys=v=>H-pad.b-(v/max)*(H-pad.t-pad.b);
+    // grid
+    ctx.strokeStyle='#34302a';ctx.lineWidth=1;ctx.font='10px Helvetica,Arial';ctx.fillStyle='#8a7d60';
+    for(let i=0;i<=4;i++){const v=max*i/4;const y=ys(v);ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();
+      ctx.textAlign='right';ctx.fillText(fmtB(v),pad.l-8,y+3);}
+    ctx.textAlign='center';
+    for(let i=0;i<=YEARS;i+=5){ctx.fillText('Y'+i,xs(i),H-8);}
+    // line helper
+    function line(arr,color,w,dash){
+      ctx.strokeStyle=color;ctx.lineWidth=w;ctx.setLineDash(dash||[]);
+      ctx.beginPath();arr.forEach((v,i)=>{const x=xs(i),y=ys(v);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    // dead-money area baseline (value if 0% return)
+    line(dd,'#8a7d60',1.5,[5,4]);
+    // value created (green) with fill
+    ctx.beginPath();vl.forEach((v,i)=>{const x=xs(i),y=ys(v);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});
+    ctx.lineTo(xs(YEARS),ys(0));ctx.lineTo(xs(0),ys(0));ctx.closePath();
+    ctx.fillStyle='rgba(95,184,154,.10)';ctx.fill();
+    line(vl,'#5fb89a',2.4);
+    // float (vermilion)
+    line(fl,'#c8412a',2.8);
+  }
+  [f,g,cr,ret].forEach(el=>el.addEventListener('input',()=>{
+    $('t1-f-v').textContent=fmtB(+f.value);
+    $('t1-g-v').textContent=g.value+'%';
+    $('t1-cr-v').textContent=cr.value+'%';
+    $('t1-r-v').textContent=ret.value+'%';
+    run();
+  }));
+  // init labels
+  $('t1-f-v').textContent=fmtB(+f.value);$('t1-g-v').textContent=g.value+'%';
+  $('t1-cr-v').textContent=cr.value+'%';$('t1-r-v').textContent=ret.value+'%';
+  run();
+  window.addEventListener('resize',run);
+})();
+
+/* ===================================================================
+   INTERACTIVE 2 — COMBINED RATIO & COST OF FLOAT
+   =================================================================== */
+(function(){
+  const loss=$('t2-loss'),exp=$('t2-exp'),yield_=$('t2-yield');
+  function run(){
+    const l=+loss.value,e=+exp.value,y=+yield_.value;
+    const cr=l+e;
+    const uw=100-cr; // underwriting profit per 100 premium
+    // bar widths (clamp visual to 100% premium; profit shows only if cr<100)
+    const lw=Math.min(l,100), ew=Math.min(e,Math.max(0,100-l));
+    const pw=Math.max(0,100-cr);
+    $('t2-bar-loss').style.width=lw+'%';
+    $('t2-bar-exp').style.width=ew+'%';
+    $('t2-bar-profit').style.width=pw+'%';
+    $('t2-bar-profit').textContent=pw>6?'Profit':'';
+    $('t2-bar-loss').textContent=lw>10?'Loss '+l+'%':'';
+    $('t2-bar-exp').textContent=ew>10?'Exp '+e+'%':'';
+    // combined ratio readout
+    const crEl=$('t2-out-cr');crEl.textContent=cr+'%';
+    crEl.className='metric '+(cr<100?'good':cr>100?'bad':'hot');
+    $('t2-out-crnote').textContent=cr<100?'Underwriting profit':cr>100?'Underwriting loss':'Break-even';
+    // cost of float = -(underwriting margin). Here float≈premium scale, so cost ≈ -uw%
+    const cost=-uw;
+    const costEl=$('t2-out-cost');costEl.textContent=(cost>0?'+':'')+cost+'%';
+    costEl.className='metric '+(cost<0?'good':cost>0?'bad':'');
+    // net margin = underwriting + investment income (invest income ≈ yield * float, float≈ premium*1)
+    const net=uw+y;
+    const netEl=$('t2-out-net');netEl.textContent=(net>0?'+₹':'−₹')+Math.abs(net).toFixed(0);
+    netEl.className='metric '+(net>0?'good':'bad');
+    // verdict
+    const vd=$('t2-verdict');
+    if(cr<100){
+      vd.className='verdict pos';
+      vd.innerHTML='<strong>Negative-cost float.</strong> Combined ratio '+cr+'% means a ₹'+uw+' underwriting profit per ₹100 — and you still earn '+y+'% on the float. You\'re being paid to hold the money. Total: ₹'+net.toFixed(0)+' per ₹100 premium.';
+    }else if(net>0){
+      vd.className='verdict';
+      vd.innerHTML='<strong>Investment income saves it.</strong> Underwriting loses ₹'+(-uw)+' per ₹100 (cost of float +'+(-uw)+'%), but '+y+'% investment income on the float more than covers it. Net ₹'+net.toFixed(0)+'. This is how most profitable insurers actually operate.';
+    }else{
+      vd.className='verdict';
+      vd.innerHTML='<strong>Underwater.</strong> The ₹'+(-uw)+' underwriting loss exceeds the ₹'+y+' of investment income. Net ₹'+net.toFixed(0)+' per ₹100 — the float is costing more than it earns. Unsustainable.';
+    }
+  }
+  [loss,exp,yield_].forEach(el=>el.addEventListener('input',()=>{
+    $('t2-l-v').textContent=loss.value+'%';
+    $('t2-e-v').textContent=exp.value+'%';
+    $('t2-y-v').textContent=yield_.value+'%';
+    run();
+  }));
+  $('t2-l-v').textContent=loss.value+'%';$('t2-e-v').textContent=exp.value+'%';$('t2-y-v').textContent=yield_.value+'%';
+  run();
+})();
+
+/* ===================================================================
+   INTERACTIVE 3 (tool4) — TAIL VISUALISER
+   =================================================================== */
+(function(){
+  const yield_=$('t4-yield'),prem=$('t4-prem'),track=$('t4-track');
+  // [name, avg years held, color]
+  const lines=[
+    ['Travel / gadget',0.3,'#7a9e3a'],
+    ['Motor (own damage)',0.8,'#5fb89a'],
+    ['Health',1.2,'#3a9e8f'],
+    ['Property / fire',2.0,'#1f5e5b'],
+    ['Marine / cargo',2.5,'#2e7d8f'],
+    ['Commercial liability',6,'#a67c2e'],
+    ['Workers\' comp',9,'#c8412a'],
+    ['Asbestos / long-tail',30,'#9c2f1d'],
+    ['Life insurance',45,'#16130d'],
+  ];
+  const maxYears=45;
+  function run(){
+    const y=+yield_.value/100, p=+prem.value;
+    track.innerHTML='';
+    lines.forEach(([name,yrs,color])=>{
+      const income=p*(Math.pow(1+y,yrs)-1); // compounded investment income over hold period
+      const row=document.createElement('div');row.className='tail-row';
+      const pct=Math.max(4,(yrs/maxYears)*100);
+      row.innerHTML=
+        '<div class="tail-name">'+name+'</div>'+
+        '<div class="tail-bar-area"><div class="tail-bar" style="width:'+pct+'%;background:'+color+'">'+
+          (yrs<1?(yrs*12).toFixed(0)+' mo':yrs+' yr')+'</div></div>'+
+        '<div class="tail-dur">₹'+income.toFixed(0)+'</div>';
+      track.appendChild(row);
+    });
+    const vd=$('t4-verdict');
+    const lifeIncome=p*(Math.pow(1+y,45)-1);
+    const motorIncome=p*(Math.pow(1+y,0.8)-1);
+    vd.className='verdict';
+    vd.innerHTML='<strong>The same ₹'+p+' premium, wildly different float value.</strong> Held in a motor book it earns ~₹'+motorIncome.toFixed(0)+' before leaving. Held in a life book at '+(y*100).toFixed(0)+'%, it compounds for decades into ~₹'+lifeIncome.toFixed(0)+' — roughly '+(lifeIncome/Math.max(motorIncome,0.01)).toFixed(0)+'× more. This is why long-tail float is the prize — and why it demands the most careful reserving.';
+  }
+  [yield_,prem].forEach(el=>el.addEventListener('input',()=>{
+    $('t4-y-v').textContent=yield_.value+'%';
+    $('t4-p-v').textContent='₹'+prem.value;
+    run();
+  }));
+  $('t4-y-v').textContent=yield_.value+'%';$('t4-p-v').textContent='₹'+prem.value;
+  run();
+})();
+
+/* ===================================================================
+   INTERACTIVE 4 (tool5) — VALUATION SANDBOX
+   justified P/B = (ROE - g) / (Ke - g)
+   =================================================================== */
+(function(){
+  const book=$('t5-book'),roe=$('t5-roe'),grow=$('t5-grow'),ke=$('t5-ke');
+  function run(){
+    const B=+book.value, r=+roe.value/100, g=+grow.value/100, k=+ke.value/100;
+    let pb, note='';
+    if(g>=k){ // growth >= cost of equity → model breaks (infinite); cap it
+      pb=99; note='g ≥ Ke — model breaks down';
+    }else{
+      pb=(r-g)/(k-g);
+    }
+    pb=Math.max(0.1,pb);
+    const pbShown=pb>=20?'20+':pb.toFixed(2);
+    $('t5-out-pb').textContent=pbShown+'×';
+    const val=B*Math.min(pb,20);
+    $('t5-out-val').textContent=fmtRs(val);
+    // implied P/E = P/B ÷ ROE
+    const pe=pb/r;
+    $('t5-out-pe').textContent=(pe>=60?'60+':pe.toFixed(1))+'×';
+    // profile classification
+    const prof=$('t5-out-profile'),profSub=$('t5-out-profilesub');
+    if(pb>=5){prof.textContent='Indian life';prof.style.color='#5fb89a';profSub.textContent='High ROE + high growth = premium multiple';}
+    else if(pb>=2){prof.textContent='Quality grower';prof.style.color='#a67c2e';profSub.textContent='Solid returns, moderate growth';}
+    else if(pb>=1){prof.textContent='US P&C / mature';prof.style.color='#c8412a';profSub.textContent='Earns ~cost of capital, low growth';}
+    else{prof.textContent='Value destroyer';prof.style.color='#e0654a';profSub.textContent='ROE below cost of equity — trades below book';}
+    // verdict
+    const vd=$('t5-verdict');
+    if(g>=k){
+      vd.className='verdict';
+      vd.innerHTML='<strong>Growth ≥ cost of equity.</strong> The Gordon-style formula produces an infinite multiple — mathematically broken, and a real-world warning: valuations that assume growth permanently at or above the discount rate are unsustainable. Pull growth back below '+(k*100).toFixed(0)+'%.';
+    }else if(pb>=5){
+      vd.className='verdict pos';
+      vd.innerHTML='<strong>This is the Indian life-insurer setup.</strong> '+(r*100).toFixed(0)+'% ROE growing at '+(g*100).toFixed(0)+'% against a '+(k*100).toFixed(0)+'% cost of equity justifies '+pb.toFixed(1)+'× book — exactly the 7–10× range the market pays. The multiple is growth and returns priced, not hype. But note how fast it falls if growth slows.';
+    }else if(pb>=1){
+      vd.className='verdict';
+      vd.innerHTML='<strong>The mature-market profile.</strong> '+pb.toFixed(2)+'× book — a US P&C insurer earning near its cost of capital with little growth sits right here. Same business model as the Indian insurer; completely different valuation because the growth runway is gone.';
+    }else{
+      vd.className='verdict';
+      vd.innerHTML='<strong>Below book value.</strong> An ROE of '+(r*100).toFixed(0)+'% under the '+(k*100).toFixed(0)+'% cost of equity means the company destroys value as it grows — the market rationally pays less than '+pb.toFixed(2)+'× book.';
+    }
+  }
+  [book,roe,grow,ke].forEach(el=>el.addEventListener('input',()=>{
+    $('t5-b-v').textContent=fmtRs(+book.value);
+    $('t5-roe-v').textContent=roe.value+'%';
+    $('t5-g-v').textContent=grow.value+'%';
+    $('t5-ke-v').textContent=ke.value+'%';
+    run();
+  }));
+  $('t5-b-v').textContent=fmtRs(+book.value);$('t5-roe-v').textContent=roe.value+'%';
+  $('t5-g-v').textContent=grow.value+'%';$('t5-ke-v').textContent=ke.value+'%';
+  run();
+})();
+</script>
+</body>
+</html>
