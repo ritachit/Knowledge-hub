@@ -122,6 +122,15 @@ a.ref:hover{border-bottom-style:solid}
 .fact .label{color:#7a6f55;margin-top:10px;display:block}
 .fact .fnote{font-family:var(--serif);font-size:.84rem;color:var(--ink-2);margin-top:8px;font-style:italic}
 
+.toc-index{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;
+  background:var(--line-soft);border:1px solid var(--line-soft);margin:34px 0}
+.toc-item{background:var(--parch);padding:18px 20px;display:flex;gap:14px;align-items:baseline;
+  text-decoration:none;color:inherit;transition:background .15s}
+.toc-item:hover{background:var(--parch-2)}
+.toc-item .toc-kicker{display:block;font-size:.66rem;text-transform:uppercase;letter-spacing:.14em;
+  color:#7a6f55;margin-bottom:3px;font-weight:700}
+.toc-item .toc-title{font-family:var(--grot);font-weight:700;font-size:.94rem;color:var(--ink);line-height:1.3}
+
 .callout{background:var(--ink);color:var(--parch);padding:34px 36px;margin:38px 0;border-radius:4px;position:relative}
 .callout .label{color:var(--vermilion);display:block;margin-bottom:14px}
 .callout p{max-width:64ch;font-size:1.08rem}
@@ -293,6 +302,33 @@ ul.clean li strong{font-family:var(--grot);font-size:.92em}
     </div>
   </div>
 </header>
+
+<!-- ========================= TABLE OF CONTENTS ========================= -->
+<section id="contents" style="padding:56px 0">
+  <div class="wrap">
+    <div class="kicker">
+      <span class="sec-num">—</span>
+      <span class="label" style="color:#7a6f55">Contents</span>
+    </div>
+    <h2 class="head" style="font-size:clamp(1.6rem,3vw,2.2rem)">Thirteen chapters</h2>
+    <div class="section-intro-rule"></div>
+    <nav class="toc-index" aria-label="Table of contents">
+      <a class="toc-item" href="#s1"><span class="sec-num">01</span><span><span class="toc-kicker">The Two Engines</span><span class="toc-title">An insurer is two businesses wearing one coat</span></span></a>
+      <a class="toc-item" href="#s2"><span class="sec-num">02</span><span><span class="toc-kicker">Origins &amp; Evolution</span><span class="toc-title">From a coffee house to a trillion-dollar idea</span></span></a>
+      <a class="toc-item" href="#s3"><span class="sec-num">03</span><span><span class="toc-kicker">The Engine Room</span><span class="toc-title">The float, and the only number that matters: its cost</span></span></a>
+      <a class="toc-item" href="#s4"><span class="sec-num">04</span><span><span class="toc-kicker">Risk, Reserves &amp; The Math</span><span class="toc-title">The arithmetic of a promise</span></span></a>
+      <a class="toc-item" href="#s5"><span class="sec-num">05</span><span><span class="toc-kicker">The Shape of Time</span><span class="toc-title">Why some premiums stay investable for 40 years</span></span></a>
+      <a class="toc-item" href="#s6"><span class="sec-num">06</span><span><span class="toc-kicker">The Builder</span><span class="toc-title">How one man turned float into Berkshire</span></span></a>
+      <a class="toc-item" href="#s7"><span class="sec-num">07</span><span><span class="toc-kicker">Who Owns the Customer</span><span class="toc-title">Distribution is the business; the product is a commodity</span></span></a>
+      <a class="toc-item" href="#s8"><span class="sec-num">08</span><span><span class="toc-kicker">Two Markets, Two Maturities</span><span class="toc-title">India vs the United States</span></span></a>
+      <a class="toc-item" href="#s9"><span class="sec-num">09</span><span><span class="toc-kicker">Rules, Capital &amp; Accounting</span><span class="toc-title">The constraints that decide how the float can be used</span></span></a>
+      <a class="toc-item" href="#s10"><span class="sec-num">10</span><span><span class="toc-kicker">Putting a Price on It</span><span class="toc-title">How to value an insurer (and why P/E lies)</span></span></a>
+      <a class="toc-item" href="#s11"><span class="sec-num">11</span><span><span class="toc-kicker">The Consumer's Side</span><span class="toc-title">How insurers fool you — and why the incentives demand it</span></span></a>
+      <a class="toc-item" href="#s12"><span class="sec-num">12</span><span><span class="toc-kicker">The Graveyard</span><span class="toc-title">When the float turns on you</span></span></a>
+      <a class="toc-item" href="#s13"><span class="sec-num">13</span><span><span class="toc-kicker">What the Top 0.001% Know</span><span class="toc-title">The deep structure</span></span></a>
+    </nav>
+  </div>
+</section>
 
 <!-- ========================= 01 · WHAT IT IS ========================= -->
 <section id="s1">
