@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Payments Primer — Networks, India, and the Operators' View</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0e14;--bg-2:#111620;--bg-3:#161d2a;
+  --line:#233047;--line-hot:#2e4266;
+  --fg:#e4ecf7;--fg-2:#93a4bd;--fg-3:#61748f;
+  --saffron:#ff9d3d;--cyan:#3ddbd9;--violet:#a78bfa;
+  --lime:#a3e635;--rose:#fb7185;--gold:#fbbf24;
+  --issuer:#3ddbd9;--acq:#ff9d3d;--net:#a78bfa;--merch:#a3e635;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);
+  font-family:'Space Grotesk',system-ui,sans-serif;font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  background-image:linear-gradient(var(--bg-2) 1px,transparent 1px),linear-gradient(90deg,var(--bg-2) 1px,transparent 1px);
+  background-size:56px 56px;}
+.wrap{max-width:1060px;margin:0 auto;padding:0 26px}
+
+/* ---------- cover ---------- */
+.cover{padding:74px 0 0;position:relative}
+.tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--cyan);margin:0 0 24px;display:flex;align-items:center;gap:12px}
+.tag::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--line-hot),transparent)}
+h1.cover-t{font-weight:700;font-size:clamp(42px,8.2vw,92px);line-height:.95;letter-spacing:-.04em;margin:0 0 24px}
+h1.cover-t .hi{background:linear-gradient(100deg,var(--saffron),var(--gold) 38%,var(--cyan) 72%,var(--violet));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.dek{font-family:'Source Serif 4',Georgia,serif;font-size:21px;line-height:1.5;color:var(--fg-2);max-width:64ch;margin:0 0 34px}
+.cover-meta{display:flex;flex-wrap:wrap;gap:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:44px}
+.cover-meta div{padding:14px 22px 14px 0;margin-right:22px;border-right:1px solid var(--line);
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-3)}
+.cover-meta div:last-child{border-right:none;margin-right:0}
+.cover-meta b{color:var(--fg-2);font-weight:500}
+
+/* ---------- part dividers ---------- */
+.partdiv{padding:66px 0 40px;border-bottom:1px solid var(--line-hot)}
+.partdiv .pn{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--pc,var(--saffron));margin:0 0 14px;font-weight:700}
+.partdiv h2{font-weight:700;font-size:clamp(30px,5.4vw,54px);line-height:1.02;letter-spacing:-.032em;margin:0 0 16px}
+.partdiv p{font-family:'Source Serif 4',Georgia,serif;font-size:18px;color:var(--fg-2);max-width:64ch;margin:0}
+
+/* ---------- nav ---------- */
+.railnav{border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  background:rgba(11,14,20,.94);backdrop-filter:blur(10px);position:sticky;top:0;z-index:50}
+.railnav ul{list-style:none;display:flex;margin:0;padding:0;overflow-x:auto;scrollbar-width:none}
+.railnav ul::-webkit-scrollbar{display:none}
+.railnav li{flex:none}
+.railnav a{display:block;padding:13px 18px;color:var(--fg-3);text-decoration:none;
+  font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.11em;text-transform:uppercase;
+  border-right:1px solid var(--line);white-space:nowrap;transition:color .15s,background .15s}
+.railnav a:hover,.railnav a:focus-visible{color:var(--cyan);background:var(--bg-2)}
+.railnav a.pmark{color:var(--saffron);font-weight:700}
+
+/* ---------- contents ---------- */
+.toc{padding:52px 0;border-bottom:1px solid var(--line)}
+.toc h3{margin-top:0}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:0 34px}
+.toc-col .tc-h{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--tcc,var(--saffron));font-weight:700;padding:14px 0 9px;border-bottom:1px solid var(--line-hot);margin-bottom:4px}
+.toc-col a{display:flex;gap:11px;padding:8px 0;color:var(--fg-2);text-decoration:none;font-size:13.5px;
+  border-bottom:1px solid var(--line);transition:color .15s}
+.toc-col a:hover{color:var(--cyan)}
+.toc-col a .num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--fg-3);flex:none;padding-top:2px}
+
+/* ---------- sections ---------- */
+section{padding:60px 0;border-bottom:1px solid var(--line)}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--saffron);margin:0 0 12px;font-weight:500}
+h2{font-weight:700;font-size:clamp(27px,4.4vw,42px);line-height:1.06;letter-spacing:-.028em;margin:0 0 18px}
+h3{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--cyan);margin:40px 0 14px;display:flex;align-items:center;gap:12px}
+h3::after{content:'';flex:1;height:1px;background:var(--line)}
+h4{font-size:16px;font-weight:600;margin:26px 0 8px;color:var(--fg)}
+p{margin:0 0 15px;max-width:73ch;color:var(--fg-2)}
+p strong,li strong,dd strong,td strong{color:var(--fg);font-weight:600}
+ul,ol{max-width:73ch;padding-left:19px;margin:0 0 15px;color:var(--fg-2)}
+li{margin-bottom:9px}li::marker{color:var(--fg-3)}
+em{color:var(--fg);font-style:italic}
+code,.mono{font-family:'JetBrains Mono',monospace;font-size:.87em;color:var(--cyan);background:var(--bg-3);padding:2px 6px;border-radius:3px}
+
+/* ---------- tables ---------- */
+.tw{overflow-x:auto;margin:22px 0 10px;border:1px solid var(--line);background:var(--bg-2)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:600px}
+thead th{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  text-align:left;font-weight:500;color:var(--fg-3);padding:13px 16px;border-bottom:1px solid var(--line-hot);
+  background:var(--bg-3);vertical-align:bottom}
+th{text-align:left}
+td{padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.5;color:var(--fg-2)}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:rgba(35,48,71,.28)}
+td.n,th.n{font-family:'JetBrains Mono',monospace;text-align:right;white-space:nowrap}
+.pos{color:var(--lime)}.neg{color:var(--rose)}.warnc{color:var(--gold)}
+.sub{display:block;font-size:11px;color:var(--fg-3);font-family:'JetBrains Mono',monospace;margin-top:3px}
+.tnote{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--fg-3);margin:0 0 24px;line-height:1.6;max-width:73ch;font-style:normal}
+
+/* ---------- notes ---------- */
+.note{border:1px solid var(--line);border-left:3px solid var(--cyan);background:var(--bg-2);padding:18px 22px;margin:24px 0;max-width:73ch}
+.note .nl{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.17em;text-transform:uppercase;
+  color:var(--cyan);font-weight:700;display:block;margin-bottom:8px}
+.note p{margin-bottom:10px;font-size:14.5px}
+.note p:last-child{margin-bottom:0}
+.note.hot{border-left-color:var(--rose)}.note.hot .nl{color:var(--rose)}
+.note.amb{border-left-color:var(--gold)}.note.amb .nl{color:var(--gold)}
+.note.vio{border-left-color:var(--violet)}.note.vio .nl{color:var(--violet)}
+
+/* ---------- switch / flow ---------- */
+.switchbox{border:1px solid var(--line-hot);background:var(--bg-2);margin:30px 0;
+  box-shadow:0 0 0 1px rgba(61,219,217,.06),0 18px 50px -22px rgba(0,0,0,.9)}
+.sb-head{padding:12px 18px;border-bottom:1px solid var(--line);font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-2);
+  display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.sb-head .lat{color:var(--lime)}
+.hop{display:grid;grid-template-columns:70px 1fr;border-bottom:1px solid var(--line)}
+.hop:last-child{border-bottom:none}
+.hop-id{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;color:var(--bg);
+  background:var(--cyan);display:flex;align-items:center;justify-content:center;letter-spacing:.05em;text-align:center}
+.hop:nth-child(3n) .hop-id{background:var(--violet)}
+.hop:nth-child(3n+1) .hop-id{background:var(--saffron)}
+.hop-b{padding:15px 20px}
+.hop-t{font-weight:600;font-size:15px;margin-bottom:4px;color:var(--fg)}
+.hop-r{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--cyan);margin-bottom:8px;word-break:break-word}
+.hop-b p{font-size:13.5px;margin:0;color:var(--fg-2);max-width:none}
+
+/* ---------- rupee split bar (part 1) ---------- */
+.split{margin:26px 0}
+.split-bar{display:flex;height:46px;border:1px solid var(--line-hot);font-family:'JetBrains Mono',monospace}
+.split-bar div{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;
+  color:var(--bg);border-right:1px solid rgba(11,14,20,.4);overflow:hidden;white-space:nowrap}
+.split-bar div:last-child{border-right:none}
+.s-iss{background:var(--issuer)}.s-net{background:var(--net)}
+.s-acq{background:var(--acq)}.s-pg{background:var(--fg-3)}.s-mer{background:var(--merch)}
+.split-key{display:flex;flex-wrap:wrap;gap:16px;margin-top:10px}
+.split-key span{display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--fg-2)}
+.dot{width:10px;height:10px;display:inline-block;border-radius:1px;flex:none}
+
+/* ---------- MDR bars (part 2) ---------- */
+.mdr{margin:26px 0}
+.mdr-row{display:grid;grid-template-columns:186px 1fr;gap:14px;align-items:center;margin-bottom:10px}
+.mdr-lab{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--fg-2);text-align:right;line-height:1.35}
+.mdr-track{height:34px;background:var(--bg-3);border:1px solid var(--line);display:flex;align-items:center}
+.mdr-fill{height:100%;display:flex;align-items:center;padding-left:11px;font-family:'JetBrains Mono',monospace;
+  font-size:11px;font-weight:700;color:var(--bg);white-space:nowrap}
+.f-zero{background:repeating-linear-gradient(45deg,var(--line),var(--line) 5px,var(--bg-3) 5px,var(--bg-3) 10px);
+  color:var(--fg-3);width:100%;font-weight:400}
+.f-lo{background:var(--cyan)}.f-mid{background:var(--gold)}.f-hi{background:var(--saffron)}
+
+/* ---------- definition lists (part 1 -> gloss-dl) ---------- */
+dl.gloss-dl{margin:18px 0;max-width:73ch}
+dl.gloss-dl dt{font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:var(--cyan);
+  margin-top:18px;letter-spacing:.09em}
+dl.gloss-dl dd{margin:5px 0 0;font-size:14px;color:var(--fg-2);padding-left:0;line-height:1.6}
+
+/* ---------- ticker (part 2) ---------- */
+.ticker{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));
+  border:1px solid var(--line);background:rgba(17,22,32,.9);margin:26px 0 8px}
+.tk{padding:16px 18px;border-right:1px solid var(--line)}
+.tk:last-child{border-right:none}
+.tk .k{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-3);margin-bottom:7px}
+.tk .v{font-family:'JetBrains Mono',monospace;font-size:23px;font-weight:700;line-height:1;color:var(--fg)}
+.tk .v small{font-size:12px;font-weight:400;color:var(--fg-2);margin-left:3px}
+.tk .d{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--lime);margin-top:6px}
+.tk .d.dn{color:var(--rose)}
+.ticker-note{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--fg-3);margin:0 0 20px}
+
+/* ---------- operator cards (part 2) ---------- */
+.ops{display:grid;grid-template-columns:repeat(auto-fit,minmax(288px,1fr));gap:14px;margin:26px 0}
+.op{border:1px solid var(--line);background:var(--bg-2);padding:20px;position:relative;overflow:hidden}
+.op::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent,var(--cyan))}
+.op-n{font-size:19px;font-weight:700;letter-spacing:-.015em;margin-bottom:3px;color:var(--fg)}
+.op-w{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--accent,var(--cyan));margin-bottom:13px}
+.op-m{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:13px;padding-bottom:13px;border-bottom:1px solid var(--line)}
+.op-m div{font-family:'JetBrains Mono',monospace}
+.op-m .ml{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-3);margin-bottom:3px}
+.op-m .mv{font-size:14px;font-weight:700;color:var(--fg)}
+.op p{font-size:13.5px;margin:0;color:var(--fg-2);max-width:none}
+
+/* ---------- timeline (part 2) ---------- */
+.tl{border-left:1px solid var(--line);margin:26px 0 26px 6px}
+.tl-i{position:relative;padding:0 0 26px 26px}
+.tl-i::before{content:'';position:absolute;left:-4.5px;top:6px;width:8px;height:8px;
+  background:var(--bg);border:1.5px solid var(--saffron);border-radius:50%}
+.tl-i.big::before{background:var(--saffron);box-shadow:0 0 0 4px rgba(255,157,61,.15)}
+.tl-y{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--saffron);letter-spacing:.09em;font-weight:700;margin-bottom:3px}
+.tl-t{font-weight:600;font-size:15px;margin-bottom:3px;color:var(--fg)}
+.tl-i p{font-size:13.5px;margin:0;max-width:66ch}
+
+/* ---------- exec cards (part 3) ---------- */
+.execs{display:grid;gap:16px;margin:28px 0}
+.exec{border:1px solid var(--line);background:var(--bg-2);overflow:hidden}
+.exec-h{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;padding:18px 22px;border-bottom:1px solid var(--line);
+  background:linear-gradient(90deg,color-mix(in srgb,var(--ac) 13%,transparent),transparent)}
+.exec-r{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--ac);letter-spacing:.02em}
+.exec-t{font-size:15px;color:var(--fg-2);font-weight:500}
+.exec-b{padding:20px 22px}
+.exec-b p{max-width:none}
+.lbl{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--fg-3);margin:0 0 8px;font-weight:700}
+.sleep{margin:0 0 20px;padding-left:17px}
+.sleep li{font-size:14px;color:var(--fg-2);margin-bottom:7px}
+.sleep li::marker{color:var(--ac)}
+.dash{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:20px}
+.chip{font-family:'JetBrains Mono',monospace;font-size:10.5px;padding:5px 10px;border:1px solid var(--line-hot);
+  color:var(--fg-2);background:var(--bg-3);white-space:nowrap}
+.tension{border-left:2px solid var(--ac);padding:11px 16px;background:var(--bg-3);margin-bottom:16px}
+.tension p{font-size:13.5px;margin:0;max-width:none}
+.bad{font-size:13.5px;color:var(--fg-2);padding-top:14px;border-top:1px solid var(--line);margin:0}
+.bad strong{color:var(--rose)}
+
+/* ---------- glossary (part 3) ---------- */
+.gloss{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:0 30px;margin:22px 0}
+.gi{padding:13px 0;border-bottom:1px solid var(--line)}
+.gt{font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:var(--cyan);margin-bottom:4px;letter-spacing:.02em}
+.gd{font-size:13.5px;color:var(--fg-2);line-height:1.55}
+.gd b{color:var(--fg);font-weight:600}
+
+/* ---------- abused numbers (part 3) ---------- */
+.abuse{border:1px solid var(--line);background:var(--bg-2);margin:18px 0}
+.ab-h{padding:15px 20px;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;
+  background:linear-gradient(90deg,rgba(251,113,133,.1),transparent)}
+.ab-n{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--rose)}
+.ab-t{font-size:17px;font-weight:700;color:var(--fg);letter-spacing:-.01em}
+.ab-b{padding:18px 20px}
+.ab-b p{font-size:14px;max-width:none;margin-bottom:12px}
+.ask{border-left:2px solid var(--lime);background:var(--bg-3);padding:12px 16px;margin-top:14px}
+.ask .al{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--lime);font-weight:700;display:block;margin-bottom:6px}
+.ask p{font-size:13.5px;margin:0;color:var(--fg)}
+
+/* ---------- footer ---------- */
+footer{padding:52px 0 84px}
+footer h3{margin-top:0}
+footer p{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.75;color:var(--fg-3);max-width:78ch;margin-bottom:16px}
+footer strong{color:var(--fg-2)}
+
+/* back to top */
+.totop{position:fixed;right:22px;bottom:22px;z-index:60;width:42px;height:42px;
+  border:1px solid var(--line-hot);background:rgba(17,22,32,.94);color:var(--cyan);
+  font-family:'JetBrains Mono',monospace;font-size:15px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .22s}
+.totop.on{opacity:1;pointer-events:auto}
+.totop:hover{border-color:var(--cyan)}
+
+@media(max-width:640px){
+  .wrap{padding:0 16px}section{padding:44px 0}body{background-size:36px 36px}
+  .hop{grid-template-columns:48px 1fr}
+  .mdr-row{grid-template-columns:1fr;gap:5px}.mdr-lab{text-align:left}
+  .gloss{grid-template-columns:1fr}
+  .tk{border-right:none;border-bottom:1px solid var(--line)}
+  .cover-meta div{border-right:none;margin-right:0;width:100%;padding:7px 0}
+  .totop{right:12px;bottom:12px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+@media print{
+  body{background:#fff;color:#000}
+  .railnav,.totop{display:none}
+}
+</style>
+</head>
+<body>
+
+
+<div class="wrap cover">
+  <p class="tag">Complete edition · Parts I–III</p>
+  <h1 class="cover-t">How money<br>actually <span class="hi">moves</span></h1>
+  <p class="dek">A working primer on the payments industry: how the card networks were assembled and what they really sell, why India built the world's largest real-time rail and made it free, and the numbers this business uses to hide from itself.</p>
+  <div class="cover-meta">
+    <div><b>23</b> sections</div>
+    <div><b>3</b> parts</div>
+    <div>Figures verified to <b>FY2025</b> filings</div>
+    <div>Compiled <b>22 Jul 2026</b></div>
+  </div>
+</div>
+
+
+<nav class="railnav">
+  <div class="wrap">
+    <ul>
+      <li><a href="#contents" class="pmark">Contents</a></li>
+      <li><a href="#part1" class="pmark">Part I · Networks</a></li>
+      <li><a href="#walkthrough">Mechanics</a></li>
+      <li><a href="#part2" class="pmark">Part II · India</a></li>
+      <li><a href="#upi">UPI</a></li>
+      <li><a href="#ops">Operators</a></li>
+      <li><a href="#part3" class="pmark">Part III · Operators' view</a></li>
+      <li><a href="#abuse">Abused numbers</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ul>
+  </div>
+</nav>
+
+
+<div class="toc" id="contents">
+  <div class="wrap">
+    <h3>Contents</h3>
+    <div class="toc-grid">
+      <div class="toc-col" style="--tcc:var(--saffron)">
+        <div class="tc-h">Part I — The networks</div>
+        <a href="#origins"><span class="num">1.1</span> Origins &amp; the consortium bet</a>
+        <a href="#demutual"><span class="num">1.2</span> Demutualisation</a>
+        <a href="#fourparty"><span class="num">1.3</span> Four-party vs three-party</a>
+        <a href="#amex"><span class="num">1.4</span> Amex: spend-centric</a>
+        <a href="#economics"><span class="num">1.5</span> What networks sell</a>
+        <a href="#regulation"><span class="num">1.6</span> Regulatory scar tissue</a>
+        <a href="#walkthrough"><span class="num">2.1</span> One transaction, end to end</a>
+        <a href="#split"><span class="num">2.2</span> The fee split, worked</a>
+        <a href="#failure"><span class="num">2.3</span> Failure paths</a>
+        <a href="#tokens"><span class="num">2.4</span> Tokenisation &amp; liability</a>
+      </div>
+      <div class="toc-col" style="--tcc:var(--cyan)">
+        <div class="tc-h">Part II — India</div>
+        <a href="#npci"><span class="num">3.1</span> NPCI &amp; the pre-UPI baseline</a>
+        <a href="#upi"><span class="num">3.2</span> UPI architecture</a>
+        <a href="#mdr"><span class="num">3.3</span> Zero MDR</a>
+        <a href="#rupay"><span class="num">3.4</span> RuPay &amp; credit-on-UPI</a>
+        <a href="#reg"><span class="num">3.5</span> The regulatory perimeter</a>
+        <a href="#ops"><span class="num">3.6</span> The operators</a>
+        <a href="#pivot"><span class="num">3.7</span> Why they all pivoted</a>
+      </div>
+      <div class="toc-col" style="--tcc:var(--rose)">
+        <div class="tc-h">Part III — The operators' view</div>
+        <a href="#suite"><span class="num">4.1</span> The C-suite</a>
+        <a href="#tensions"><span class="num">4.2</span> Structural tensions</a>
+        <a href="#gloss"><span class="num">4.3</span> Working vocabulary</a>
+        <a href="#north"><span class="num">4.4</span> North star metrics</a>
+        <a href="#abuse"><span class="num">4.5</span> The abused numbers</a>
+        <a href="#diligence"><span class="num">4.6</span> Diligence checklist</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="partdiv" id="part1" style="--pc:var(--saffron)">
+  <div class="wrap">
+    <p class="pn">Part I</p>
+    <h2>The rails, the rents,<br>and who actually pays</h2>
+    <p>How four-party card networks were assembled, why they earn more than the banks that built them, and where every paisa goes on a single transaction.</p>
+  </div>
+</div>
+
+<section id="origins">
+  <div class="wrap">
+    <p class="eyebrow">1.1 — Origins</p>
+    <h2>A consortium beat a monopoly</h2>
+
+    <p>The founding artifact is the <strong>Fresno Drop</strong>: in September 1958, Bank of America mailed roughly 60,000 unsolicited, pre-activated BankAmericards to residents of Fresno, California. It was a deliberate solution to the chicken-and-egg problem that kills every payment network — merchants won't accept a card no consumer holds, and consumers won't carry a card no merchant takes. BofA solved it by simply manufacturing one side of the market overnight.</p>
+
+    <p>It was also a financial disaster in the short run. Delinquency ran far above projections and losses in the first years were substantial. But the structural insight held: BofA had proven a general-purpose revolving credit card could work at scale, where earlier attempts (Diners Club 1950, charge-only and travel-focused; store cards, single-merchant) had not.</p>
+
+    <p>The decisive move came next, and it is the one most people skip. BofA could not expand nationally — the Bank Holding Company Act and state-level branching restrictions meant a California bank could not issue cards in Illinois. So in 1966 BofA began <strong>licensing</strong> BankAmericard to other banks. Simultaneously, a group of rival Californian banks formed the Interbank Card Association, which acquired the "Master Charge" brand from a Western States consortium.</p>
+
+    <p>Two consortia now existed. Neither was owned by a single bank; both were owned by their member banks. This is the whole story in miniature:</p>
+
+    <div class="note">
+      <span class="nl">The structural insight</span>
+      <p>A single bank's card is limited by that bank's footprint. A consortium's card is limited only by how many banks join. Because members were competitors who all benefited from acceptance and none benefited from a rival owning the rails, the neutral-utility structure was the only one they would all fund. Network effects then did the rest.</p>
+    </div>
+
+    <p>Dee Hock, who ran the BankAmericard licensee programme, formalised this in 1970 by having BofA spin the system out into <strong>National BankAmericard Inc.</strong> — a members-owned entity. It was renamed <strong>Visa</strong> in 1976, chosen because it was pronounceable in most languages and needed no translation. Interbank renamed itself <strong>MasterCard</strong> in 1979.</p>
+
+    <p>Both spent the following two decades doing three unglamorous things: writing the operating rules that make interoperability possible, building the switching infrastructure (BASE I for authorisation in 1973, BASE II for clearing in 1974), and arbitrating disputes between members who were otherwise competitors. That's the moat. Not technology.</p>
+  </div>
+</section>
+<section id="demutual">
+  <div class="wrap">
+    <p class="eyebrow">1.2 — Demutualisation</p>
+    <h2>The banks sold the toll booth</h2>
+
+    <p>Mastercard IPO'd in May 2006. Visa IPO'd in March 2008 — at the time the largest IPO in US history, raising roughly $17.9bn. In both cases the member banks converted their ownership into shares and, over time, sold down.</p>
+
+    <p>Why would banks give up ownership of the rails they built? Three reasons, in rough order of weight:</p>
+
+    <ol>
+      <li><strong>Antitrust liability transfer.</strong> A bank-owned network setting interchange rates that banks receive looks exactly like a price-fixing cartel, because structurally it is one. Merchant litigation was mounting. Converting to an independent public company put a legal buffer between the banks and the rate-setting function.</li>
+      <li><strong>Capital.</strong> The IPOs monetised a stake most banks carried at near-zero book value. For banks reaching for capital in 2006–08, that was not a trivial consideration.</li>
+      <li><strong>Governance paralysis.</strong> A consortium of competitors is a bad vehicle for making fast investment decisions. Every member has a veto instinct.</li>
+    </ol>
+
+    <p>The consequence — and this is the part worth internalising — is that <strong>incentives inverted</strong>. A bank-owned network optimises for member bank economics: it wants interchange high and network fees low, because members receive the former and pay the latter. An independent public network optimises for its own revenue: <em>network assessment and data-processing fees</em>. It is comparatively indifferent to interchange except insofar as interchange keeps issuers loyal.</p>
+
+    <div class="note hot">
+      <span class="nl">Common error</span>
+      <p>"Visa and Mastercard charge merchants 2–3%." They do not. The networks set <em>default</em> interchange rates but the money goes to the <strong>issuing bank</strong>, not to them. The networks keep a much thinner assessment and processing fee. This distinction is the single most common misunderstanding in the industry and it changes who you should be negotiating with.</p>
+    </div>
+
+    <p>Look at the FY2025 numbers to see the shape of the business the market actually values:</p>
+
+    <div class="tw">
+    <table>
+      <thead>
+        <tr>
+          <th>FY2025</th>
+          <th class="n">Net revenue</th>
+          <th class="n">Net income</th>
+          <th class="n">Volume</th>
+          <th class="n">Transactions</th>
+          <th>Model</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Visa</strong><br><span style="color:var(--ink-3);font-size:12px">FY ends 30 Sep</span></td>
+          <td class="n">$40.0bn<br><span style="color:var(--ink-3)">+11%</span></td>
+          <td class="n">$20.1bn<br><span style="color:var(--ink-3)">GAAP, +2%</span></td>
+          <td class="n">$17tn<br><span style="color:var(--ink-3)">pmts + cash</span></td>
+          <td class="n">257.5bn<br><span style="color:var(--ink-3)">processed</span></td>
+          <td>Four-party. Rails only — does not issue or lend.</td>
+        </tr>
+        <tr>
+          <td><strong>Mastercard</strong><br><span style="color:var(--ink-3);font-size:12px">FY ends 31 Dec</span></td>
+          <td class="n">$32.8bn<br><span style="color:var(--ink-3)">+16%</span></td>
+          <td class="n">$15.0bn<br><span style="color:var(--ink-3)">+16%</span></td>
+          <td class="n">$10.6tn<br><span style="color:var(--ink-3)">GDV</span></td>
+          <td class="n">175.5bn<br><span style="color:var(--ink-3)">switched</span></td>
+          <td>Four-party. Same, with a larger services mix.</td>
+        </tr>
+        <tr>
+          <td><strong>American Express</strong><br><span style="color:var(--ink-3);font-size:12px">FY ends 31 Dec</span></td>
+          <td class="n">$72.2bn<br><span style="color:var(--ink-3)">+10%</span></td>
+          <td class="n">$10.8bn<br><span style="color:var(--ink-3)">+7%</span></td>
+          <td class="n">$1.67tn<br><span style="color:var(--ink-3)">billed business</span></td>
+          <td class="n">—</td>
+          <td>Three-party. Issues, acquires, <em>and</em> operates the network.</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="tnote">Sources: Visa Q4 FY25 earnings release (28 Oct 2025); Mastercard FY25 Form 10-K and Q4 release (29 Jan 2026); American Express Q4 2025 press release (30 Jan 2026). Volume metrics are not directly comparable across the three — see the note below.</p>
+
+    <p>Read that table carefully, because it contains the whole argument. Amex has <strong>nearly twice Visa's revenue on one-tenth of Visa's volume</strong>. That is not Amex outperforming; it is a different business being measured with a similarly-named metric. Amex's revenue includes card fees, net interest income on lending, and the full merchant discount — because Amex <em>is</em> the issuer and the acquirer. Visa's $40bn is a thin toll on $17tn flowing past.</p>
+
+    <p>Mastercard's operating margin in 2025 was <strong>57.6%</strong>, up from 55.3% the prior year. That number is what a neutral toll booth on global commerce looks like once the infrastructure is built and the marginal cost of a transaction approaches zero.</p>
+
+    <div class="note hot">
+      <span class="nl">Metric trap #1 — volume is not comparable</span>
+      <p>Visa reports "payments volume," "total volume" (which includes cash withdrawals), and "processed transactions" (only those Visa itself switched — a subset of Visa-branded transactions). Mastercard reports "GDV" and "switched transactions." Amex reports "billed business" (spend on Amex-issued cards) and "network volume" (billed business plus volume on partner-issued cards). Anyone comparing these directly without normalising is either careless or selling something.</p>
+    </div>
+  </div>
+</section>
+<section id="fourparty">
+  <div class="wrap">
+    <p class="eyebrow">1.3 — Structure</p>
+    <h2>Four parties, or three</h2>
+
+    <p>Everything downstream — pricing, acceptance, rewards, who can negotiate with whom — follows from this structural difference.</p>
+
+    <div class="tw">
+    <table>
+      <thead>
+        <tr><th>Dimension</th><th>Four-party (Visa, Mastercard, RuPay)</th><th>Three-party / closed loop (Amex, Discover, Diners)</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Parties</strong></td>
+          <td>Cardholder · Issuer · Acquirer · Merchant. Network sits in the middle as a fifth, non-transacting party.</td>
+          <td>Cardholder · Amex · Merchant. Amex is issuer, acquirer and network simultaneously.</td>
+        </tr>
+        <tr>
+          <td><strong>Who sets merchant price</strong></td>
+          <td>Acquirer sets MDR; interchange (the bulk of it) is a network-published default the acquirer must pass to the issuer.</td>
+          <td>Amex sets the merchant discount rate directly. No interchange exists — there is no second bank to pay.</td>
+        </tr>
+        <tr>
+          <td><strong>Network revenue</strong></td>
+          <td>Assessment + data processing + cross-border + value-added services. Thin per transaction, enormous in aggregate.</td>
+          <td>The entire merchant discount, plus card fees, plus net interest income.</td>
+        </tr>
+        <tr>
+          <td><strong>Scaling</strong></td>
+          <td>Recruit banks; each bank brings its own customers and its own credit risk. Network takes no credit risk.</td>
+          <td>Must acquire every cardholder and every merchant itself. Slow, expensive, but full margin capture.</td>
+        </tr>
+        <tr>
+          <td><strong>Credit risk</strong></td>
+          <td>Sits with the issuing bank. Visa/MC have effectively none.</td>
+          <td>Sits with Amex. This is why Amex reports a provision for credit losses and Visa does not.</td>
+        </tr>
+        <tr>
+          <td><strong>Data</strong></td>
+          <td>Fragmented — issuer sees the cardholder, acquirer sees the merchant, network sees the routing.</td>
+          <td>Amex sees both sides of every transaction. This is the underappreciated asset.</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p>The last row is worth pausing on. Amex knows that a specific cardholder shopped at a specific merchant, and it knows this for both the demand and supply side of the same transaction. Visa sees a transaction between an issuer it does not own and an acquirer it does not own. Amex's ability to run closed-loop merchant offers ("spend $X at this restaurant, get $Y back") is a direct product of the closed loop, and it is a genuine competitive asset rather than a marketing artefact.</p>
+  </div>
+</section>
+<section id="amex">
+  <div class="wrap">
+    <p class="eyebrow">1.4 — Amex</p>
+    <h2>Spend-centric, not lend-centric</h2>
+
+    <p>Amex predates all of them — founded 1850 as a freight forwarder, then money orders (1882), then travellers cheques (1891). The card came in 1958, the same year as the Fresno Drop, but as a <strong>charge card</strong>: pay in full monthly, no revolving balance, with an annual fee. That origin shaped everything.</p>
+
+    <p>A revolving credit card issuer makes money primarily on <em>interest</em>. It wants customers who carry balances. Amex's original model made money on <em>merchant discount and annual fees</em>. It wanted customers who spend a lot and pay in full. These produce entirely different businesses:</p>
+
+    <div class="tw">
+    <table>
+      <thead><tr><th>&nbsp;</th><th>Lend-centric issuer</th><th>Spend-centric (Amex)</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Primary revenue</strong></td><td>Net interest income on revolving balances</td><td>Discount revenue + net card fees</td></tr>
+        <tr><td><strong>Ideal customer</strong></td><td>Revolver — carries a balance, pays interest</td><td>Transactor — spends heavily, pays in full</td></tr>
+        <tr><td><strong>Underwriting bias</strong></td><td>Tolerant; risk is priced into APR</td><td>Selective; a defaulting customer is pure loss</td></tr>
+        <tr><td><strong>Merchant fee</strong></td><td>Standard interchange</td><td>Higher — Amex must fund rewards from discount alone</td></tr>
+        <tr><td><strong>Cyclicality</strong></td><td>Credit losses spike in downturns</td><td>Spend falls in downturns, but especially T&amp;E spend</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p>The premium-spend flywheel is the actual product: high annual fee funds rich rewards → attracts affluent, high-spending cardholders → justifies a higher merchant discount rate → funds richer rewards. It only works if Amex cardholders genuinely spend more than the alternative, which they do. FY2025 billed business of <strong>$1,669.8bn across roughly 86.6m proprietary cards</strong> implies annual spend per proprietary card of roughly <strong>$19,000</strong> — a multiple of typical general-purpose card spend.</p>
+
+    <p>The chronic weakness was <strong>acceptance</strong>. A merchant paying Amex's higher discount rate needs to believe Amex customers bring incremental spend, not just the same customers with a more expensive card. Many small merchants did not believe it. Amex's answer was <strong>OptBlue</strong> (launched 2014): let third-party acquirers sign small merchants onto Amex at rates <em>they</em> set, rather than Amex negotiating each one. Amex gave up per-merchant pricing control in exchange for coverage. As of mid-2025 Amex reports acceptance at roughly <strong>160 million merchant locations globally</strong>, a large multiple of its 2017 footprint — though note that "locations" is a count that expanded partly through methodology and partly through OptBlue, not purely through new merchant persuasion.</p>
+
+    <p>The durable moat is <strong>corporate T&amp;E</strong>. Amex's commercial business — corporate cards, expense integration, business travel — is genuinely hard to dislodge because it is embedded in finance workflows, not just in a wallet. Switching a company's corporate card programme means rebuilding expense reporting, and CFOs do not do that casually.</p>
+
+    <div class="note vio">
+      <span class="nl">Where this is heading</span>
+      <p>The 2025 interchange settlement's end to "honor all cards" is, if it survives appeal, more consequential for Visa/Mastercard premium cards than it is for Amex — Amex merchants already chose to accept a higher-cost card knowingly. The irony is that a rule change won by merchants against V/MC pushes V/MC's premium tier toward the acceptance problem Amex spent forty years solving.</p>
+    </div>
+  </div>
+</section>
+<section id="economics">
+  <div class="wrap">
+    <p class="eyebrow">1.5 — Economics</p>
+    <h2>What a network actually sells</h2>
+
+    <p>If you asked a Visa executive what the company sells, "payment processing" would be a bad answer. The switching infrastructure is commoditised — NPCI runs a switch at enormous scale on a not-for-profit basis. What Visa and Mastercard actually sell is a bundle of five things, only one of which is technical:</p>
+
+    <dl class="gloss-dl">
+      <dt>1 · RULES</dt>
+      <dd>A written operating regulation that thousands of mutually competing banks in 200+ countries have contractually agreed to follow. This is the product. Interoperability is a legal artefact before it is a technical one.</dd>
+
+      <dt>2 · ARBITRATION</dt>
+      <dd>When an issuer and an acquirer disagree about a chargeback, someone must decide. The network is the court. Without a neutral arbiter, cross-bank disputes would require actual litigation and the system would collapse under its own transaction volume.</dd>
+
+      <dt>3 · BRAND / ACCEPTANCE GUARANTEE</dt>
+      <dd>The logo tells a cardholder in Lisbon that a card issued in Pune will work. That assurance is what allows an issuer to sell a card at all. It is worth more than the switching.</dd>
+
+      <dt>4 · SWITCHING</dt>
+      <dd>The actual message routing. Technically impressive at 65,000+ messages/second peak, but the least defensible layer.</dd>
+
+      <dt>5 · VALUE-ADDED SERVICES</dt>
+      <dd>Fraud scoring, tokenisation, consulting, data analytics, dispute tooling. The fastest-growing and strategically most important line — for Mastercard this reached <strong>$13.3bn in 2025, 40.6% of net revenue, growing 23%</strong> versus 12% for the core payment network.</dd>
+    </dl>
+
+    <p>Point 5 deserves emphasis because it signals where the networks think their future is. Core switching revenue grows roughly with global commerce — mid-single to low-double digits. Services grow at twice that rate and carry no interchange-regulation exposure. Every network strategy deck for the last five years has been, at bottom, a plan to reduce dependence on a fee stream that regulators keep attacking.</p>
+
+    <h3>Why the margins are what they are</h3>
+    <p>A Mastercard operating margin of 57.6% is not a pricing-power story alone. It is a fixed-cost story. The switch costs roughly the same to run whether it processes 150bn or 175bn transactions. Every incremental transaction is close to pure contribution. Combine that with:</p>
+    <ul>
+      <li><strong>No credit risk</strong> — the issuer eats defaults.</li>
+      <li><strong>No customer acquisition cost at the consumer level</strong> — issuers spend that money.</li>
+      <li><strong>Negative working capital</strong> — settlement flows through, it doesn't sit.</li>
+      <li><strong>Two-sided network effects</strong> that have already resolved. There is no realistic new global four-party entrant.</li>
+    </ul>
+    <p>The offset is <strong>client incentives</strong> — payments to banks to keep their portfolios on your network. Visa's client incentives were <strong>$15.8bn in FY25, up 14%</strong>, growing faster than net revenue. This is the competitive cost of a duopoly: Visa and Mastercard compete almost entirely by bidding for issuer portfolios, and issuers capture that surplus. Watch this line. If incentives grow persistently faster than revenue, the duopoly is more competitive than the margin suggests.</p>
+  </div>
+</section>
+<section id="regulation">
+  <div class="wrap">
+    <p class="eyebrow">1.6 — Regulation</p>
+    <h2>Twenty-one years of litigation</h2>
+
+    <p>Interchange is the most litigated price in the global economy, for a reason that is genuinely hard: the merchant who pays it is not party to the contract that sets it. A merchant accepting Visa agrees to its acquirer's MDR, but the largest component of that MDR was set by Visa and is paid to a bank the merchant never chose.</p>
+
+    <div class="tw">
+    <table>
+      <thead><tr><th>Intervention</th><th>Year</th><th>What it did</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Durbin Amendment</strong> (US)</td><td>2010</td>
+          <td>Capped <em>debit</em> interchange for banks over $10bn assets; mandated dual-network routing on debit.</td>
+          <td>Debit interchange fell sharply. Credit was untouched — so issuers shifted marketing to credit. Merchant savings passed to consumers only partially, and banks recovered revenue via account fees.</td>
+        </tr>
+        <tr>
+          <td><strong>EU Interchange Fee Regulation</strong></td><td>2015</td>
+          <td>Hard caps: 0.2% debit, 0.3% credit, on consumer cards within the EEA.</td>
+          <td>Effective at cutting interchange. European card rewards are consequently far weaker than US rewards — a direct causal link worth remembering.</td>
+        </tr>
+        <tr>
+          <td><strong>MDL 1720</strong> (US class action)</td><td>Filed 2005</td>
+          <td>~12m merchants alleging price-fixing on interchange.</td>
+          <td>$5.54bn damages settlement finally approved 2019. Separate injunctive-relief settlement rejected by Judge Brodie in June 2024 as inadequate.</td>
+        </tr>
+        <tr>
+          <td><strong>Revised settlement</strong></td><td>Nov 2025</td>
+          <td>10bps average credit interchange reduction for 5 years; 1.25% cap on standard US consumer credit for 8 years; partial dismantling of "honor all cards"; expanded surcharging rights.</td>
+          <td>Preliminary approval granted by Judge Brian Cogan on <strong>9 June 2026</strong>. NRF, NACS and the Merchants Payments Coalition oppose it. Appeals remain possible.</td>
+        </tr>
+        <tr>
+          <td><strong>Credit Card Competition Act</strong></td><td>Pending</td>
+          <td>Would extend Durbin-style dual-routing to credit cards.</td>
+          <td>Not passed as of this compilation. Separate from the settlement. Durbin and Marshall have repeatedly sought to attach it to must-pass legislation.</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="tnote">The June 2026 preliminary approval is the current state; final approval, objections and appeals remain outstanding. Treat rate changes as not yet in effect. Merchant-side implementation of surcharge and selective-decline rights realistically lags final approval by 12–24 months given POS and processor system updates.</p>
+
+    <div class="note">
+      <span class="nl">The honest disagreement</span>
+      <p><strong>Merchants argue</strong> interchange is a cartel price: set centrally, not competitively, borne by parties with no seat at the table, and inflated by a rewards arms race that regressively transfers from cash-paying (poorer) consumers to card-using (richer) ones via higher shelf prices.</p>
+      <p><strong>Networks and issuers argue</strong> interchange is the price of a service — guaranteed payment, fraud absorption, credit extension, and a customer base that spends more on card than on cash. Cap it, and the EU outcome follows: rewards collapse, and there is limited evidence merchants passed the savings to consumers. The Durbin experience is the strongest empirical evidence for this position.</p>
+      <p>Both readings are supported by real evidence. Anyone who resolves this quickly is arguing a brief, not analysing.</p>
+    </div>
+  </div>
+</section>
+<section id="walkthrough">
+  <div class="wrap">
+    <p class="eyebrow">2.1 — Mechanics</p>
+    <h2>One ₹1,000 transaction, end to end</h2>
+
+    <p>A customer taps a Visa credit card issued by HDFC Bank at a merchant whose payments are handled by Razorpay, which acquires through ICICI Bank. Here is every message and every party.</p>
+
+    <div class="switchbox">
+      <div class="sb-head">Phase A · Authorisation — target latency under 2 seconds</div>
+
+      <div class="hop">
+        <div class="hop-id">01</div>
+        <div class="hop-b">
+          <div class="hop-t">Card presented</div>
+          <div class="hop-r">Card chip → POS terminal</div>
+          <p>The EMV chip generates an <span class="mono">ARQC</span> (Authorisation Request Cryptogram) — a one-time cryptographic value derived from the transaction amount, a counter, and a key only the chip and issuer hold. This is what makes chip cards hard to clone: the magnetic stripe carried static data, the chip carries a value that is useless if replayed.</p>
+        </div>
+      </div>
+
+      <div class="hop">
+        <div class="hop-id">02</div>
+        <div class="hop-b">
+          <div class="hop-t">Merchant to acquirer</div>
+          <div class="hop-r">Terminal → Razorpay (PA) → ICICI (acquirer)</div>
+          <p>An <span class="mono">ISO 8583</span> message assembles: PAN, amount, currency, merchant category code (MCC), terminal ID, acquirer BIN, the ARQC. The MCC matters more than it looks — it drives the interchange rate, the rewards category, and whether the transaction is even permitted.</p>
+        </div>
+      </div>
+
+      <div class="hop">
+        <div class="hop-id">03</div>
+        <div class="hop-b">
+          <div class="hop-t">Acquirer to network</div>
+          <div class="hop-r">ICICI → VisaNet</div>
+          <p>Visa reads the first 6–8 digits of the PAN — the <span class="mono">BIN</span>/IIN — to identify HDFC as the issuer, and routes accordingly. Visa applies its own risk scoring in flight and may attach a score the issuer can use.</p>
+        </div>
+      </div>
+
+      <div class="hop">
+        <div class="hop-id">04</div>
+        <div class="hop-b">
+          <div class="hop-t">Issuer decision</div>
+          <div class="hop-r">VisaNet → HDFC authorisation host</div>
+          <p>HDFC validates the ARQC, checks open-to-buy against the credit limit, runs velocity and fraud models, checks blocks. Returns approve or a decline code. This decision is where the <strong>auth rate</strong> is determined — the metric that matters most to every merchant and every PA, and the one they have least control over.</p>
+        </div>
+      </div>
+
+      <div class="hop">
+        <div class="hop-id">05</div>
+        <div class="hop-b">
+          <div class="hop-t">Response and hold</div>
+          <div class="hop-r">HDFC → VisaNet → ICICI → Razorpay → terminal</div>
+          <p>Approval returns with an authorisation code. HDFC places a <strong>hold</strong> on ₹1,000 of the customer's available credit. Critically: <em>no money has moved.</em> Authorisation is a promise, not a payment. The customer walks out with goods against a promise.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="switchbox">
+      <div class="sb-head">Phase B · Clearing &amp; settlement — hours to days</div>
+
+      <div class="hop">
+        <div class="hop-id">06</div>
+        <div class="hop-b">
+          <div class="hop-t">Batch capture</div>
+          <div class="hop-r">Merchant → acquirer, typically end of day</div>
+          <p>The merchant submits the day's authorisations for capture. Capture amount can differ from auth amount — restaurants authorise the bill and capture bill-plus-tip; hotels authorise an estimate. This gap is a routine source of reconciliation pain.</p>
+        </div>
+      </div>
+
+      <div class="hop">
+        <div class="hop-id">07</div>
+        <div class="hop-b">
+          <div class="hop-t">Clearing</div>
+          <div class="hop-r">Acquirer → network → issuer</div>
+          <p>Visa computes the <strong>net</strong> position of every member. HDFC does not send ICICI one payment per transaction; Visa nets everything bilaterally and multilaterally and produces a single settlement figure per member per currency per cycle. This netting is a large part of why the network exists.</p>
+        </div>
+      </div>
+
+      <div class="hop">
+        <div class="hop-id">08</div>
+        <div class="hop-b">
+          <div class="hop-t">Settlement</div>
+          <div class="hop-r">Issuer settlement bank → network settlement bank → acquirer</div>
+          <p>Actual funds move, in central bank money, between settlement accounts. Interchange is deducted here — the issuer remits the transaction amount <em>minus</em> its interchange entitlement. The network never takes custody of the principal; it instructs.</p>
+        </div>
+      </div>
+
+      <div class="hop">
+        <div class="hop-id">09</div>
+        <div class="hop-b">
+          <div class="hop-t">Merchant payout</div>
+          <div class="hop-r">ICICI → Razorpay nodal/escrow account → merchant</div>
+          <p>In India, a Payment Aggregator must hold merchant funds in a designated <strong>escrow account</strong> with a scheduled commercial bank, per the RBI's March 2020 PA/PG guidelines. Standard settlement is <strong>T+1</strong> for most merchants; the PA may offer faster settlement as a paid product, or slower for high-risk merchant categories.</p>
+        </div>
+      </div>
+
+      <div class="hop">
+        <div class="hop-id">10</div>
+        <div class="hop-b">
+          <div class="hop-t">Cardholder billing</div>
+          <div class="hop-r">HDFC → statement → payment</div>
+          <p>The transaction posts to the customer's statement. HDFC has funded ₹1,000 minus interchange and will not be repaid for up to 45 days. That funding cost is a real input to issuer economics and one reason interchange is defended as compensating for credit extension.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <span class="nl">The float question</span>
+      <p>Between step 05 and step 09, money exists in a definitionally awkward state — committed but not transferred. Whoever holds funds during a settlement cycle earns interest on them. At scale this is material, which is exactly why the RBI's escrow rules for Indian PAs specify where merchant funds may sit and for how long. When you hear a PA discussing "float income," this is the mechanism, and regulators view it with suspicion because the money is not the PA's.</p>
+    </div>
+  </div>
+</section>
+<section id="split">
+  <div class="wrap">
+    <p class="eyebrow">2.2 — Economics</p>
+    <h2>Where the ₹1,000 goes</h2>
+
+    <p>Assume a 2.0% MDR on a ₹1,000 domestic credit card transaction in India — a plausible mid-market e-commerce rate. Total fee: <strong>₹20</strong>.</p>
+
+    <div class="split">
+      <div class="split-bar">
+        <div class="s-iss" style="flex:14">Issuer ₹14</div>
+        <div class="s-net" style="flex:2">Net ₹2</div>
+        <div class="s-acq" style="flex:2">Acq ₹2</div>
+        <div class="s-pg" style="flex:2">PA ₹2</div>
+      </div>
+      <div class="split-key">
+        <span><i class="dot s-iss"></i> Interchange → issuing bank · ~1.4%</span>
+        <span><i class="dot s-net"></i> Network assessment + switching · ~0.2%</span>
+        <span><i class="dot s-acq"></i> Acquiring bank margin · ~0.2%</span>
+        <span><i class="dot s-pg"></i> Payment aggregator margin · ~0.2%</span>
+      </div>
+    </div>
+
+    <p class="tnote">Illustrative split. Actual interchange varies materially by card type (premium cards carry higher interchange), MCC, whether the transaction is card-present or card-not-present, and domestic vs cross-border. Treat the shape as correct and the precise numbers as indicative.</p>
+
+    <p>Three implications follow directly from this bar, and they explain most strategic behaviour in the industry:</p>
+
+    <ul>
+      <li><strong>The issuer takes ~70% of the fee.</strong> This is why every fintech eventually wants to become or partner with an issuer, and why card issuance is where the rewards arms race happens. It is also why merchant lobbying targets interchange rather than acquirer margin.</li>
+      <li><strong>The PA's margin is roughly 0.2% gross</strong> — and out of that must come fraud losses, chargeback handling, engineering, support, and sales. This is why "we process $50bn in TPV" tells you almost nothing about whether a company makes money.</li>
+      <li><strong>Nobody in this chain is getting rich on a single transaction.</strong> The business is volume, or it is something else entirely bolted on top. Hold that thought for Part II — it is the whole reason Indian PAs went into lending.</li>
+    </ul>
+
+    <h3>Why the US split differs</h3>
+    <div class="tw">
+    <table>
+      <thead><tr><th>Component</th><th class="n">India (illustrative)</th><th class="n">US credit (typical)</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>Interchange</td><td class="n">~1.4%</td><td class="n">~1.8–2.2%</td><td>US rewards competition bids interchange up; no cap on credit. The 2025 settlement would cap standard consumer credit at 1.25%.</td></tr>
+        <tr><td>Network fees</td><td class="n">~0.2%</td><td class="n">~0.13–0.15%</td><td>Broadly similar; US assessment plus per-transaction switching.</td></tr>
+        <tr><td>Acquirer + processor</td><td class="n">~0.4%</td><td class="n">~0.3–0.8%</td><td>Highly variable. US small merchants on flat-rate pricing (Square, Stripe at 2.9%+30¢) pay far more than interchange-plus merchants.</td></tr>
+        <tr><td><strong>Effective MDR</strong></td><td class="n"><strong>~2.0%</strong></td><td class="n"><strong>~2.2–3.0%</strong></td><td>US merchants paid roughly <strong>$187.2bn</strong> in combined credit and debit swipe fees in 2024 — up around 70% since 2020.</td></tr>
+        <tr><td><strong>UPI (India)</strong></td><td class="n"><strong>0%</strong></td><td class="n">n/a</td><td>Mandated zero MDR since Jan 2020. This single regulatory fact restructured the entire Indian market — covered in Part II.</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</section>
+<section id="failure">
+  <div class="wrap">
+    <p class="eyebrow">2.3 — Failure</p>
+    <h2>What happens when it doesn't work</h2>
+
+    <p>The happy path is the easy part. Operational cost, headcount, and most of a payments company's genuine differentiation live in the failure paths.</p>
+
+    <h3>Declines</h3>
+    <p>Distinguish two kinds, because the remedy is entirely different:</p>
+    <ul>
+      <li><strong>Hard decline</strong> — stolen card, closed account, invalid card. Retrying is pointless and repeated retries can be treated as abusive.</li>
+      <li><strong>Soft decline</strong> — insufficient funds, issuer risk model triggered, temporary technical failure. Retrying with different timing or routing can succeed. <strong>Retry orchestration</strong> — deciding when and how to retry — is a real product, and it is the core of what an orchestration layer like Juspay sells.</li>
+    </ul>
+    <p>A merchant seeing a 4% decline rate versus 7% is looking at a direct 3% revenue difference on card volume. This is why auth rate, not uptime, is the metric merchants actually negotiate on.</p>
+
+    <h3>Refunds vs reversals vs chargebacks</h3>
+    <div class="tw">
+    <table>
+      <thead><tr><th>Mechanism</th><th>Initiated by</th><th>When</th><th>Cost to merchant</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Auth reversal</strong></td><td>Merchant</td><td>Before capture — releases the hold</td><td>Minimal. The cheapest way to undo a transaction.</td></tr>
+        <tr><td><strong>Refund</strong></td><td>Merchant</td><td>After settlement — a new transaction in reverse</td><td>Merchant typically does not recover the original MDR. Refunding a ₹1,000 sale costs the merchant ₹1,020 in effect.</td></tr>
+        <tr><td><strong>Chargeback</strong></td><td>Cardholder, via issuer</td><td>Disputed transaction; windows commonly 120 days, longer for some reason codes</td><td>Funds pulled back <em>plus</em> a chargeback fee, <em>plus</em> damage to the merchant's chargeback ratio.</td></tr>
+        <tr><td><strong>Representment</strong></td><td>Merchant, via acquirer</td><td>Merchant contests the chargeback with evidence</td><td>Operational cost; success rates vary enormously by reason code and evidence quality.</td></tr>
+        <tr><td><strong>Pre-arbitration / arbitration</strong></td><td>Either side</td><td>Dispute persists after representment</td><td>Network adjudicates and charges a fee to the loser. Rarely economic below high ticket sizes.</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="note hot">
+      <span class="nl">The chargeback ratio is a survival metric</span>
+      <p>Card networks impose monitoring programmes when a merchant's chargeback ratio exceeds thresholds — commonly cited around 0.9–1% of transactions, with escalating penalties and eventual termination of acceptance. A merchant losing card acceptance is usually a merchant losing its business. This is why risk teams have veto power over merchant onboarding at every serious PA, and why "we onboard merchants in 5 minutes" is a claim to interrogate rather than admire.</p>
+    </div>
+
+    <h3>Who eats the loss</h3>
+    <p>This is the question that drives every fraud-control decision in the industry, and the answer turns on <strong>liability shift</strong>:</p>
+    <ul>
+      <li><strong>Card-present, EMV chip used</strong> — issuer generally bears counterfeit fraud loss. The chip did its job.</li>
+      <li><strong>Card-present, merchant used magstripe on a chip card</strong> — merchant bears it. This is the EMV liability shift (US: October 2015), and it was the mechanism that forced terminal upgrades without a mandate.</li>
+      <li><strong>Card-not-present, no 3DS authentication</strong> — merchant generally bears it.</li>
+      <li><strong>Card-not-present, 3DS authenticated</strong> — liability generally shifts to the issuer.</li>
+    </ul>
+    <p>Read that last pair again: authentication does not primarily reduce fraud, it <em>reallocates who pays for it</em>. This is why merchants have complicated feelings about 3DS. It moves liability off them, but every additional step in checkout costs conversion. In India the RBI mandates additional factor authentication on most card-not-present transactions, so the trade-off is settled by regulation rather than by merchant preference — a genuinely important structural difference from the US.</p>
+  </div>
+</section>
+<section id="tokens">
+  <div class="wrap">
+    <p class="eyebrow">2.4 — Tokens</p>
+    <h2>Tokenisation and what it changed</h2>
+
+    <p>A token is a surrogate value that replaces the actual card number. If a merchant's database is breached, the attacker gets tokens that are useless outside a specific context. Two distinct kinds, frequently conflated:</p>
+
+    <dl class="gloss-dl">
+      <dt>NETWORK TOKEN</dt>
+      <dd>Issued by Visa/Mastercard themselves through a Token Service Provider. Scoped to a merchant or channel. Because the network issues it, the network can update it when the underlying card is reissued — so a customer's subscription does not break when their card expires. This is a real merchant benefit, not just a security control. Visa reported over <strong>16 billion tokens</strong> in circulation as of its FY25 commentary, against 10 billion in May 2024.</dd>
+
+      <dt>DEVICE TOKEN</dt>
+      <dd>What Apple Pay and Google Pay provision. Bound to a specific device with a device-specific cryptogram. The merchant never sees a PAN at all.</dd>
+
+      <dt>PSP / ACQUIRER TOKEN</dt>
+      <dd>A vault reference issued by a processor. Convenient but proprietary — it locks the merchant to that processor, since the token is meaningless elsewhere. This is a commercial lock-in mechanism dressed as a security feature, and merchants should treat it as such.</dd>
+    </dl>
+
+    <p>India took the strongest position globally here. The RBI's card-on-file tokenisation mandate, effective from <strong>1 October 2022</strong> after multiple deferrals, prohibits merchants and PAs from storing actual card numbers. Every saved card in India must be a token. The short-term effect was a measurable dip in card-on-file transaction success as the ecosystem migrated; the long-term effect is that India's card data footprint is materially smaller than that of most markets.</p>
+
+    <div class="note vio">
+      <span class="nl">Part II picks up here</span>
+      <p>The next part covers India specifically: NPCI's structure and the governance question it raises; UPI's architecture and the zero-MDR mandate; RuPay's role and the credit-card-on-UPI construct; the PA/PG licensing regime; and the companies — Razorpay, Cashfree, PayU, Pine Labs, BillDesk, Paytm, PhonePe, Juspay. Part III covers the C-suite lens, the vocabulary, and the abused numbers.</p>
+    </div>
+  </div>
+</section>
+
+<div class="partdiv" id="part2" style="--pc:var(--cyan)">
+  <div class="wrap">
+    <p class="pn">Part II</p>
+    <h2>A national switch<br>that charges nothing</h2>
+    <p>India built the world's largest real-time retail payment system and then made it illegal to charge for it. Everything about the Indian payments industry follows from that one decision.</p>
+    <div class="ticker">
+      <div class="tk"><div class="k">UPI · Jun 2026</div><div class="v">22.72<small>bn txns</small></div><div class="d">+23% YoY</div></div>
+      <div class="tk"><div class="k">Value · Jun 2026</div><div class="v">&#8377;28.92<small>L cr</small></div><div class="d">+20% YoY</div></div>
+      <div class="tk"><div class="k">FY 2025-26</div><div class="v">241.6<small>bn</small></div><div class="d">+30% YoY</div></div>
+      <div class="tk"><div class="k">Daily average</div><div class="v">757<small>mn/day</small></div><div class="d">May: 748mn</div></div>
+      <div class="tk"><div class="k">MDR on bank UPI</div><div class="v">0.00<small>%</small></div><div class="d dn">since Jan 2020</div></div>
+    </div>
+    <p class="ticker-note">SOURCE: NPCI monthly data, June 2026. Excludes Credit Card on UPI and Credit Line on UPI.</p>
+  </div>
+</div>
+
+<section id="npci">
+  <div class="wrap">
+    <p class="eyebrow">01 — The institution</p>
+    <h2>A not-for-profit runs the national rails</h2>
+
+    <p>There is no American or European equivalent to NPCI, and that absence is the point. The <strong>National Payments Corporation of India</strong> was incorporated in 2008 under Section 25 of the Companies Act — a not-for-profit — at the initiative of the RBI and the Indian Banks' Association. It is owned by banks. It operates as public infrastructure. It does not distribute profit.</p>
+
+    <p>NPCI runs, among others: <span class="mono">UPI</span>, <span class="mono">IMPS</span>, <span class="mono">RuPay</span>, <span class="mono">AePS</span>, <span class="mono">NACH</span>, <span class="mono">Bharat BillPay</span>, <span class="mono">FASTag</span>, and <span class="mono">NCMC</span>. In American terms: imagine if the Fed's payment rails, Visa, ACH, and the toll-tag system were one bank-owned nonprofit.</p>
+
+    <p>Before understanding UPI you need the baseline it replaced. India's pre-2010 retail payments were overwhelmingly cash, with cheque clearing that took days and a fragmented set of electronic rails:</p>
+
+    <div class="tw">
+    <table>
+      <thead><tr><th>Rail</th><th>Live</th><th>Settlement</th><th>What it was for</th></tr></thead>
+      <tbody>
+        <tr><td><strong>RTGS</strong></td><td class="n">2004</td><td>Real-time, gross</td><td>High-value interbank. Minimum ₹2 lakh. Not a retail rail.</td></tr>
+        <tr><td><strong>NEFT</strong></td><td class="n">2005</td><td>Deferred net batches</td><td>Retail transfers, but batched — originally half-hourly, banking hours only.</td></tr>
+        <tr><td><strong>IMPS</strong></td><td class="n">2010</td><td>Real-time, 24×7</td><td>NPCI's first genuine breakthrough. Instant retail transfers around the clock, years before most developed markets had one. UPI is built on IMPS rails.</td></tr>
+        <tr><td><strong>ECS / NACH</strong></td><td class="n">2016</td><td>Batch</td><td>Bulk recurring debits and credits — salaries, SIPs, utility mandates.</td></tr>
+        <tr><td><strong>UPI</strong></td><td class="n">2016</td><td>Real-time, 24×7</td><td>An abstraction layer over IMPS, with an addressing scheme and an open API.</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p>IMPS deserves more credit than it gets. By 2010 India had a working 24×7 real-time retail settlement system. The US did not get one until RTP in 2017 and FedNow in 2023. What UPI added was not real-time settlement — that already existed — but <em>addressing, authorisation and an open API</em>.</p>
+
+    <div class="note amb">
+      <span class="nl">The governance question</span>
+      <p>NPCI is a private not-for-profit with regulatory-scale power. It sets interchange, approves participants, decides which apps can access UPI and on what terms, and can throttle a company's business through a circular. Its board is dominated by banks, which compete with the fintechs it regulates.</p>
+      <p><strong>The defence:</strong> a nonprofit had no incentive to extract rents, which is exactly why UPI could be free and why adoption was explosive. A for-profit network would have priced it, and India would look like Brazil at best.</p>
+      <p><strong>The critique:</strong> a body with this much market power sits outside the accountability structures that apply to a statutory regulator. Bank-controlled governance over the rails that fintechs depend on is a structural conflict, whether or not it is currently exercised.</p>
+      <p>Both are correct. This tension has no resolution on the current institutional design, and anyone operating in Indian payments should treat NPCI circular risk as a first-order business risk.</p>
+    </div>
+  </div>
+</section>
+<section id="upi">
+  <div class="wrap">
+    <p class="eyebrow">02 — Architecture</p>
+    <h2>Four addressable parties, one switch</h2>
+
+    <p>UPI's design insight was to separate the <em>identity</em> of a payment endpoint from the <em>bank account</em> behind it. A Virtual Payment Address — <span class="mono">ritachit@okhdfcbank</span> — resolves through the NPCI switch to an underlying account. The payer never sees an account number, and the account can be switched without changing the address.</p>
+
+    <p>The second insight was to split the app from the bank. A <strong>PSP</strong> (Payment Service Provider) app like PhonePe or Google Pay is not a bank. It partners with a <strong>PSP bank</strong> that holds actual UPI membership. This is why Google Pay, with no banking licence, can run one of the world's largest payment apps — and also why a fintech's UPI business depends on a sponsor bank relationship it does not control.</p>
+
+    <div class="switchbox">
+      <div class="sb-head"><span>UPI P2M — QR scan at a merchant</span><span class="lat">◆ target &lt; 5s end to end</span></div>
+
+      <div class="hop">
+        <div class="hop-id">HOP 1</div>
+        <div class="hop-b">
+          <div class="hop-t">Intent capture</div>
+          <div class="hop-r">Merchant QR → payer PSP app</div>
+          <p>The QR encodes the merchant's VPA, name, and optionally the amount. Static QR (printed, amount typed by payer) versus dynamic QR (generated per transaction, amount embedded) — the difference matters enormously for reconciliation, because a static QR gives the merchant no transaction reference.</p>
+        </div>
+      </div>
+
+      <div class="hop">
+        <div class="hop-id">HOP 2</div>
+        <div class="hop-b">
+          <div class="hop-t">Authorisation</div>
+          <div class="hop-r">Payer app → NPCI switch</div>
+          <p>The payer enters a 4- or 6-digit UPI PIN. Critically, the PIN is <em>not</em> validated by the app or by NPCI — it is encrypted at the device via the NPCI Common Library and validated by the <strong>remitter bank</strong>. The app never sees it. This is why a compromised UPI app cannot drain accounts on its own.</p>
+        </div>
+      </div>
+
+      <div class="hop">
+        <div class="hop-id">HOP 3</div>
+        <div class="hop-b">
+          <div class="hop-t">Resolution and debit</div>
+          <div class="hop-r">NPCI → remitter bank (payer's) → debit</div>
+          <p>NPCI resolves the VPA to an account, routes the debit request to the remitter bank, which checks balance, validates the PIN, and debits. Failures here — most commonly bank-side timeouts — are the dominant source of UPI failure, and they are attributed to the bank, not the app.</p>
+        </div>
+      </div>
+
+      <div class="hop">
+        <div class="hop-id">HOP 4</div>
+        <div class="hop-b">
+          <div class="hop-t">Credit</div>
+          <div class="hop-r">NPCI → beneficiary bank → merchant account</div>
+          <p>The beneficiary bank credits the merchant. The merchant's app shows confirmation, often via an audio speaker device — the sound box, which turns out to be one of the most commercially important products in Indian payments because it solves the merchant's trust problem without requiring them to look at a screen.</p>
+        </div>
+      </div>
+
+      <div class="hop">
+        <div class="hop-id">HOP 5</div>
+        <div class="hop-b">
+          <div class="hop-t">Settlement</div>
+          <div class="hop-r">NPCI net settlement → RBI accounts</div>
+          <p>Individual transactions credit in real time, but interbank settlement is netted in cycles through RBI accounts. Banks extend intraday credit against the netted position. This is the same architecture as card settlement — real-time to the user, netted underneath.</p>
+        </div>
+      </div>
+    </div>
+
+    <p>Two structural consequences worth naming:</p>
+    <ul>
+      <li><strong>The app has almost no control over success rate.</strong> Failure is usually bank-side. A PSP app can route across multiple PSP banks to improve success, and that routing intelligence is a genuine differentiator — but the app is fundamentally dependent on infrastructure it does not own.</li>
+      <li><strong>There is no card number, so nothing to tokenise, steal, or leak.</strong> UPI's fraud surface is social engineering, not data breach. Which is exactly what the fraud statistics show: reported UPI fraud in FY2025-26 (to November) ran at roughly <strong>10.6 lakh cases worth about ₹805 crore</strong>, up from ~6.3 lakh cases worth ₹485 crore in FY2024-25. Large in count, small relative to ₹314 lakh crore of throughput — and overwhelmingly a story of people being talked into authorising payments, not of systems being broken.</li>
+    </ul>
+
+    <h3>The 30% cap that keeps not happening</h3>
+    <p>NPCI directed in November 2020 that no single third-party app provider should exceed 30% of UPI transaction volume, measured on a rolling three-month average, to limit concentration risk. A TPAP breaching the cap is required to stop onboarding new customers. The deadline has been extended three times: from 31 December 2022, to 31 December 2024, and — by a December 2024 circular — to <strong>31 December 2026</strong>.</p>
+    <p>May 2026 data shows <strong>PhonePe at 46.2% and Google Pay at 32.7%</strong> — combined share dipping below 80% for the first time, with BHIM, Navi and super.money gaining. Both leaders remain far above 30%, and PhonePe would need to shed roughly a third of its volume to comply.</p>
+    <p>Enforcing the cap would mean degrading service for hundreds of millions of users to pre-empt a risk that has not yet materialised, which is why it keeps being deferred. But a dated deadline now exists and is close. This is the clearest live example of NPCI circular risk in the market: PhonePe's own CEO has publicly cited the cap as an overhang on its IPO timing, and no business plan that depends on UPI share should treat a fourth extension as given.</p>
+  </div>
+</section>
+<section id="mdr">
+  <div class="wrap">
+    <p class="eyebrow">03 — The decision that shaped everything</p>
+    <h2>Zero MDR</h2>
+
+    <p>From <strong>1 January 2020</strong>, following the Finance Act 2019 and CBDT notification under Section 269SU, merchants above a turnover threshold were required to offer UPI and RuPay debit, and <em>no charge could be levied</em> on those transactions — not on the customer, not on the merchant.</p>
+
+    <p>Read that again from the perspective of a payments company. The government mandated that you must offer a product, and that you may not charge for it.</p>
+
+    <div class="mdr">
+      <div class="mdr-row">
+        <div class="mdr-lab">UPI from bank account<br><span style="color:var(--fg-3)">P2P and P2M</span></div>
+        <div class="mdr-track"><div class="mdr-fill f-zero">0.00% — mandated nil, no revenue to any party</div></div>
+      </div>
+      <div class="mdr-row">
+        <div class="mdr-lab">UPI via PPI wallet<br><span style="color:var(--fg-3)">above ₹2,000</span></div>
+        <div class="mdr-track"><div class="mdr-fill f-mid" style="width:55%">1.1% interchange to wallet issuer</div></div>
+      </div>
+      <div class="mdr-row">
+        <div class="mdr-lab">RuPay credit on UPI<br><span style="color:var(--fg-3)">at or below ₹2,000</span></div>
+        <div class="mdr-track"><div class="mdr-fill f-zero">0.00% — nil MDR</div></div>
+      </div>
+      <div class="mdr-row">
+        <div class="mdr-lab">RuPay credit on UPI<br><span style="color:var(--fg-3)">above ₹2,000</span></div>
+        <div class="mdr-track"><div class="mdr-fill f-hi" style="width:100%">~2% — approx 1.5% issuer, 0.5% network</div></div>
+      </div>
+      <div class="mdr-row">
+        <div class="mdr-lab">Visa / MC credit card<br><span style="color:var(--fg-3)">typical e-commerce</span></div>
+        <div class="mdr-track"><div class="mdr-fill f-hi" style="width:100%">~2% MDR</div></div>
+      </div>
+    </div>
+    <p class="tnote">RuPay-on-UPI interchange split is as reported by industry analysis, not an NPCI public schedule; NPCI's rate circulars are member-access. Card MDR is commercially negotiated and varies by MCC, ticket size and channel.</p>
+
+    <div class="note hot">
+      <span class="nl">The most important sentence in this document</span>
+      <p>UPI carries roughly 80–85% of India's retail digital payment volume and generates <strong>zero</strong> merchant discount revenue. Every Indian payments company therefore competes for share of a market where the dominant product cannot be monetised directly. This is not a business model problem to be solved with better execution. It is the structure of the market.</p>
+      <p>When you evaluate any Indian payments company, the first question is not "how much volume do they process" — it is "what fraction of their volume is monetisable, and what are they selling that isn't payments?"</p>
+    </div>
+
+    <h3>Who actually pays for UPI</h3>
+    <p>The infrastructure is not free to run. Somebody funds it:</p>
+    <ul>
+      <li><strong>Government incentive scheme.</strong> Annual budgetary allocations to compensate banks for low-value P2M UPI and RuPay debit acceptance. The amounts have varied year to year and have consistently fallen short of what the industry says the cost is.</li>
+      <li><strong>Banks, out of pocket.</strong> Banks absorb the switching, infrastructure and support cost. Their argument for tolerating it is deposit stickiness and data — UPI keeps the customer's primary account relationship live.</li>
+      <li><strong>Apps, from adjacent products.</strong> PhonePe, Google Pay and Paytm run UPI at a loss and monetise through insurance distribution, lending referral, mutual funds, ads, and merchant services. UPI is customer acquisition, not a product.</li>
+    </ul>
+
+    <div class="note vio">
+      <span class="nl">Live policy debate — status as of mid-2026</span>
+      <p>Zero MDR on bank-account UPI P2M remains current law. But it is under active review. The <strong>Parliamentary Standing Committee on Finance</strong> tabled a report on 12 March 2026, and the <strong>Payments Council of India</strong> has proposed a tiered structure — reportedly around 30bps MDR applying only to large merchants, above a turnover threshold. No binding RBI or CBDT notification has followed.</p>
+      <p>The stakes are concrete. A business doing ₹100 crore GMV with a 65% UPI mix faces roughly ₹19 lakh of incremental annual cost per 30bps introduced. For the payments industry it would be the difference between a structurally unprofitable core product and a viable one.</p>
+      <p><strong>For:</strong> zero MDR is an unfunded mandate that has made India's payments industry structurally lossmaking and dependent on inconsistent subsidy; large merchants can afford to pay for a service they benefit from. <strong>Against:</strong> zero MDR is precisely why adoption reached small merchants who would never have accepted a 2% fee; introducing MDR risks pushing the long tail back to cash and undoing the achievement. Watch this — it is the single biggest swing factor in Indian payments economics.</p>
+    </div>
+
+    <h3>Demonetisation: separating the accelerant from the curve</h3>
+    <p>The claim that demonetisation (8 November 2016) created UPI is common and wrong, though the opposite claim is also wrong. The honest reading:</p>
+    <ul>
+      <li>UPI launched in <strong>April 2016</strong>, before demonetisation, and cleared just 373 transactions in its first month against 21 live banks. It was not ready.</li>
+      <li>Demonetisation's immediate beneficiaries were <strong>wallets</strong>, particularly Paytm, which had the consumer product ready at that moment. UPI did not yet.</li>
+      <li>What demonetisation genuinely did was create a national behavioural shock — merchants who had never accepted digital payment installed the means to, and consumers who had never used it tried it. That acceptance base was still there when UPI matured.</li>
+      <li>UPI's actual inflection came in <strong>2018–19</strong>, driven by PhonePe and Google Pay's distribution spending, QR ubiquity, and zero cost — not by 2016.</li>
+    </ul>
+    <p>Growth has been extraordinary and durable: from 21 banks and 373 transactions in the first month to <strong>703 banks</strong> and 22.72 billion monthly transactions by June 2026. India now accounts for roughly <strong>49% of global real-time payment volume</strong> — close to one in every two instant payments worldwide.</p>
+  </div>
+</section>
+<section id="rupay">
+  <div class="wrap">
+    <p class="eyebrow">04 — RuPay</p>
+    <h2>The domestic switch, and the credit card that isn't</h2>
+
+    <p>RuPay launched in 2012. The rationale was explicit and had three parts:</p>
+    <ol>
+      <li><strong>Cost.</strong> Every domestic Indian card transaction was being switched abroad and paying assessment fees to Visa or Mastercard in foreign currency. For a domestic-to-domestic transaction, that is pure leakage.</li>
+      <li><strong>Sovereignty.</strong> Domestic payment infrastructure that routes through foreign private networks is a strategic dependency. This argument gained enormous weight after the 2022 sanctions on Russia demonstrated that card networks can be switched off as an instrument of policy.</li>
+      <li><strong>Financial inclusion.</strong> RuPay debit was the default card issued under the Jan Dhan account programme, putting hundreds of millions of cards into circulation almost overnight. Volume by mandate.</li>
+    </ol>
+
+    <p>RuPay is a four-party network structurally identical to Visa — issuers, acquirers, interchange, the lot. What makes it interesting is what NPCI did next.</p>
+
+    <h3>RuPay credit card on UPI</h3>
+    <p>Enabled from 2022, this lets a cardholder link a <em>RuPay credit card</em> to their UPI handle and pay by scanning a QR code. The user experience is indistinguishable from normal UPI. Underneath, the funding leg is a credit card transaction.</p>
+
+    <p>This is the most commercially significant construct in Indian payments, and the reason is not obvious:</p>
+
+    <div class="note">
+      <span class="nl">Why this matters</span>
+      <p>India has roughly 400 million+ UPI users but only a fraction of that number holds a credit card. Card acceptance requires a POS terminal; UPI acceptance requires a printed QR code. Credit-on-UPI collapses that gap — it lets a credit card be spent at any of tens of millions of QR-accepting merchants who would never install a card terminal.</p>
+      <p>And critically, <strong>it carries MDR above ₹2,000</strong>. It is the only mass-scale construct that combines UPI's acceptance footprint with card economics. That is why every bank, every UPI app, and NPCI itself have pushed it hard.</p>
+    </div>
+
+    <p>The economics, and note the threshold carefully:</p>
+    <div class="tw">
+    <table>
+      <thead><tr><th>Transaction</th><th class="n">Merchant pays</th><th>Where it goes</th></tr></thead>
+      <tbody>
+        <tr><td><strong>≤ ₹2,000</strong><br><span class="sub">"small offline merchant" category</span></td><td class="n pos">Nil</td><td>Nobody earns. Protects the small-merchant use case that zero-MDR policy was designed around.</td></tr>
+        <tr><td><strong>&gt; ₹2,000</strong></td><td class="n warnc">~2%</td><td>Roughly 1.5% to the issuing bank as interchange, ~0.5% to the network. Plus a TPAP fee to the consumer app.</td></tr>
+        <tr><td><strong>TPAP fee</strong><br><span class="sub">from 1 Apr 2026</span></td><td class="n">6bps / 3bps</td><td>Cut from 8bps (non-industry) and 4bps (industry). Paid to consumer-facing apps — PhonePe, Google Pay, Paytm — for processing as third-party app providers.</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="tnote">TPAP fee revision announced via Paytm regulatory filing, March 2026, effective 1 April 2026. Unchanged for small offline merchants below ₹2,000, EMI, Autopay mandates and Reserve Pay. Note this is a cut to <em>app</em> revenue per transaction — favourable to merchant-light, consumer-heavy models like PhonePe and Google Pay; broadly neutral for merchant-heavy models like Paytm, whose MDR revenue is unaffected.</p>
+
+    <div class="note hot">
+      <span class="nl">A trap worth knowing about operationally</span>
+      <p>Because the user experience is identical to UPI, many payment gateways report credit-on-UPI transactions under a generic "UPI" label on merchant statements. A merchant who believes their UPI mix is free can be absorbing ~2% on every above-₹2,000 transaction in that mix without seeing it broken out.</p>
+      <p>For subscription and D2C businesses with ticket sizes just over ₹2,000, this is a material and frequently undetected margin leak. The remedy is contractual: require sub-instrument-level tagging in the settlement file. If you take one operational item from this document, take this one.</p>
+    </div>
+
+    <h3>What it means for Visa and Mastercard</h3>
+    <p>Only RuPay is permitted on UPI. Visa and Mastercard are not. So every credit card issued as RuPay-on-UPI is a card that a global network does not switch and does not earn on. Combine that with the RBI's April 2018 <strong>data localisation</strong> mandate — all payment data relating to Indian transactions must be stored in India — which imposed real cost on the global networks and briefly led to Mastercard being barred from onboarding new Indian customers in 2021 for non-compliance.</p>
+    <p>India is, deliberately, the hardest large market in the world for Visa and Mastercard to earn in. That is a policy achievement, not an accident.</p>
+  </div>
+</section>
+<section id="reg">
+  <div class="wrap">
+    <p class="eyebrow">05 — The regulatory perimeter</p>
+    <h2>Licence risk is the business risk</h2>
+
+    <p>In most markets, regulation is a compliance cost. In India, it is the primary determinant of who exists. Four interventions restructured the industry:</p>
+
+    <div class="tl">
+      <div class="tl-i big">
+        <div class="tl-y">MARCH 2020</div>
+        <div class="tl-t">PA/PG Guidelines — the licence regime</div>
+        <p>RBI drew a bright line. A <strong>Payment Aggregator</strong> handles merchant funds and therefore requires authorisation, a minimum net worth (₹15 crore rising to ₹25 crore), and must hold merchant money in an escrow account with a scheduled commercial bank. A <strong>Payment Gateway</strong> only provides technology and never touches funds — no licence needed. Everyone who wanted to be a real business needed the PA licence.</p>
+      </div>
+      <div class="tl-i big">
+        <div class="tl-y">2021–2023</div>
+        <div class="tl-t">The licence freeze</div>
+        <p>RBI stopped granting new PA licences while it processed the backlog, and barred unlicensed applicants from onboarding new merchants. Razorpay and Cashfree were both caught in this — able to serve existing merchants but frozen out of new acquisition for roughly a year. Competitors with licences in hand took share. This is the clearest demonstration in Indian fintech that regulatory status, not product quality, determines outcomes.</p>
+      </div>
+      <div class="tl-i">
+        <div class="tl-y">OCT 2022</div>
+        <div class="tl-t">Card-on-file tokenisation mandate</div>
+        <p>After multiple deferrals, merchants and PAs were prohibited from storing actual card numbers. Every saved card in India became a token. Short-term success rates dipped during migration; long-term, India's stored-card data footprint is far smaller than comparable markets.</p>
+      </div>
+      <div class="tl-i">
+        <div class="tl-y">APRIL 2018</div>
+        <div class="tl-t">Data localisation</div>
+        <p>All payment system data relating to Indian transactions to be stored only in India. Imposed significant re-architecture cost on global players and became an enforcement lever — Mastercard was barred from onboarding new Indian customers in 2021 over non-compliance.</p>
+      </div>
+      <div class="tl-i big">
+        <div class="tl-y">JAN 2024</div>
+        <div class="tl-t">Paytm Payments Bank — the rupture</div>
+        <p>RBI directed Paytm Payments Bank to stop accepting fresh deposits and credit transactions after 29 February 2024, following persistent supervisory concerns and non-compliance. PPBL was where Paytm's UPI handles, wallet balances and much of its settlement infrastructure lived. Paytm had to migrate its UPI handles to four external partner banks and rebuild dependencies it had assumed were permanent.</p>
+      </div>
+    </div>
+
+    <div class="note hot">
+      <span class="nl">The Paytm lesson, stated precisely</span>
+      <p>The failure was not a business failure. It was <strong>concentration of regulatory dependency</strong>: Paytm had built its consumer payments business on a single affiliated regulated entity, so a single supervisory action against that entity took down the whole stack at once.</p>
+      <p>The generalisable lesson for anyone operating in this market: enumerate every licence, sponsor bank, and NPCI approval your business depends on, and ask what happens if any one of them is withdrawn on 30 days' notice. If the answer for any single item is "we stop operating," that is your actual risk profile — not your churn rate.</p>
+    </div>
+  </div>
+</section>
+<section id="ops">
+  <div class="wrap">
+    <p class="eyebrow">06 — The operators</p>
+    <h2>Who they are and what they actually sell</h2>
+
+    <p>Each of these won its first ten thousand merchants with a specific wedge. The wedge explains the company better than the current product list does.</p>
+
+    <div class="ops">
+      <div class="op" style="--accent:var(--cyan)">
+        <div class="op-n">Razorpay</div>
+        <div class="op-w">Wedge · developer experience</div>
+        <div class="op-m">
+          <div><div class="ml">FY25 revenue</div><div class="mv">₹3,783 cr</div></div>
+          <div><div class="ml">Growth</div><div class="mv pos">+65%</div></div>
+          <div><div class="ml">FY25 net</div><div class="mv neg">−₹1,209 cr</div></div>
+        </div>
+        <p>Founded 2014, Mathur and Kumar. Won by being the first Indian gateway with documentation a developer could integrate against in an afternoon — everyone else required sales calls and paperwork. Now full-stack: RazorpayX neobanking, Razorpay Capital lending, POS. Core online payments is EBITDA-profitable; the FY25 loss is largely ESOP charges and roughly $150mn of tax from the reverse-flip redomicile, not operating weakness. Confidentially filed DRHP 12 June 2026, targeting ₹5,000–6,000 crore at a reported $5–6bn — against a $7.5bn Series F mark in 2021.</p>
+      </div>
+
+      <div class="op" style="--accent:var(--violet)">
+        <div class="op-n">Pine Labs</div>
+        <div class="op-w">Wedge · offline POS terminals</div>
+        <div class="op-m">
+          <div><div class="ml">FY25 income</div><div class="mv">₹1,735 cr</div></div>
+          <div><div class="ml">Growth</div><div class="mv pos">+25.5%</div></div>
+          <div><div class="ml">Status</div><div class="mv">Listed Nov 2025</div></div>
+        </div>
+        <p>The oldest of the group — 27 years to IPO. Built the physical terminal estate in large-format retail, then layered EMI-at-POS, which is genuinely valuable in India where consumers convert large purchases to instalments at checkout. IPO raised ~$440mn at a $2.9bn valuation, against $5bn privately in 2022. Listed at a ~9.5–14% premium, since traded around the issue price. Turned a small quarterly net profit in the June quarter. Amrish Rau CEO.</p>
+      </div>
+
+      <div class="op" style="--accent:var(--saffron)">
+        <div class="op-n">Cashfree</div>
+        <div class="op-w">Wedge · payouts, not collections</div>
+        <div class="op-m">
+          <div><div class="ml">FY25 revenue</div><div class="mv">₹640 cr</div></div>
+          <div><div class="ml">Growth</div><div class="mv">~flat</div></div>
+          <div><div class="ml">FY25 net</div><div class="mv neg">−₹154 cr</div></div>
+        </div>
+        <p>The genuinely differentiated wedge: everyone else was solving <em>collecting</em> money; Cashfree solved <em>disbursing</em> it — vendor payouts, refunds, gig-worker settlements, insurance claims. That is a real, underserved problem. Revenue essentially flat FY24→FY25 (₹643cr → ₹640cr) with losses widening 14%; PG commissions are 75% of operating revenue, so the diversification is thinner than peers'.</p>
+      </div>
+
+      <div class="op" style="--accent:var(--gold)">
+        <div class="op-n">PayU India</div>
+        <div class="op-w">Wedge · enterprise incumbency</div>
+        <div class="op-m">
+          <div><div class="ml">FY24 revenue</div><div class="mv">~$444mn</div></div>
+          <div><div class="ml">Owner</div><div class="mv">Prosus</div></div>
+          <div><div class="ml">Note</div><div class="mv warnc">BillDesk failed</div></div>
+        </div>
+        <p>Prosus-owned, deep enterprise relationships, and a lending arm (LazyPay). The defining event was the <strong>$4.7bn BillDesk acquisition</strong> — approved by CCI, then called off by PayU in October 2022 on the grounds that closing conditions were not met by the deadline. The widely-held reading is that the price agreed in 2021 no longer looked defensible in 2022's repriced market. It remains the clearest available signal of how sharply payments valuations reset.</p>
+      </div>
+
+      <div class="op" style="--accent:var(--rose)">
+        <div class="op-n">Paytm</div>
+        <div class="op-w">Wedge · everything, at once</div>
+        <div class="op-m">
+          <div><div class="ml">Listed</div><div class="mv">Nov 2021</div></div>
+          <div><div class="ml">Day 1</div><div class="mv neg">−27%</div></div>
+          <div><div class="ml">Event</div><div class="mv warnc">PPBL, Jan 2024</div></div>
+        </div>
+        <p>Wallet-first, and demonetisation's single biggest beneficiary. Built consumer wallet, merchant QR, sound boxes, lending distribution and a payments bank simultaneously. The ₹18,000 crore IPO that fell 27% on day one remains the reference point every Indian fintech listing is priced against — Razorpay's bankers are explicitly working in its shadow. The PPBL action is covered above; recovery has been real but the concentration lesson is permanent.</p>
+      </div>
+
+      <div class="op" style="--accent:var(--lime)">
+        <div class="op-n">PhonePe</div>
+        <div class="op-w">Wedge · UPI distribution at any cost</div>
+        <div class="op-m">
+          <div><div class="ml">UPI share</div><div class="mv">46.2%</div></div>
+          <div><div class="ml">Jan 2026</div><div class="mv">9.91bn txns</div></div>
+          <div><div class="ml">Status</div><div class="mv">IPO approved</div></div>
+        </div>
+        <p>Walmart-owned, the UPI volume leader by a wide margin — 9.91 billion transactions worth ₹13.77 lakh crore in January 2026. Spent enormously to win UPI share knowing UPI earns nothing, on the thesis that the consumer relationship monetises through insurance, lending, mutual funds and ads. Has SEBI approval for its IPO. The 30% cap is a direct and unresolved overhang on its business model.</p>
+      </div>
+
+      <div class="op" style="--accent:var(--cyan)">
+        <div class="op-n">BillDesk</div>
+        <div class="op-w">Wedge · bill payment plumbing</div>
+        <div class="op-m">
+          <div><div class="ml">Founded</div><div class="mv">2000</div></div>
+          <div><div class="ml">Model</div><div class="mv">B2B, invisible</div></div>
+        </div>
+        <p>The quiet giant. Built the recurring bill-payment infrastructure — utilities, insurance, telecom — that consumers use constantly without ever seeing the brand. Boring, sticky, cash-generative, entirely unglamorous. Was to be acquired by PayU for $4.7bn; the deal collapsed in 2022.</p>
+      </div>
+
+      <div class="op" style="--accent:var(--violet)">
+        <div class="op-n">Juspay</div>
+        <div class="op-w">Wedge · orchestration, not aggregation</div>
+        <div class="op-m">
+          <div><div class="ml">Category</div><div class="mv">Different</div></div>
+          <div><div class="ml">Sells</div><div class="mv">Auth rate</div></div>
+        </div>
+        <p>Not a PA and worth understanding as a separate category. Juspay sits <em>above</em> the gateways: a large merchant connected to four PAs uses Juspay to decide which one each transaction routes to, retry intelligently on soft declines, and manage checkout. It sells success rate, not payment processing. Because it does not touch funds, its regulatory profile is entirely different — and its customer is the large enterprise merchant, not the SME.</p>
+      </div>
+
+      <div class="op" style="--accent:var(--gold)">
+        <div class="op-n">Stripe · Adyen · CCAvenue</div>
+        <div class="op-w">Wedge · cross-border and incumbency</div>
+        <div class="op-m">
+          <div><div class="ml">Stripe/Adyen</div><div class="mv">Cross-border</div></div>
+          <div><div class="ml">CCAvenue</div><div class="mv">Since 2001</div></div>
+        </div>
+        <p>Stripe and Adyen compete mainly for Indian businesses selling internationally, and for global merchants selling into India — not for domestic UPI rails, where local players and local regulatory posture dominate. CCAvenue (Infibeam) is one of India's oldest gateways, with long-tail merchant incumbency but limited mindshare among newer businesses.</p>
+      </div>
+    </div>
+
+    <div class="note amb">
+      <span class="nl">Reading these numbers honestly</span>
+      <p>Revenue figures come from ROC filings and press reporting rather than a single audited comparable basis, and definitions differ — Pine Labs' ₹1,735 cr is "total income," Razorpay's ₹3,783 cr is consolidated revenue across payments, banking and international. These are <em>not</em> like-for-like. Razorpay's headline revenue includes businesses Cashfree does not operate.</p>
+      <p>Every TPV figure in Indian payments should be treated as marketing until you know the UPI mix inside it. Razorpay's disclosed ~$180bn annualised TPV is a real number that tells you very little about revenue, because the monetisable fraction is what matters.</p>
+    </div>
+  </div>
+</section>
+<section id="pivot">
+  <div class="wrap">
+    <p class="eyebrow">07 — The consequence</p>
+    <h2>Why every one of them left payments</h2>
+
+    <p>Look at that set of companies and notice what they have in common. Razorpay sells neobanking and lending. Pine Labs sells EMI and software. Cashfree sells payouts and verification. PayU owns a lending business. Paytm distributes credit. PhonePe distributes insurance and funds.</p>
+
+    <p>None of them is primarily a payment processor any more. That is not nine independent strategic choices. It is one market structure producing the same answer nine times.</p>
+
+    <div class="tw">
+    <table>
+      <thead><tr><th>Constraint</th><th>Consequence</th><th>The escape</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Dominant rail earns zero</strong><br><span class="sub">UPI = ~80–85% of volume</span></td>
+          <td>The more successful you are at winning the market's primary payment method, the less you earn.</td>
+          <td>Monetise the merchant relationship, not the transaction.</td>
+        </tr>
+        <tr>
+          <td><strong>Card margin is ~20bps gross</strong><br><span class="sub">before fraud, ops, support</span></td>
+          <td>Even the monetisable rail leaves a thin net margin that requires enormous scale to matter.</td>
+          <td>Attach a product with 10–100× the take rate to the same customer.</td>
+        </tr>
+        <tr>
+          <td><strong>Payments is commoditised</strong></td>
+          <td>Every PA offers substantially the same rails at substantially the same price. Competition is on price, which compresses margin further.</td>
+          <td>Build workflow lock-in — payroll, reconciliation, vendor payouts — that raises switching cost.</td>
+        </tr>
+        <tr>
+          <td><strong>You already have the data</strong></td>
+          <td>A PA sees a merchant's daily settlement volume in real time — better underwriting data than most lenders can buy.</td>
+          <td class="warnc">Lending. This is the real prize, and it is why every serious player has an NBFC or a lending partnership.</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p>The last row is the whole thesis. A payment aggregator knows what a merchant earns, when, from whom, and how volatile it is — continuously, with no reporting lag, and verified by actual settlement rather than by self-declaration. That is a materially better credit signal than a bank statement, and it can be collected against automatically from future settlement flow.</p>
+
+    <p>Payments, in India, is a customer acquisition and underwriting-data business wearing a payments costume. Once you see it that way, the strategic behaviour of every company above becomes legible — and so does the valuation question the public markets are now asking Razorpay and PhonePe.</p>
+
+    <div class="note vio">
+      <span class="nl">Part III</span>
+      <p>Next: the C-suite lens — what CEO, COO, CTO, CPO, CMO and the risk and compliance seats each actually lose sleep over, and the specific tensions between them. Then the working vocabulary, the north star metrics by player type, and a brutal section on the most abused numbers in the industry and what to ask for instead.</p>
+    </div>
+  </div>
+</section>
+
+<div class="partdiv" id="part3" style="--pc:var(--rose)">
+  <div class="wrap">
+    <p class="pn">Part III</p>
+    <h2>Six seats, one<br>contested dashboard</h2>
+    <p>What each executive actually loses sleep over, the tensions that structurally cannot be resolved, and the numbers this industry uses to hide from itself.</p>
+  </div>
+</div>
+
+<section id="suite">
+  <div class="wrap">
+    <p class="eyebrow">01 — The seats</p>
+    <h2>What each one is actually afraid of</h2>
+
+    <p>Generic answers are worthless here. "The CEO cares about growth" tells you nothing. What follows is specific to payments, and specific to India where the constraints differ from Western markets.</p>
+
+    <p>One framing before the detail: in most industries the CFO and the CEO are the powerful seats. In payments, <strong>the risk and compliance seats hold effective veto power over the business</strong>, because a single regulatory action can end the company. Paytm Payments Bank is the proof. Any org chart that treats compliance as a support function is mispriced.</p>
+
+    <div class="execs">
+
+      <div class="exec" style="--ac:var(--saffron)">
+        <div class="exec-h"><span class="exec-r">CEO</span><span class="exec-t">Survives the regulator, then the market</span></div>
+        <div class="exec-b">
+          <p class="lbl">Loses sleep over</p>
+          <ul class="sleep">
+            <li><strong>Licence and sponsor-bank dependency.</strong> Which single external approval, if withdrawn, stops the business? For most Indian PAs there are several, and none is under their control.</li>
+            <li><strong>The monetisation gap.</strong> Volume grows, revenue doesn't follow, because the growth is in UPI. Explaining this to a board that reads TPV headlines.</li>
+            <li><strong>Whether the adjacent business is real.</strong> Lending, neobanking, payouts — is it a genuine second engine or a story to justify the valuation?</li>
+            <li><strong>Public market comparables.</strong> Post-Paytm and post-Pine Labs, private marks are being reset hard. Razorpay's DRHP at a reported $5–6bn against a $7.5bn Series F is the live example.</li>
+            <li><strong>Talent to the frontier.</strong> Payments engineering competes with AI labs for the same people, and loses on both compensation and perceived interest.</li>
+          </ul>
+          <p class="lbl">On the dashboard</p>
+          <div class="dash">
+            <span class="chip">Net revenue (not TPV)</span><span class="chip">Take rate on monetisable volume</span>
+            <span class="chip">Contribution margin %</span><span class="chip">Non-payments revenue mix</span>
+            <span class="chip">Months of runway</span><span class="chip">Regulatory open items</span>
+          </div>
+          <p class="bad"><strong>A bad quarter:</strong> TPV up 30%, net revenue up 6%, because the incremental volume was all UPI. Board asks why growth isn't converting. The honest answer is structural and sounds like an excuse.</p>
+        </div>
+      </div>
+
+      <div class="exec" style="--ac:var(--cyan)">
+        <div class="exec-h"><span class="exec-r">COO</span><span class="exec-t">Owns settlement, reconciliation and the ops floor</span></div>
+        <div class="exec-b">
+          <p class="lbl">Loses sleep over</p>
+          <ul class="sleep">
+            <li><strong>Settlement breaks.</strong> Money that arrived but cannot be matched to a transaction. Every unreconciled paisa is a potential audit finding and a merchant dispute.</li>
+            <li><strong>T+1 discipline.</strong> Missing a settlement window is the fastest way to lose a merchant, because it directly hits their working capital.</li>
+            <li><strong>Escrow compliance.</strong> Merchant funds in a designated escrow account per RBI PA guidelines, with reporting that survives inspection. This is not a best practice; it is a licence condition.</li>
+            <li><strong>Chargeback and dispute throughput.</strong> Representment is manual, deadline-bound, and scales linearly with volume unless tooled.</li>
+            <li><strong>Support cost per transaction.</strong> The metric nobody presents externally and everyone watches internally.</li>
+          </ul>
+          <p class="lbl">On the dashboard</p>
+          <div class="dash">
+            <span class="chip">Settlement SLA adherence</span><span class="chip">Unreconciled value ageing</span>
+            <span class="chip">Dispute resolution TAT</span><span class="chip">Cost per transaction</span>
+            <span class="chip">Escrow balance vs obligation</span><span class="chip">Tickets per 1,000 txns</span>
+          </div>
+          <p class="bad"><strong>A bad quarter:</strong> a bank partner changes its settlement file format without notice, reconciliation breaks for four days, and ₹200 crore sits unmatched while merchants escalate publicly.</p>
+        </div>
+      </div>
+
+      <div class="exec" style="--ac:var(--violet)">
+        <div class="exec-h"><span class="exec-r">CTO</span><span class="exec-t">Uptime is table stakes; auth rate is the job</span></div>
+        <div class="exec-b">
+          <p class="lbl">Loses sleep over</p>
+          <ul class="sleep">
+            <li><strong>Auth rate, not uptime.</strong> A gateway can report 99.99% uptime while 40% of transactions routed to one bank fail. The gap between those two numbers is where revenue disappears.</li>
+            <li><strong>Bank-side failure detection and rerouting.</strong> The differentiated capability is noticing a bank is degraded within seconds and moving traffic before merchants notice.</li>
+            <li><strong>Peak load.</strong> Sale events, salary day, festival season. Capacity planned for the peak, paid for year-round.</li>
+            <li><strong>Regulatory engineering deadlines.</strong> The RBI's 2FA directions bit on 1 April 2026 with cross-border CNP requirements following on 1 October 2026. These are not negotiable and they consume roadmap.</li>
+            <li><strong>Idempotency and double-debit.</strong> The worst failure mode in payments is charging a customer twice. It destroys trust faster than a decline.</li>
+          </ul>
+          <p class="lbl">On the dashboard</p>
+          <div class="dash">
+            <span class="chip">Auth rate by method / bank / BIN</span><span class="chip">p99 latency</span>
+            <span class="chip">Reroute detection time</span><span class="chip">Technical vs business declines</span>
+            <span class="chip">Double-debit incidents</span><span class="chip">Peak headroom</span>
+          </div>
+          <p class="bad"><strong>A bad quarter:</strong> a major bank degrades during a festival sale, routing doesn't fail over fast enough, and the largest merchant's success rate drops eight points on the highest-volume day of the year.</p>
+        </div>
+      </div>
+
+      <div class="exec" style="--ac:var(--lime)">
+        <div class="exec-h"><span class="exec-r">CPO</span><span class="exec-t">Every step removed is revenue; every step removed is risk</span></div>
+        <div class="exec-b">
+          <p class="lbl">Loses sleep over</p>
+          <ul class="sleep">
+            <li><strong>Checkout conversion.</strong> Indian D2C success rates commonly sit in the 68–74% band against an achievable 85%+. That gap is the single largest recoverable revenue lever most merchants have.</li>
+            <li><strong>Onboarding friction versus KYC obligation.</strong> Merchants want to go live today; the regulator requires verification. This tension has no clean resolution.</li>
+            <li><strong>Method mix.</strong> Shipping a new method that shifts volume from cards to UPI improves the merchant's experience and destroys your own take rate.</li>
+            <li><strong>2FA without friction.</strong> The April 2026 directions permit passkeys, biometrics and device binding as alternatives to SMS OTP. Whoever implements dynamic authentication that doesn't cost conversion wins real share.</li>
+            <li><strong>Recurring payments.</strong> E-mandate rules, AFA on the first debit, pre-debit notification. Subscription businesses in India are meaningfully harder to run than elsewhere.</li>
+          </ul>
+          <p class="lbl">On the dashboard</p>
+          <div class="dash">
+            <span class="chip">Checkout conversion</span><span class="chip">Success rate by method</span>
+            <span class="chip">Time-to-first-transaction</span><span class="chip">Mandate success rate</span>
+            <span class="chip">Retry recovery rate</span><span class="chip">Drop-off by step</span>
+          </div>
+          <p class="bad"><strong>A bad quarter:</strong> a fraud-driven tightening of risk rules lifts false declines two points. Fraud loss falls; revenue falls more. The CRO's win shows in their metric, the loss shows in yours.</p>
+        </div>
+      </div>
+
+      <div class="exec" style="--ac:var(--gold)">
+        <div class="exec-h"><span class="exec-r">CMO</span><span class="exec-t">Selling a commodity to people who compare on price</span></div>
+        <div class="exec-b">
+          <p class="lbl">Loses sleep over</p>
+          <ul class="sleep">
+            <li><strong>Genuine undifferentiation.</strong> Every PA offers substantially the same rails at substantially the same price. The honest differentiators — success rate, settlement reliability, support — are hard to prove in an ad.</li>
+            <li><strong>CAC against a thin take rate.</strong> At ~20bps gross on card volume, a merchant must process a great deal before they repay acquisition cost. Payback periods are long and unforgiving.</li>
+            <li><strong>Developer credibility.</strong> In this market the buyer is frequently an engineer. Documentation quality is marketing; a bad SDK is a lost account.</li>
+            <li><strong>Trust after any public incident.</strong> An outage during a sale event, or a regulatory action, undoes years of positioning.</li>
+            <li><strong>Being pulled into TPV theatre.</strong> Announcing volume milestones is easy and meaningless, and it trains the market to value the wrong number.</li>
+          </ul>
+          <p class="lbl">On the dashboard</p>
+          <div class="dash">
+            <span class="chip">CAC by merchant segment</span><span class="chip">CAC payback (months)</span>
+            <span class="chip">Net revenue retention</span><span class="chip">Merchant NPS</span>
+            <span class="chip">Share of enterprise pipeline</span><span class="chip">Docs → integration rate</span>
+          </div>
+          <p class="bad"><strong>A bad quarter:</strong> a competitor undercuts on headline MDR, wins several logos on price, and the resulting discounting takes group take rate down 3bps — permanently, because prices don't go back up.</p>
+        </div>
+      </div>
+
+      <div class="exec" style="--ac:var(--rose)">
+        <div class="exec-h"><span class="exec-r">CRO / CCO</span><span class="exec-t">The seat that can stop the company — or save it</span></div>
+        <div class="exec-b">
+          <p class="lbl">Loses sleep over</p>
+          <ul class="sleep">
+            <li><strong>One bad merchant category.</strong> Onboarding a segment with high dispute rates can push portfolio chargeback ratios past network monitoring thresholds, with penalties and eventual loss of acceptance.</li>
+            <li><strong>Merchant-side fraud.</strong> Not the cardholder — the merchant. Transaction laundering, where a licensed MCC fronts prohibited activity, is the risk that ends licences.</li>
+            <li><strong>Regulatory examination readiness.</strong> Escrow reconciliation, KYC files, data localisation evidence, grievance redressal logs. Continuously, not before an inspection.</li>
+            <li><strong>Every dependency at once.</strong> Enumerating each licence, sponsor bank and NPCI approval the business runs on, and what happens if any single one is withdrawn on short notice.</li>
+            <li><strong>Being right too early.</strong> Blocking a large merchant on risk grounds is invisible if it works and career-defining if you were wrong.</li>
+          </ul>
+          <p class="lbl">On the dashboard</p>
+          <div class="dash">
+            <span class="chip">Chargeback ratio vs threshold</span><span class="chip">Fraud bps of volume</span>
+            <span class="chip">False positive rate</span><span class="chip">Merchant risk concentration</span>
+            <span class="chip">KYC exception ageing</span><span class="chip">Open regulatory items</span>
+          </div>
+          <p class="bad"><strong>A bad quarter:</strong> not a metric at all. It's a supervisory letter. Everything above becomes secondary within an hour of it arriving.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<section id="tensions">
+  <div class="wrap">
+    <p class="eyebrow">02 — Structural conflict</p>
+    <h2>These tensions don't resolve</h2>
+
+    <p>Weak organisations treat these as coordination problems to be fixed with better alignment. They aren't. They are genuine conflicts of objective built into the business, and the job of the CEO is to arbitrate them explicitly rather than pretend they've been designed away.</p>
+
+    <div class="tw">
+    <table>
+      <thead><tr><th>Axis</th><th>One side</th><th>Other side</th><th>How mature companies handle it</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Friction</strong></td>
+          <td class="warnc">CPO: remove every step. Each one costs conversion.</td>
+          <td class="warnc">CRO: each step is a control. Removing them raises fraud and dispute exposure.</td>
+          <td>Set an explicit fraud-loss budget in bps and let the product team optimise conversion within it. Makes the trade-off a number rather than an argument.</td>
+        </tr>
+        <tr>
+          <td><strong>Velocity</strong></td>
+          <td class="warnc">CPO: ship weekly, iterate.</td>
+          <td class="warnc">CTO: every deploy is a risk to a system moving other people's money.</td>
+          <td>Separate the checkout layer from the money-movement core. Different release cadences for different blast radii.</td>
+        </tr>
+        <tr>
+          <td><strong>Growth</strong></td>
+          <td class="warnc">CMO: onboard fast, low friction, high volume.</td>
+          <td class="warnc">CCO: KYC and category restrictions are licence conditions, not preferences.</td>
+          <td>Risk-tiered onboarding: low-value merchants go live fast with capped limits; high-risk categories go to manual review. Speed for most, scrutiny where it matters.</td>
+        </tr>
+        <tr>
+          <td><strong>Pricing</strong></td>
+          <td class="warnc">CMO: match the competitor's headline MDR to win the logo.</td>
+          <td class="warnc">CEO/CFO: at 20bps gross, a 3bps concession is 15% of the margin on that account.</td>
+          <td>Sell on total cost of ownership — success rate, settlement speed, hidden AMC and refund charges — rather than headline rate. Harder, and the only defensible position.</td>
+        </tr>
+        <tr>
+          <td><strong>Method mix</strong></td>
+          <td class="warnc">Everyone: give merchants what customers want, which is UPI.</td>
+          <td class="warnc">Finance: every point of mix shift toward UPI cuts blended take rate.</td>
+          <td>Accept it and monetise elsewhere. Fighting the mix shift is fighting the customer.</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="note amb">
+      <span class="nl">The tension worth watching most closely</span>
+      <p>The friction axis is about to be repriced by regulation. RBI's Authentication Directions (issued 25 September 2025, effective 1 April 2026) require two distinct factors on domestic digital payments, with at least one <em>dynamic</em> for non-card-present transactions — and they explicitly permit passkeys, biometrics and device-bound credentials instead of SMS OTP.</p>
+      <p>That converts a CPO-versus-CRO argument into an engineering problem with a compliance deadline. It also creates a real competitive opening: whoever ships dynamic authentication that <em>improves</em> conversion rather than costing it gets a genuine, if temporary, advantage. Cross-border CNP requirements follow on 1 October 2026.</p>
+    </div>
+  </div>
+</section>
+<section id="gloss">
+  <div class="wrap">
+    <p class="eyebrow">03 — Vocabulary</p>
+    <h2>Terms that carry weight</h2>
+    <p>Not a dictionary. These are the terms where using them precisely signals you know the business, and using them loosely signals you don't.</p>
+
+    <h3>Structure</h3>
+    <div class="gloss">
+      <div class="gi"><div class="gt">ISSUER</div><div class="gd">The bank that gave the customer the card and carries the credit risk. Takes the largest share of MDR via interchange.</div></div>
+      <div class="gi"><div class="gt">ACQUIRER</div><div class="gd">The bank that holds the merchant relationship and settles funds to them. Must be a bank.</div></div>
+      <div class="gi"><div class="gt">PA · PAYMENT AGGREGATOR</div><div class="gd"><b>Handles merchant funds.</b> Requires RBI authorisation, minimum net worth, and escrow with a scheduled commercial bank.</div></div>
+      <div class="gi"><div class="gt">PG · PAYMENT GATEWAY</div><div class="gd"><b>Technology only, never touches funds.</b> No licence required. The distinction is regulatory, not marketing — people conflate these constantly.</div></div>
+      <div class="gi"><div class="gt">ORCHESTRATOR</div><div class="gd">Sits above multiple PAs, routing each transaction to the best-performing one. Sells success rate. Juspay is the Indian example.</div></div>
+      <div class="gi"><div class="gt">PSP / TPAP</div><div class="gd">In UPI: the app. A <b>TPAP</b> (third-party app provider) is a non-bank like PhonePe operating through a sponsor <b>PSP bank</b>.</div></div>
+      <div class="gi"><div class="gt">PPI</div><div class="gd">Prepaid Payment Instrument — a wallet. Relevant because PPI-funded UPI above ₹2,000 carries 1.1% interchange while bank-funded UPI carries nil.</div></div>
+      <div class="gi"><div class="gt">BIN / IIN</div><div class="gd">First 6–8 digits of the card number. Identifies the issuer and card product, and therefore determines the interchange rate.</div></div>
+      <div class="gi"><div class="gt">MCC</div><div class="gd">Merchant Category Code. Drives interchange, rewards eligibility, and permissibility. Misclassified MCC is a common form of merchant fraud.</div></div>
+      <div class="gi"><div class="gt">NODAL / ESCROW ACCOUNT</div><div class="gd">Where a PA must hold merchant funds in transit. A licence condition, and the thing an RBI inspection looks at first.</div></div>
+    </div>
+
+    <h3>Money</h3>
+    <div class="gloss">
+      <div class="gi"><div class="gt">MDR / TDR</div><div class="gd">Total fee the merchant pays, as a percentage. The pool everything else is carved from.</div></div>
+      <div class="gi"><div class="gt">INTERCHANGE</div><div class="gd">The issuer's share of MDR — the largest component, typically ~70%. Set by the network as a default, not by the acquirer.</div></div>
+      <div class="gi"><div class="gt">TAKE RATE</div><div class="gd">Net revenue ÷ volume. <b>Always ask which volume.</b> Take rate on total TPV and on card-only TPV are wildly different numbers in India.</div></div>
+      <div class="gi"><div class="gt">TPV</div><div class="gd">Total Payment Volume. The most-quoted and least-informative number in the industry. Meaningless without the monetisable mix.</div></div>
+      <div class="gi"><div class="gt">GROSS vs NET REVENUE</div><div class="gd">Gross includes interchange and network fees the company merely passes through. <b>Net is what it keeps.</b> The gap can be 5–10×.</div></div>
+      <div class="gi"><div class="gt">CONTRIBUTION MARGIN</div><div class="gd">Net revenue minus directly variable cost. Definitions vary enormously — the number is only comparable if you know what was excluded.</div></div>
+      <div class="gi"><div class="gt">FLOAT</div><div class="gd">Interest earned on funds held between collection and settlement. Real money at scale; regulators view it warily because the funds aren't yours.</div></div>
+      <div class="gi"><div class="gt">TPAP FEE</div><div class="gd">Paid to consumer UPI apps for processing. Cut from 8bps to 6bps (non-industry) and 4bps to 3bps (industry) effective 1 April 2026.</div></div>
+    </div>
+
+    <h3>Operations</h3>
+    <div class="gloss">
+      <div class="gi"><div class="gt">AUTH RATE · PSR</div><div class="gd">Share of attempts that succeed. <b>The metric that actually matters</b> to merchants — a five-point improvement is worth ~25× a 0.2% MDR cut at the same volume.</div></div>
+      <div class="gi"><div class="gt">TECHNICAL vs BUSINESS DECLINE</div><div class="gd">NPCI's distinction. Technical = system failure, addressable by routing. Business = insufficient funds or limits, not addressable. Conflating them flatters your numbers.</div></div>
+      <div class="gi"><div class="gt">SOFT vs HARD DECLINE</div><div class="gd">Soft is retryable (insufficient funds, timeout). Hard is not (stolen, closed). Retrying hard declines is abuse.</div></div>
+      <div class="gi"><div class="gt">CHARGEBACK RATIO</div><div class="gd">Disputes ÷ transactions. Networks impose monitoring above roughly 0.9–1%, with penalties and eventual loss of acceptance. A survival metric.</div></div>
+      <div class="gi"><div class="gt">REPRESENTMENT</div><div class="gd">Contesting a chargeback with evidence. Manual, deadline-bound, and where dispute-ops headcount goes.</div></div>
+      <div class="gi"><div class="gt">ARN</div><div class="gd">Acquirer Reference Number. The tracking ID for a transaction or refund. What support asks for when a customer says the refund never arrived.</div></div>
+      <div class="gi"><div class="gt">SETTLEMENT CYCLE</div><div class="gd">T+1 standard in India; faster is sold as a product, slower is imposed on high-risk merchants.</div></div>
+      <div class="gi"><div class="gt">E-MANDATE</div><div class="gd">Recurring payment authorisation. India requires AFA on setup and pre-debit notification — subscriptions are materially harder here than in the US.</div></div>
+      <div class="gi"><div class="gt">STATIC vs DYNAMIC QR</div><div class="gd">Static: printed, payer types the amount, <b>no transaction reference</b> — a reconciliation problem. Dynamic: generated per transaction with amount embedded.</div></div>
+      <div class="gi"><div class="gt">NETWORK TOKEN</div><div class="gd">Issued by the network, survives card reissuance — so subscriptions don't break on card expiry. Distinct from a PSP vault token, which locks you to that processor.</div></div>
+    </div>
+  </div>
+</section>
+<section id="north">
+  <div class="wrap">
+    <p class="eyebrow">04 — North stars</p>
+    <h2>Different players, different single number</h2>
+
+    <p>Asking "what's the north star metric in payments" is the wrong question. It depends entirely on where you sit in the stack, and the answers are in genuine tension with each other.</p>
+
+    <div class="tw">
+    <table>
+      <thead><tr><th>Player</th><th>North star</th><th>Why that one</th><th>What it distorts</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Card network</strong><br><span class="sub">Visa, Mastercard</span></td>
+          <td class="pos">Processed transactions</td>
+          <td>Fixed-cost switch; every incremental transaction is near-pure contribution. Volume in currency terms matters less than count.</td>
+          <td>Encourages chasing low-value transaction count and bidding up client incentives to hold issuer portfolios.</td>
+        </tr>
+        <tr>
+          <td><strong>Issuer</strong><br><span class="sub">HDFC, Amex</span></td>
+          <td class="pos">Spend per active card</td>
+          <td>Interchange scales with spend, and the cost of servicing a card is broadly fixed. An inactive card is pure cost.</td>
+          <td>Rewards arms race. Cards get issued to people who won't use them, inflating "cards in force."</td>
+        </tr>
+        <tr>
+          <td><strong>PA / gateway</strong><br><span class="sub">Razorpay, Cashfree</span></td>
+          <td class="pos">Net revenue retention</td>
+          <td>Merchant acquisition is expensive against a thin take rate. The business only works if merchants stay and grow.</td>
+          <td>Nothing much — this is the honest metric. Which is precisely why it's quoted less often than TPV.</td>
+        </tr>
+        <tr>
+          <td><strong>Orchestrator</strong><br><span class="sub">Juspay</span></td>
+          <td class="pos">Auth rate uplift</td>
+          <td>It is literally the product. Measurable against a control, and directly convertible to merchant revenue.</td>
+          <td>Attribution disputes — was the uplift routing, or a bank fixing its own infrastructure?</td>
+        </tr>
+        <tr>
+          <td><strong>UPI app</strong><br><span class="sub">PhonePe, GPay</span></td>
+          <td class="warnc">Monthly transacting users</td>
+          <td>UPI itself earns nothing. The asset is a user with a payment habit who can be sold credit, insurance or funds.</td>
+          <td>Transaction count becomes vanity — a ₹10 payment counts the same as ₹10,000. Drives the ₹-value-blind volume race.</td>
+        </tr>
+        <tr>
+          <td><strong>Merchant</strong></td>
+          <td class="pos">Checkout conversion</td>
+          <td>The only number that maps directly to their revenue. MDR is a cost line; conversion is the top line.</td>
+          <td>Nothing. This is why the sophisticated merchants negotiate on success rate, not price.</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="note">
+      <span class="nl">The asymmetry worth internalising</span>
+      <p>At ₹1 crore monthly GMV, a 0.2 percentage point MDR reduction saves roughly ₹20,000 a month. A five-point improvement in payment success rate recovers roughly ₹5 lakh a month.</p>
+      <p><strong>The success-rate lever is around 25× larger than the price lever</strong> — and most merchants negotiate exclusively on price, because MDR is on the invoice and failed transactions are not. This single asymmetry explains why orchestration exists as a category, and it's the most useful thing in this document for anyone actually buying payment services.</p>
+    </div>
+  </div>
+</section>
+<section id="abuse">
+  <div class="wrap">
+    <p class="eyebrow">05 — Be brutal here</p>
+    <h2>The numbers this industry hides behind</h2>
+
+    <p>Each of these is technically true and functionally misleading. For each, what to ask instead.</p>
+
+    <div class="abuse">
+      <div class="ab-h"><span class="ab-n">01</span><span class="ab-t">"We process $X billion in TPV"</span></div>
+      <div class="ab-b">
+        <p>The industry's signature number and its emptiest. In India, if 80% of that volume is UPI, then 80% of it generates <em>zero</em> revenue. A company processing $180bn of which four-fifths is UPI is not four times better than one processing $45bn that is all cards — it may be worse.</p>
+        <p>TPV also silently includes payouts, refunds and reversals in some disclosures. And it is trivially inflatable by onboarding a single large, low-margin enterprise merchant at near-zero take rate.</p>
+        <div class="ask"><span class="al">Ask instead</span><p>"What is net revenue, and what is your blended take rate on <em>monetisable</em> volume?" Then: "What percentage of TPV is UPI?" The second answer usually explains the first.</p></div>
+      </div>
+    </div>
+
+    <div class="abuse">
+      <div class="ab-h"><span class="ab-n">02</span><span class="ab-t">Gross revenue quoted as revenue</span></div>
+      <div class="ab-b">
+        <p>A PA collecting 2% MDR passes ~1.4% to the issuer and ~0.2% to the network. It <em>keeps</em> roughly 0.2–0.4%. Reporting the full 2% as revenue overstates the business by 5–10×.</p>
+        <p>Accounting standards on gross-versus-net presentation give real latitude here depending on whether the company is deemed principal or agent, and companies choose the presentation that flatters. It is not fraud; it is a choice that most readers don't notice.</p>
+        <div class="ask"><span class="al">Ask instead</span><p>"Is this gross or net of interchange and scheme fees?" If gross, ask for net. If they resist, that is the answer.</p></div>
+      </div>
+    </div>
+
+    <div class="abuse">
+      <div class="ab-h"><span class="ab-n">03</span><span class="ab-t">"Users" — which almost never means users</span></div>
+      <div class="ab-b">
+        <p>Registered users, app installs, MAU and <em>transacting</em> users differ by an order of magnitude. A UPI app with 400mn registrations might have 120mn monthly transacting users and far fewer who have ever bought a financial product.</p>
+        <p>"Merchants" has the same problem: onboarded merchants versus merchants who transacted this month versus merchants generating meaningful revenue. Long tails in Indian payments are extremely long.</p>
+        <div class="ask"><span class="al">Ask instead</span><p>"How many merchants transacted in the last 30 days, and what share of net revenue comes from the top 10?" Concentration is usually the more revealing number.</p></div>
+      </div>
+    </div>
+
+    <div class="abuse">
+      <div class="ab-h"><span class="ab-n">04</span><span class="ab-t">UPI transaction counts</span></div>
+      <div class="ab-b">
+        <p>A ₹10 tea payment and a ₹50,000 transfer both count as one transaction. India's headline volume figures are genuinely enormous and genuinely real — but count-based metrics systematically overweight small-ticket P2P activity, which is the least monetisable segment of all.</p>
+        <p>The honest cut is <strong>P2M value</strong>, not total count. NPCI itself notes its published UPI totals exclude Credit Card on UPI and Credit Line on UPI, so the headline number is neither a complete count nor a revenue proxy.</p>
+        <div class="ask"><span class="al">Ask instead</span><p>"P2M value, not total count — and what's the average ticket size?" Ticket size tells you more about monetisability than volume ever will.</p></div>
+      </div>
+    </div>
+
+    <div class="abuse">
+      <div class="ab-h"><span class="ab-n">05</span><span class="ab-t">Take rate on the wrong denominator</span></div>
+      <div class="ab-b">
+        <p>The most quietly effective distortion in the industry. Net revenue ÷ card volume is a respectable number. Net revenue ÷ total TPV including UPI is a much smaller one. Companies naturally choose the flattering denominator and rarely state which they used.</p>
+        <div class="ask"><span class="al">Ask instead</span><p>"Take rate on what base, exactly?" Then compute it yourself from net revenue and total volume, and compare to what they claimed.</p></div>
+      </div>
+    </div>
+
+    <div class="abuse">
+      <div class="ab-h"><span class="ab-n">06</span><span class="ab-t">"Profitable" — with adjustments</span></div>
+      <div class="ab-b">
+        <p>Adjusted EBITDA excluding ESOP, excluding one-time restructuring, excluding impairment, at the segment level rather than consolidated. Each exclusion may be individually defensible. Together they can convert a substantial loss into a headline profit.</p>
+        <p>Razorpay is a clean illustration of why this needs care in <em>both</em> directions: it reported a ₹1,209 crore FY25 loss, but that figure is largely ESOP charges and roughly $150mn of tax from redomiciling to India — while its core online payments segment is genuinely EBITDA-profitable. The headline loss overstates operational weakness just as an adjusted profit would overstate strength. Neither single number is the answer.</p>
+        <div class="ask"><span class="al">Ask instead</span><p>"Show me consolidated GAAP net income, and separately the reconciliation from that to your adjusted figure." The bridge is where the story is.</p></div>
+      </div>
+    </div>
+
+    <div class="abuse">
+      <div class="ab-h"><span class="ab-n">07</span><span class="ab-t">Contribution margin, defined creatively</span></div>
+      <div class="ab-b">
+        <p>Some companies exclude fraud losses. Some exclude support cost. Some exclude the sales commission that acquired the merchant. There is no standard definition, so the number is not comparable across companies even within the same market.</p>
+        <div class="ask"><span class="al">Ask instead</span><p>"What exactly is excluded, and where do fraud losses, chargeback handling and merchant support sit in your P&amp;L?"</p></div>
+      </div>
+    </div>
+
+    <div class="abuse">
+      <div class="ab-h"><span class="ab-n">08</span><span class="ab-t">Uptime instead of auth rate</span></div>
+      <div class="ab-b">
+        <p>The operational equivalent of TPV. A gateway can truthfully claim 99.99% uptime while a substantial share of transactions fail because a partner bank is degraded and traffic wasn't rerouted. Uptime measures whether <em>your</em> system responded, not whether the customer's payment succeeded.</p>
+        <div class="ask"><span class="al">Ask instead</span><p>"Auth rate by method, by bank, over the last 90 days including your worst day." The worst day is the useful number — averages hide exactly the events that cost merchants money.</p></div>
+      </div>
+    </div>
+
+    <div class="abuse">
+      <div class="ab-h"><span class="ab-n">09</span><span class="ab-t">Success rate measured after the drop-off</span></div>
+      <div class="ab-b">
+        <p>Subtler and more common than it should be. If success rate is measured from transactions <em>submitted to the bank</em>, everything the customer abandoned at the checkout page is excluded from the denominator. The reported number improves while merchant revenue doesn't.</p>
+        <div class="ask"><span class="al">Ask instead</span><p>"Is the denominator checkout initiations or bank submissions?" Then ask for end-to-end conversion from checkout load to confirmed payment. That's the number the merchant actually feels.</p></div>
+      </div>
+    </div>
+
+    <div class="abuse">
+      <div class="ab-h"><span class="ab-n">10</span><span class="ab-t">Valuation marks as facts</span></div>
+      <div class="ab-b">
+        <p>A private valuation is the price of the last marginal share sold under negotiated terms — often with liquidation preferences and ratchets that mean the headline number overstates common equity value. It is not a market price.</p>
+        <p>The 2025–26 Indian listings settled this empirically. Pine Labs listed at roughly $2.9bn against a $5bn private mark. Razorpay's DRHP reportedly targets $5–6bn against a $7.5bn Series F. The public market repriced both by roughly a third.</p>
+        <div class="ask"><span class="al">Ask instead</span><p>"What were the preference terms on the last round?" And treat any private mark from the 2021 cohort as an upper bound rather than a valuation.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="diligence">
+  <div class="wrap">
+    <p class="eyebrow">06 — Practical</p>
+    <h2>Questions that separate signal from pitch</h2>
+
+    <p>If you have one meeting with an Indian payments company — as an investor, a partner, an acquirer, or a candidate — these are the questions whose answers you cannot get from a deck.</p>
+
+    <div class="tw">
+    <table>
+      <thead><tr><th>Question</th><th>What a good answer looks like</th><th>What a bad answer reveals</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>What share of TPV is monetisable?</strong></td>
+          <td>An immediate number, with the UPI/card/other split, and a clear view on where mix is heading.</td>
+          <td>Deflection to total TPV, or visible discomfort. They either don't track it or don't want to say it.</td>
+        </tr>
+        <tr>
+          <td><strong>Which single external approval, if withdrawn, stops the business?</strong></td>
+          <td>A specific enumerated list — PA licence, named sponsor banks, NPCI approvals — with contingency for each.</td>
+          <td>"We're fully compliant." That answers a different question. Paytm was compliant until it wasn't.</td>
+        </tr>
+        <tr>
+          <td><strong>Auth rate on your worst day last quarter?</strong></td>
+          <td>A specific number, the cause, and what changed afterwards.</td>
+          <td>Quoting an average, or quoting uptime. Averages conceal precisely the events that cost merchants money.</td>
+        </tr>
+        <tr>
+          <td><strong>Top 10 merchants as a share of net revenue?</strong></td>
+          <td>A number, with a view on concentration risk and the take-rate profile of those accounts.</td>
+          <td>Merchant <em>count</em> as the answer. Long tails are long and mostly worthless.</td>
+        </tr>
+        <tr>
+          <td><strong>Is your non-payments revenue a real second engine?</strong></td>
+          <td>Segment-level revenue and margin, with the cross-sell rate from payments customers into it.</td>
+          <td>Aspiration language. "Huge opportunity," "early days," no numbers.</td>
+        </tr>
+        <tr>
+          <td><strong>What happens to your economics if UPI gets MDR?</strong></td>
+          <td>A quantified scenario. They've modelled 30bps on large merchants and know the revenue effect.</td>
+          <td>Never considered it. It is the single largest swing factor in Indian payments and it is under live review.</td>
+        </tr>
+        <tr>
+          <td><strong>How are you handling the 2FA directions?</strong></td>
+          <td>Shipped before 1 April 2026, with a conversion measurement, and a plan for cross-border CNP by 1 October 2026.</td>
+          <td>Treating it as a compliance checkbox rather than a conversion opportunity. They've missed the strategic read.</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="note vio">
+      <span class="nl">Closing the loop</span>
+      <p>Three things carry across all three parts. <strong>One:</strong> the issuer takes roughly 70% of card economics, which is why everyone eventually wants to issue or lend. <strong>Two:</strong> India mandated its dominant payment rail to be free, which is why every Indian payments company is really a distribution business for something else. <strong>Three:</strong> volume metrics are the industry's preferred hiding place, and the discipline of asking "on what denominator, net of what" is most of what separates an informed read from a credulous one.</p>
+    </div>
+  </div>
+</section>
+
+<footer id="sources">
+  <div class="wrap">
+    <h3>Sources, estimates and open questions</h3>
+
+    <p><strong>PART I — SOURCING.</strong> Financial figures from FY2025 company filings: Visa Q4 FY25 earnings release (28 Oct 2025); Mastercard FY25 Form 10-K and Q4 release (29 Jan 2026); American Express Q4 2025 release (30 Jan 2026). Interchange litigation status reflects Judge Brian Cogan's preliminary approval of the revised settlement on 9 June 2026.</p>
+
+    <p><strong>PART I — ESTIMATES.</strong> The rupee split in &sect;2.2 and the India/US comparison are illustrative reconstructions, not published rates. Interchange schedules vary by card tier, MCC and channel; Indian acquirer and PA margins are commercially negotiated and undisclosed. The structure is reliable; treat specific basis points as indicative.</p>
+
+    <p><strong>PART I — UNRESOLVED.</strong> The interchange settlement has preliminary approval only. Final approval, objections and appeals are outstanding. Merchant-side implementation of surcharging and selective-decline rights would lag any final approval by an estimated 12&ndash;24 months.</p>
+
+    <p><strong>PART II — SOURCING.</strong> UPI volumes from NPCI monthly releases (June 2026 data) via multiple secondary reports. Company financials from ROC filings as reported by Entrackr, YourStory and MediaNama; Pine Labs IPO detail from Reuters and listing coverage; Razorpay DRHP detail from Business Today and Economic Times reporting of the 12 June 2026 confidential filing. RuPay-on-UPI fee revision from Paytm's March 2026 regulatory filing.</p>
+
+    <p><strong>PART II — CONFLICTS FLAGGED.</strong> Secondary sources disagree materially on UPI monthly figures &mdash; some report ~13bn monthly transactions for March 2026 against NPCI's ~22&ndash;23bn. The higher figures are consistent with NPCI's own releases and the FY25-26 total of 241.62bn; the lower appear to use a narrower base. NPCI-attributed figures were used throughout. Company revenue figures are <em>not</em> like-for-like: Pine Labs' &#8377;1,735cr is total income, Razorpay's &#8377;3,783cr is consolidated revenue across payments, banking and international.</p>
+
+    <p><strong>PART II — NOT PUBLICLY VERIFIABLE.</strong> The RuPay-on-UPI interchange split (~1.5% issuer / ~0.5% network) comes from industry analysis, not an NPCI public schedule &mdash; NPCI rate circulars are member-access only. Card MDR ranges are commercially negotiated and undisclosed.</p>
+
+    <p><strong>PART III — SOURCING.</strong> RBI Authentication Mechanisms for Digital Payment Transactions Directions, 2025 (RBI/2025-26/79, notified 25 September 2025, effective 1 April 2026; cross-border CNP requirements 1 October 2026) per KPMG India and IBM analysis. Success-rate benchmarks and the MDR-versus-success-rate asymmetry from Razorpay published merchant guidance, June 2026 &mdash; a vendor source with an interest in the framing, though the underlying arithmetic is verifiable. NPCI technical-versus-business decline taxonomy per PhonePe merchant documentation.</p>
+
+    <p><strong>PART III — ANALYTICAL CONSTRUCTIONS.</strong> Executive dashboards, structural tensions and bad-quarter scenarios are grounded in the industry's documented economics but are not survey data &mdash; no company publishes its internal metric set. Chargeback monitoring thresholds (~0.9&ndash;1%) are widely cited but vary by network programme and change over time.</p>
+
+    <p><strong>ON THE 30% CAP.</strong> NPCI's cap on any single third-party app provider exceeding 30% of UPI transaction volume carries a standing deadline of <strong>31 December 2026</strong>, set by a December 2024 circular &mdash; the third extension, after deadlines of 31 December 2022 and 31 December 2024. It is calculated on a rolling three-month average, and a breaching TPAP is required to halt new customer onboarding. Whether it is enforced or deferred a fourth time is unresolved.</p>
+
+    <p><strong>LIVE AT TIME OF WRITING.</strong> Three things move this analysis materially and none is settled: (1) the MDR-on-UPI policy review &mdash; Parliamentary Standing Committee report tabled 12 March 2026, Payments Council of India tiered-MDR proposal &mdash; with no binding notification yet; (2) the NPCI 30% cap deadline of 31 December 2026, roughly five months out; (3) Razorpay's DRHP, filed confidentially, so public financials, risk factors and issue size are not yet available. Anyone relying on this document after roughly Q4 2026 should re-verify all three.</p>
+
+    <p><strong>KNOWLEDGE BOUNDARY.</strong> This document was compiled on 22 July 2026 against a training cutoff of end-January 2026. Everything after that date &mdash; including the June 2026 settlement approval, the April 2026 TPAP fee revision, the RBI 2FA directions taking effect, Razorpay's DRHP and Pine Labs' listing performance &mdash; was retrieved from current sources rather than recalled, and is cited accordingly.</p>
+  </div>
+</footer>
+
+<button class="totop" id="totop" aria-label="Back to top">&uarr;</button>
+<script>
+(function(){
+  var b=document.getElementById('totop');
+  function s(){ if(window.scrollY>900){b.classList.add('on')}else{b.classList.remove('on')} }
+  window.addEventListener('scroll',s,{passive:true}); s();
+  b.addEventListener('click',function(){
+    var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({top:0,behavior:reduce?'auto':'smooth'});
+  });
+})();
+</script>
+</body>
+</html>
