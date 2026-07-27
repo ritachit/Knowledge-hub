@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Bias Compendium</title>
+<style>
+  :root{
+    --bg:#F7F5F0; --ink:#1A1815; --muted:#6B6459; --line:#E2DDD3;
+    --card:#FFFFFF; --shadow:0 1px 2px rgba(26,24,21,.04),0 8px 24px rgba(26,24,21,.05);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.5;-webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1140px;margin:0 auto;padding:0 20px}
+  /* Header */
+  header{padding:54px 0 26px;border-bottom:1px solid var(--line)}
+  .eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  h1{font-size:clamp(34px,6vw,60px);line-height:1.02;font-weight:800;letter-spacing:-.02em;margin:10px 0 12px;
+     font-family:Georgia,"Times New Roman",serif}
+  h1 em{font-style:italic;color:var(--muted)}
+  .lede{max-width:680px;color:var(--muted);font-size:16px}
+  .lede b{color:var(--ink);font-weight:600}
+  /* Controls */
+  .controls{position:sticky;top:0;z-index:30;background:rgba(247,245,240,.92);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:14px 0}
+  .ctl-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .search{flex:1;min-width:220px;position:relative}
+  .search input{width:100%;padding:11px 14px 11px 38px;border:1px solid var(--line);border-radius:10px;
+    font-size:15px;background:var(--card);color:var(--ink);outline:none}
+  .search input:focus{border-color:#B9B1A2;box-shadow:0 0 0 3px rgba(185,177,162,.18)}
+  .search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.45}
+  .btn{padding:11px 15px;border:1px solid var(--line);background:var(--card);border-radius:10px;
+    font-size:14px;font-weight:600;cursor:pointer;color:var(--ink);white-space:nowrap}
+  .btn:hover{border-color:#B9B1A2}
+  .btn:focus-visible,.pill:focus-visible,.card:focus-visible{outline:2px solid #2E6F76;outline-offset:2px}
+  .count{font-size:13px;color:var(--muted);margin-left:auto;font-variant-numeric:tabular-nums}
+  .pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
+  .pill{font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:999px;cursor:pointer;
+    border:1px solid var(--line);background:var(--card);color:var(--muted);display:flex;align-items:center;gap:6px}
+  .pill .dot{width:8px;height:8px;border-radius:50%}
+  .pill[aria-pressed="true"]{color:#fff;border-color:transparent}
+  /* Grid */
+  main{padding:24px 0 70px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;
+    box-shadow:var(--shadow);cursor:pointer;transition:transform .12s ease,box-shadow .12s ease;text-align:left}
+  .card:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(26,24,21,.05),0 14px 32px rgba(26,24,21,.09)}
+  .tag{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+    display:inline-flex;align-items:center;gap:6px;color:var(--muted)}
+  .tag .dot{width:7px;height:7px;border-radius:50%}
+  .card h3{font-size:18px;font-weight:700;letter-spacing:-.01em;margin:9px 0 6px;
+    font-family:Georgia,serif}
+  .def{font-size:14px;color:var(--muted)}
+  .more{max-height:0;overflow:hidden;transition:max-height .26s ease}
+  .card[aria-expanded="true"] .more{max-height:340px}
+  .more-inner{padding-top:13px;margin-top:13px;border-top:1px dashed var(--line)}
+  .lbl{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#A39A89}
+  .more p{font-size:13.5px;margin:3px 0 11px;color:var(--ink)}
+  .more p:last-child{margin-bottom:2px}
+  .chev{float:right;color:#C3BBAC;font-size:13px;transition:transform .2s;margin-top:2px}
+  .card[aria-expanded="true"] .chev{transform:rotate(180deg)}
+  .empty{text-align:center;color:var(--muted);padding:60px 20px;font-size:15px}
+  footer{border-top:1px solid var(--line);padding:24px 0 50px;color:var(--muted);font-size:12.5px;line-height:1.7}
+  footer b{color:var(--ink)}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="eyebrow">Cognitive &middot; Behavioural &middot; Statistical &middot; Machine</div>
+    <h1>The Bias <em>Compendium</em></h1>
+    <p class="lede">A browsable field guide to the systematic errors that bend judgment — in <b>perception, marketing, statistics, and now AI</b>. Search, filter by family, and tap any card for an example and a way to push back. Not every entry is strictly a "bias" — some are heuristics, statistical effects, or folk laws — and they're labelled honestly.</p>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="wrap">
+    <div class="ctl-row">
+      <label class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="q" type="search" placeholder="Search 100+ biases, effects and laws…" autocomplete="off" aria-label="Search">
+      </label>
+      <button class="btn" id="rand">Random</button>
+      <button class="btn" id="clear">Reset</button>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="pills" id="pills"></div>
+  </div>
+</div>
+
+<main>
+  <div class="wrap">
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty" hidden>No matches. Try a different term or reset the filters.</div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <b>On accuracy:</b> definitions are kept deliberately tight. A few well-known entries (the backfire effect, Dunning–Kruger's exact shape) are debated in the literature — treat the one-liners as orientation, not the final word. Folk "laws" (Murphy, Parkinson, Pareto) are adages and rules of thumb, not biases. The AI section reflects failure modes that are actively discussed as of 2025–26 and will keep evolving.
+  </div>
+</footer>
+
+<script>
+/* ---- data injected below ---- */
+// Dataset for The Bias Compendium
+// Each entry: name, cat, def (one-line), ex (concrete example), counter (how to push back)
+const DATA = [
+// ---- Memory & Hindsight ----
+["Hindsight bias","memory","Once you know the outcome, you believe you 'knew it all along'.","After a startup fails, ex-employees insist the red flags were obvious — though none flagged them at the time.","Keep a written prediction log dated before outcomes are known."],
+["Recency bias","memory","Recent events weigh more heavily than earlier ones.","An investor dumps a fund after one bad quarter, ignoring a decade of strong returns.","Look at full base-period data, not the last data point."],
+["Peak–end rule","memory","We judge an experience by its most intense moment and its ending, not the average.","A 3-hour flight is remembered as 'great' because of a smooth landing and one good meal.","Rate experiences on logged moments, not a single recollection."],
+["Rosy retrospection","memory","The past is remembered more fondly than it was actually experienced.","'College was the best time of my life' — forgetting the exam stress and broke months.","Check old journals/photos against the memory."],
+["Telescoping effect","memory","Misjudging when past events happened — recent ones feel older, distant ones feel recent.","'That was two years ago' for something that happened five years ago.","Anchor events to dated records."],
+["Misinformation effect","memory","Post-event information distorts the original memory.","Leading questions reshape an eyewitness's account of an accident.","Record first-hand accounts immediately, before discussion."],
+["Zeigarnik effect","memory","Unfinished tasks are remembered better than completed ones.","A cliffhanger keeps you thinking about a show all week.","Write down open loops to free mental bandwidth."],
+["Google / digital amnesia effect","memory","We forget information we expect to be able to look up.","Not memorizing phone numbers because they're saved in the phone.","Deliberately rehearse what matters offline."],
+["Spacing effect","memory","Information is retained better when learning is spread over time.","Cramming the night before fades fast; spaced review sticks.","Use spaced repetition for durable learning."],
+
+// ---- Judgment & Heuristics ----
+["Availability heuristic","judgment","Judging likelihood by how easily examples come to mind.","People fear plane crashes more than car crashes because crashes are vivid in the news.","Look up base rates instead of recalling instances."],
+["Representativeness heuristic","judgment","Judging probability by how much something resembles a stereotype.","Assuming a quiet man who likes poetry is a librarian, not a salesman — ignoring that salesmen vastly outnumber librarians.","Weight base rates against the stereotype."],
+["Anchoring","judgment","First number seen disproportionately shapes the final estimate.","A '₹50,000, now ₹20,000' tag makes ₹20,000 feel cheap regardless of true value.","Generate your own estimate before seeing the anchor."],
+["Affect heuristic","judgment","Current emotion substitutes for reasoned judgment of risk/benefit.","Liking a brand makes you rate its risks lower and benefits higher.","Separate 'how I feel' from 'what's true' explicitly."],
+["Base rate neglect","judgment","Ignoring the underlying frequency when judging probability.","A 99%-accurate test for a rare disease still yields mostly false positives — most people miss this.","Always ask 'how common is this to begin with?'"],
+["Conjunction fallacy","judgment","Thinking a specific combination is more likely than one of its parts.","'Bank teller AND feminist' rated more likely than just 'bank teller'.","Remember: adding conditions can only lower probability."],
+["Attribute substitution","judgment","Answering an easier question than the one actually asked.","'Is this a good investment?' silently becomes 'do I like this company?'.","Re-read the actual question being decided."],
+["Denominator neglect","judgment","Focusing on numerators while ignoring the total they're drawn from.","'10 deaths' sounds worse than '0.0001%' even when identical.","Always convert raw counts to rates."],
+
+// ---- Belief & Reasoning ----
+["Confirmation bias","belief","Seeking and favoring information that confirms existing beliefs.","Reading only news outlets that agree with you and dismissing the rest.","Actively seek the strongest opposing case."],
+["Motivated reasoning","belief","Reasoning toward a conclusion you want rather than the evidence.","Scrutinizing a study only when its findings are inconvenient.","Apply the same evidence bar to liked and disliked claims."],
+["Backfire effect","belief","Contradictory evidence sometimes strengthens the original belief. (Note: weaker/less consistent than once thought.)","Correcting a myth occasionally makes a believer cling harder.","Lead with the fact, not the myth; repeat the truth."],
+["Belief perseverance","belief","Holding a belief even after its basis is disproved.","Trusting a first impression of someone after it's shown to be wrong.","Ask what evidence would change your mind — then check for it."],
+["Dunning–Kruger effect","belief","Low competence pairs with overconfidence; experts often underrate themselves.","A beginner is sure they've 'got it'; the expert hedges.","Seek external benchmarks and feedback."],
+["Curse of knowledge","belief","Experts can't imagine not knowing what they know.","A senior dev writes docs no beginner can follow.","Test explanations on an actual novice."],
+["Illusory truth effect","belief","Repetition makes statements feel truer.","A repeated slogan or rumor starts to feel like fact.","Judge claims on evidence, not familiarity."],
+["Semmelweis reflex","belief","Reflexively rejecting evidence that contradicts established norms.","Doctors dismissing handwashing because it broke convention.","Evaluate novel claims on data, not on who they offend."],
+["Ostrich effect","belief","Avoiding information you expect to be negative.","Not checking your portfolio during a crash.","Schedule reviews regardless of expected mood."],
+
+// ---- Social & Self ----
+["Fundamental attribution error","social","Others' actions blamed on character; our own on circumstances.","'He's late because he's lazy' vs 'I'm late because of traffic'.","Ask what situation could explain the behavior."],
+["Self-serving bias","social","Crediting yourself for success, blaming externals for failure.","'I won because I'm skilled; I lost because of bad luck.'","Use the same explanation standard for wins and losses."],
+["In-group bias","social","Favoring people in your own group.","Rating identical work higher when it's from your team.","Anonymize evaluations where possible."],
+["False consensus effect","social","Overestimating how many people share your views.","Assuming 'everyone' agrees with your political take.","Seek actual distribution data, not your circle's."],
+["Halo effect","social","One positive trait colors overall judgment.","Attractive or confident people are assumed competent.","Score each attribute independently."],
+["Horn effect","social","One negative trait drags down the whole judgment.","A typo in a CV makes the whole candidate seem sloppy.","Separate the flaw from unrelated dimensions."],
+["Bystander effect","social","People are less likely to help when others are present.","No one calls for help in a crowd, assuming someone else will.","Address a specific person directly when you need help."],
+["Bandwagon effect","social","Adopting beliefs because many others have.","Buying a stock because it's trending, not on fundamentals.","Decide on merits before checking popularity."],
+["Authority bias","social","Over-trusting the opinion of an authority figure.","Following a confident expert outside their actual domain.","Check whether the authority is relevant and evidenced."],
+["Just-world hypothesis","social","Believing people get what they deserve.","Assuming victims must have 'done something' to cause harm.","Separate outcome from desert; check for luck/structure."],
+
+// ---- Decision & Risk ----
+["Loss aversion","decision","Losses hurt about twice as much as equivalent gains feel good.","Holding a losing stock to avoid 'realizing' the loss.","Frame decisions in terms of final state, not gain/loss."],
+["Sunk cost fallacy","decision","Continuing because of already-spent resources.","Finishing a bad movie 'because I paid for the ticket'.","Decide based only on future costs and benefits."],
+["Endowment effect","decision","Valuing something more just because you own it.","Demanding more to sell a mug than you'd pay to buy it.","Ask what you'd pay if you didn't already own it."],
+["Framing effect","decision","Identical facts feel different depending on wording.","'90% survival' is chosen over '10% mortality' — same odds.","Restate the choice in the opposite frame."],
+["Status quo bias","decision","Preferring things to stay as they are.","Sticking with default plans/settings even when worse.","Ask: would I actively choose this option today?"],
+["Hyperbolic discounting","decision","Overvaluing immediate rewards over larger later ones.","Taking ₹100 now over ₹150 next month.","Compare options at the same point in time."],
+["Ambiguity aversion","decision","Preferring known risks over unknown ones.","Choosing a low-but-known return over an uncertain higher one.","Estimate the unknown range rather than avoiding it."],
+["Default effect","decision","Going with the pre-selected option.","Organ donation rates soar under opt-out defaults.","Treat the default as just one option, not the answer."],
+["Zero-risk bias","decision","Preferring to fully eliminate a small risk over largely reducing a big one.","Spending heavily to remove a tiny hazard while a larger one remains.","Compare total risk reduction per unit cost."],
+["Planning fallacy","decision","Underestimating time/cost despite past overruns.","'This project will take two weeks' — it takes two months.","Use historical 'reference class' timelines."],
+["Optimism bias","decision","Believing you're less likely than others to face bad outcomes.","'Accidents/illness won't happen to me.'","Use population base rates for your own forecasts."],
+["Choice overload","decision","Too many options reduce satisfaction and ability to decide.","24 jam varieties sell worse than 6.","Pre-filter to a shortlist before deciding."],
+
+// ---- Marketing & Persuasion ----
+["Reciprocity (Cialdini)","marketing","Feeling obliged to return a favor.","A free sample makes you more likely to buy.","Notice when a 'gift' is engineering obligation."],
+["Scarcity (Cialdini)","marketing","Things feel more valuable when limited.","'Only 2 left in stock!' drives urgency.","Ask if you'd want it without the scarcity cue."],
+["Authority (Cialdini)","marketing","Persuaded by perceived experts or symbols of authority.","'9 of 10 dentists recommend…' in ads.","Verify the credential and its relevance."],
+["Commitment & consistency (Cialdini)","marketing","We act consistently with prior commitments.","A small 'yes' (sign-up) leads to bigger purchases.","Re-evaluate each step on its own merits."],
+["Liking (Cialdini)","marketing","We say yes to people we like or find similar.","Salespeople mirror your style to build rapport.","Separate the messenger from the offer."],
+["Social proof (Cialdini)","marketing","Copying others' behavior as a guide to our own.","'Best-seller' and review counts steer choices.","Check whether the crowd has the same goals as you."],
+["Unity (Cialdini's 7th)","marketing","Persuasion via shared identity ('we', family, tribe).","'As fellow alumni…' framing in a pitch.","Notice when identity is substituting for an argument."],
+["Decoy effect","marketing","A third inferior option makes another look better.","A pointless 'medium' popcorn pushes you to 'large'.","Compare the two real options directly, ignore the decoy."],
+["Charm pricing","marketing","Prices ending in 9 feel disproportionately lower.","₹999 reads as much less than ₹1,000.","Round prices mentally before judging value."],
+["Price anchoring","marketing","A high 'original' price makes the sale price feel cheap.","'MRP ₹5,000, yours for ₹1,999.'","Judge against true market price, not the MRP."],
+["FOMO","marketing","Fear of missing out drives action.","Flash sales and countdown timers.","Ask if the deal genuinely beats your alternatives."],
+["Foot-in-the-door","marketing","A small request makes a later large one more likely.","Agreeing to a survey, then to a donation.","Treat each request as independent."],
+["Door-in-the-face","marketing","A large refused request makes a smaller one succeed.","'Donate ₹10,000?' … 'Okay, just ₹500?'","Anchor on what you'd give unprompted."],
+["Veblen effect","marketing","Higher price increases demand for status goods.","Luxury bags sell more when priced higher.","Separate signaling value from use value."],
+["Goal-gradient effect","marketing","Effort increases as you near a reward.","A loyalty card pre-stamped with 2 of 10 gets filled faster.","Notice artificial 'progress' framing."],
+["Mere exposure effect","marketing","Repeated exposure breeds preference.","Familiar brands feel more trustworthy.","Distinguish familiarity from quality."],
+["Pratfall effect","marketing","A minor flaw can make a likeable entity more appealing.","'The Avis: we're #2, so we try harder' framing.","Judge competence on substance, not charm."],
+
+// ---- Statistical & Logical ----
+["Regression to the mean","stats","Extreme measurements tend to be followed by more average ones.","A player's 'sophomore slump' after a stellar rookie year.","Expect extremes to normalize; don't over-explain them."],
+["Survivorship bias","stats","Only looking at successes that 'survived' a filter.","Studying winning startups ignores the silent graveyard of failures.","Ask where the missing/failed cases are."],
+["Selection bias","stats","A non-representative sample distorts conclusions.","Online polls only capture people who chose to respond.","Check how the sample was drawn."],
+["Simpson's paradox","stats","A trend in groups reverses when groups are combined.","A treatment helps both subgroups yet looks worse overall.","Inspect data at the right level of aggregation."],
+["Gambler's fallacy","stats","Believing past random events affect future independent ones.","'Red is due' after a run of black at roulette.","Independent events have no memory."],
+["Hot-hand fallacy","stats","Believing a streak predicts continued success in random processes.","Betting big after a few wins in chance games.","Test whether the process is actually skill-based."],
+["Texas sharpshooter fallacy","stats","Finding a pattern after the fact by cherry-picking data.","Drawing a target around bullet holes already on the wall.","Pre-register the hypothesis before looking."],
+["Base rate fallacy","stats","Ignoring general prevalence in favor of specific info.","Over-trusting a positive test for a rare condition.","Combine the test accuracy with prevalence (Bayes)."],
+["p-hacking","stats","Tweaking analysis until a result hits significance.","Trying 20 variables until one shows p<0.05.","Pre-specify analyses; correct for multiple comparisons."],
+["McNamara fallacy","stats","Deciding solely on what's measurable, ignoring the rest.","Judging a war or product purely by quantifiable metrics.","Name what the numbers leave out."],
+["Berkson's paradox","stats","A spurious negative correlation from a selected sample.","Among hospital patients, two unrelated diseases appear linked.","Check whether selection created the correlation."],
+["Ecological fallacy","stats","Inferring individual traits from group averages.","Assuming a rich country's average person is rich.","Don't apply aggregate stats to individuals."],
+
+// ---- Phenomena & 'Laws' ----
+["Placebo effect","laws","Improvement from an inert treatment due to belief.","Sugar pills reduce pain when believed to be medicine.","Use blinded controls to isolate true effect."],
+["Nocebo effect","laws","Negative outcomes from negative expectation.","Listing side effects makes patients feel them.","Frame information neutrally where ethical."],
+["Murphy's law","laws","Anything that can go wrong, will. (Adage, not a law.)","The toast lands butter-side down at the worst moment.","Build slack and redundancy for critical paths."],
+["Hawthorne effect","laws","People change behavior when they know they're observed.","Workers' output rises simply because they're being studied.","Use unobtrusive or baseline measurement."],
+["Pygmalion effect","laws","Higher expectations improve performance.","Students do better when teachers expect more of them.","Set and communicate genuinely high standards."],
+["Streisand effect","laws","Trying to suppress info makes it spread more.","A takedown demand draws huge attention to the content.","Weigh the attention cost before suppressing."],
+["Goodhart's law","laws","When a measure becomes a target, it stops being a good measure.","Gaming a KPI while the real goal degrades.","Track multiple measures; watch for gaming."],
+["Parkinson's law","laws","Work expands to fill the time available.","A task given a week takes a week.","Set tight, deliberate deadlines."],
+["Dunbar's number","laws","A cognitive limit (~150) on stable social relationships.","Communities fracture as they grow past ~150.","Design structures around small stable groups."],
+["Pareto principle (80/20)","laws","Roughly 80% of effects come from 20% of causes.","20% of customers drive 80% of revenue.","Find and prioritize the vital few."],
+["Peter principle","laws","People rise to their level of incompetence.","A great engineer promoted into a poor manager.","Promote on fit for the next role, not the last."],
+["Cobra effect","laws","An incentive backfires by rewarding the wrong behavior.","A bounty on cobras leads people to breed cobras.","Stress-test incentives for perverse responses."],
+["Survivorship-driven 'secrets of success'","laws","Success advice drawn only from winners.","'Drop out like the famous founders' ignores the failures.","Demand the full distribution, not the highlight reel."],
+
+// ---- AI & ML Biases ----
+["Training data bias","ai","A model inherits skews present in its training data.","A hiring model trained on past hires repeats historical discrimination.","Audit data composition; test on balanced sets."],
+["Algorithmic / sampling bias","ai","Skewed sampling produces systematically skewed outputs.","Facial recognition underperforms on under-represented groups.","Measure error rates per subgroup, not just overall."],
+["Automation bias","ai","Over-trusting automated outputs over your own judgment.","A driver follows GPS into a closed road.","Keep humans accountable for final decisions."],
+["Automation complacency","ai","Reduced vigilance when a system 'usually' works.","Skimming AI-drafted code without real review.","Build mandatory review checkpoints."],
+["Anthropomorphism bias","ai","Attributing human understanding/intent to AI.","Assuming a chatbot 'means' or 'feels' what it says.","Treat outputs as statistical, not sentient."],
+["LLM sycophancy","ai","Models tell users what they want to hear over what's true.","An assistant agrees with a wrong claim to please the user.","Ask the model to argue the opposing case; reward honesty."],
+["Hallucination / confabulation","ai","Models state fluent but fabricated information.","An AI cites a paper or case that doesn't exist.","Verify factual claims against primary sources."],
+["Position / order bias","ai","Output is swayed by where info sits in the prompt.","A model favors the first or last option presented.","Randomize order; test sensitivity to position."],
+["Context recency bias","ai","Recent context tokens dominate over earlier ones.","A model forgets instructions given early in a long chat.","Re-state key constraints near the decision point."],
+["Feedback loop bias","ai","A model's outputs become its future training data, amplifying skew.","Recommender pushes content that trains it to push more of it.","Inject diverse/exogenous data; monitor drift."],
+["Representation bias","ai","Some groups or cases are under-represented in the model's world.","Medical AI trained mostly on one population fails on others.","Ensure coverage across the deployment population."],
+["Prompt sensitivity","ai","Tiny wording changes flip the output.","Rephrasing a question yields a contradictory answer.","Test multiple phrasings; ensemble responses."],
+["Reward hacking (RLHF)","ai","A model optimizes the proxy reward, not the true goal.","Producing confident-sounding answers because raters like confidence.","Design rewards robust to gaming; red-team them."],
+["Mode collapse","ai","A model collapses to a narrow set of safe outputs.","Every generated image/answer starts to look the same.","Tune diversity; monitor output entropy."],
+["Evaluation / benchmark bias","ai","Benchmarks reward narrow skills that miss real-world use.","A model tops a leaderboard yet fails in production.","Evaluate on tasks that mirror real deployment."],
+["Deployment / distribution shift","ai","Real-world data differs from training data.","A model trained pre-2020 misreads post-2020 behavior.","Monitor live performance; retrain on fresh data."],
+["Confirmation bias in prompting","ai","Users phrase prompts to elicit the answer they already want.","'Explain why X is the best choice' suppresses counter-evidence.","Ask neutrally: 'Compare X and Y on the evidence.'"],
+];
+
+const CATS = {
+  memory:   ["Memory & Hindsight","#7C9A8E"],
+  judgment: ["Judgment & Heuristics","#C08552"],
+  belief:   ["Belief & Reasoning","#A2678A"],
+  social:   ["Social & Self","#5E7CA6"],
+  decision: ["Decision & Risk","#B0613E"],
+  marketing:["Marketing & Persuasion","#C9A227"],
+  stats:    ["Statistical & Logical","#4F7A6A"],
+  laws:     ["Phenomena & 'Laws'","#8A6FA8"],
+  ai:       ["AI & ML Biases","#2E6F76"],
+};
+
+/* ---- app logic ---- */
+const grid=document.getElementById('grid');
+const pills=document.getElementById('pills');
+const q=document.getElementById('q');
+const countEl=document.getElementById('count');
+const emptyEl=document.getElementById('empty');
+let active=new Set();              // active category filters
+let cards=[];                      // {el, name, def, ex, counter, cat}
+
+// build pills
+Object.entries(CATS).forEach(([key,[label,color]])=>{
+  const b=document.createElement('button');
+  b.className='pill';b.setAttribute('aria-pressed','false');
+  b.dataset.cat=key;
+  b.innerHTML='<span class="dot" style="background:'+color+'"></span>'+label;
+  b.onclick=()=>{ if(active.has(key)){active.delete(key);b.setAttribute('aria-pressed','false');b.style.background='';}
+                 else{active.add(key);b.setAttribute('aria-pressed','true');b.style.background=color;} render();};
+  pills.appendChild(b);
+});
+
+// build cards once
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+DATA.forEach(([name,cat,def,ex,counter])=>{
+  const [label,color]=CATS[cat];
+  const el=document.createElement('button');
+  el.className='card';el.type='button';el.setAttribute('aria-expanded','false');
+  el.innerHTML=
+    '<span class="chev">&#9660;</span>'+
+    '<span class="tag"><span class="dot" style="background:'+color+'"></span>'+label+'</span>'+
+    '<h3>'+esc(name)+'</h3>'+
+    '<div class="def">'+esc(def)+'</div>'+
+    '<div class="more"><div class="more-inner">'+
+      '<div class="lbl">In the wild</div><p>'+esc(ex)+'</p>'+
+      '<div class="lbl">How to counter it</div><p>'+esc(counter)+'</p>'+
+    '</div></div>';
+  el.onclick=()=>el.setAttribute('aria-expanded',el.getAttribute('aria-expanded')==='true'?'false':'true');
+  cards.push({el,name:name.toLowerCase(),def:def.toLowerCase(),ex:ex.toLowerCase(),counter:counter.toLowerCase(),cat});
+  grid.appendChild(el);
+});
+
+function render(){
+  const term=q.value.trim().toLowerCase();
+  let shown=0;
+  cards.forEach(c=>{
+    const catOk=active.size===0||active.has(c.cat);
+    const textOk=!term||c.name.includes(term)||c.def.includes(term)||c.ex.includes(term)||c.counter.includes(term);
+    const vis=catOk&&textOk;
+    c.el.style.display=vis?'':'none';
+    if(vis)shown++;
+  });
+  countEl.textContent=shown+' of '+cards.length+' shown';
+  emptyEl.hidden=shown!==0;
+}
+
+q.addEventListener('input',render);
+document.getElementById('clear').onclick=()=>{
+  q.value='';active.clear();
+  document.querySelectorAll('.pill').forEach(p=>{p.setAttribute('aria-pressed','false');p.style.background='';});
+  render();q.focus();
+};
+document.getElementById('rand').onclick=()=>{
+  const vis=cards.filter(c=>c.el.style.display!=='none');
+  if(!vis.length)return;
+  const pick=vis[Math.floor(Math.random()*vis.length)];
+  cards.forEach(c=>c.el.setAttribute('aria-expanded','false'));
+  pick.el.setAttribute('aria-expanded','true');
+  pick.el.scrollIntoView({behavior:'smooth',block:'center'});
+  pick.el.focus();
+};
+render();
+</script>
+</body>
+</html>
