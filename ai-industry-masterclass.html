@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The AI Industry, 2022–2026 — A Masterclass</title>
+<style>
+  :root{
+    --bg:#faf6ee; --bg2:#f3ecdd; --card:#fffdf8; --card2:#f1e9d8;
+    --ink:#26231c; --ink2:#5c5747; --ink3:#8d8571;
+    --accent:#2e6e4e; --accent2:#c97a2b; --green:#2e6e4e; --gold:#9a6a12;
+    --border:#e3d9c4; --radius:16px;
+    --us:#2b5fad; --in:#bb4d12;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.65}
+  ::selection{background:var(--accent);color:#fff}
+
+  .hero{padding:64px 24px 40px;text-align:center;background:
+    radial-gradient(900px 400px at 20% -10%, rgba(46,110,78,.12), transparent 60%),
+    radial-gradient(900px 400px at 80% -10%, rgba(201,122,43,.12), transparent 60%);}
+  .hero .kicker{font-size:13px;letter-spacing:.25em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:14px}
+  .hero h1{font-size:clamp(30px,5vw,52px);font-weight:800;letter-spacing:-.02em;line-height:1.15}
+  .hero h1 span{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .hero p{max-width:680px;margin:16px auto 0;color:var(--ink2);font-size:17px}
+
+  .progress-wrap{max-width:640px;margin:28px auto 0}
+  .progress-meta{display:flex;justify-content:space-between;font-size:13px;color:var(--ink3);margin-bottom:8px}
+  .progress-bar{height:8px;background:var(--card2);border-radius:99px;overflow:hidden;border:1px solid var(--border)}
+  .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px;transition:width .4s ease}
+
+  .toolbar{position:sticky;top:0;z-index:50;background:rgba(250,246,238,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 24px}
+  .toolbar-inner{max-width:1060px;margin:0 auto;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .search{flex:1;min-width:220px;position:relative}
+  .search input{width:100%;padding:10px 14px 10px 38px;border-radius:99px;border:1px solid var(--border);background:var(--card);color:var(--ink);font-size:14px;outline:none}
+  .search input:focus{border-color:var(--accent)}
+  .search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:var(--ink3)}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap}
+  .tab{padding:8px 15px;border-radius:99px;border:1px solid var(--border);background:var(--card);color:var(--ink2);font-size:13.5px;font-weight:600;cursor:pointer;transition:.18s;white-space:nowrap}
+  .tab:hover{border-color:var(--accent);color:var(--ink)}
+  .tab.active{background:var(--accent);border-color:transparent;color:#fff}
+
+  .container{max-width:1060px;margin:0 auto;padding:36px 24px 80px}
+  .section-head{margin:44px 0 6px}
+  .section-head h2{font-size:26px;font-weight:800;letter-spacing:-.01em}
+  .section-head .emoji{margin-right:10px}
+  .section-head p{color:var(--ink2);font-size:15px;margin-top:6px;max-width:760px}
+
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-top:18px;overflow:hidden;transition:border-color .2s;box-shadow:0 1px 3px rgba(60,50,30,.06)}
+  .card:hover{border-color:#cbbe9f;box-shadow:0 3px 10px rgba(60,50,30,.08)}
+  .card.learned{border-color:rgba(46,110,78,.5)}
+  .card-head{display:flex;align-items:center;gap:14px;padding:18px 22px;cursor:pointer;user-select:none}
+  .card-num{flex-shrink:0;width:34px;height:34px;border-radius:10px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--accent)}
+  .card.learned .card-num{background:rgba(46,110,78,.12);color:var(--green)}
+  .card-titles{flex:1;min-width:0}
+  .card-titles h3{font-size:17.5px;font-weight:700}
+  .card-titles .one-liner{font-size:14px;color:var(--ink2);margin-top:2px}
+  .chev{flex-shrink:0;width:18px;height:18px;stroke:var(--ink3);transition:transform .25s}
+  .card.open .chev{transform:rotate(180deg)}
+  .card-body{display:none;padding:0 22px 22px;border-top:1px solid var(--border)}
+  .card.open .card-body{display:block;animation:fadeIn .25s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+  .block{margin-top:18px}
+  .block-label{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+  .block-label.teach{color:var(--accent)}
+  .block-label.trap{color:var(--gold)}
+  .block p{font-size:15px;color:#403b2e}
+  .block p+p{margin-top:8px}
+  .block b{color:var(--ink)}
+
+  .examples{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+  @media(max-width:680px){.examples{grid-template-columns:1fr}}
+  .ex{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px}
+  .ex .flag{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+  .ex.us .flag{color:var(--us)} .ex.in .flag{color:var(--in)}
+  .ex .co{font-weight:700;color:var(--ink);font-size:15px}
+  .ex p{font-size:14px;color:var(--ink2);margin-top:4px}
+
+  .check{margin-top:18px;background:rgba(46,110,78,.06);border:1px dashed rgba(46,110,78,.4);border-radius:12px;padding:16px}
+  .check .q{font-size:14.5px;font-weight:600;color:var(--ink)}
+  .check .a{display:none;font-size:14px;color:var(--ink2);margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+  .check.revealed .a{display:block;animation:fadeIn .25s}
+  .reveal-btn{margin-top:10px;padding:7px 14px;border-radius:99px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-size:13px;font-weight:700;cursor:pointer}
+  .reveal-btn:hover{background:var(--accent);color:#fff}
+  .check.revealed .reveal-btn{display:none}
+
+  .gotit{margin-top:18px;width:100%;padding:11px;border-radius:12px;border:1px solid var(--border);background:var(--card2);color:var(--ink2);font-size:14px;font-weight:700;cursor:pointer;transition:.18s}
+  .gotit:hover{border-color:var(--green);color:var(--green)}
+  .card.learned .gotit{background:rgba(46,110,78,.1);border-color:rgba(46,110,78,.5);color:var(--green)}
+
+  /* Timeline */
+  .extra{margin-top:56px}
+  .extra h2{font-size:26px;font-weight:800}
+  .extra > p{color:var(--ink2);font-size:15px;margin-top:6px;max-width:760px}
+  .timeline{margin-top:26px;position:relative;padding-left:26px}
+  .timeline::before{content:'';position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:var(--border)}
+  .tl-item{position:relative;padding:0 0 26px 18px}
+  .tl-item::before{content:'';position:absolute;left:-26px;top:7px;width:16px;height:16px;border-radius:50%;background:var(--bg);border:3px solid var(--accent)}
+  .tl-item.big::before{background:var(--accent2);border-color:var(--accent2)}
+  .tl-item .when{font-size:12.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+  .tl-item.big .when{color:var(--accent2)}
+  .tl-item h4{font-size:16.5px;font-weight:700;margin-top:2px}
+  .tl-item p{font-size:14.5px;color:var(--ink2);margin-top:4px;max-width:760px}
+
+  /* Quotes */
+  .quote-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:26px}
+  @media(max-width:760px){.quote-grid{grid-template-columns:1fr}}
+  .quote-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;box-shadow:0 1px 3px rgba(60,50,30,.06)}
+  .quote-card blockquote{font-size:16.5px;font-weight:600;line-height:1.5;color:var(--ink)}
+  .quote-card blockquote::before{content:'“';color:var(--accent2);font-size:30px;line-height:0;vertical-align:-8px;margin-right:2px}
+  .quote-card .who{margin-top:12px;font-size:13.5px;font-weight:700;color:var(--accent)}
+  .quote-card .ctx{font-size:13.5px;color:var(--ink2);margin-top:6px}
+
+  /* Players */
+  .player-group{margin-top:26px}
+  .player-group h3{font-size:15px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent2)}
+  .player-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:12px}
+  .player{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:15px;box-shadow:0 1px 3px rgba(60,50,30,.05)}
+  .player .nm{font-weight:700;font-size:15px}
+  .player .tag{font-size:12px;color:var(--accent);font-weight:700;margin-top:1px}
+  .player p{font-size:13.5px;color:var(--ink2);margin-top:6px}
+
+  /* Quiz */
+  .quiz{margin-top:64px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:32px;box-shadow:0 1px 3px rgba(60,50,30,.06)}
+  .quiz h2{font-size:24px;font-weight:800}
+  .quiz>p{color:var(--ink2);font-size:15px;margin-top:6px}
+  .qq{margin-top:26px}
+  .qq .qt{font-weight:700;font-size:15.5px}
+  .opts{display:grid;gap:8px;margin-top:12px}
+  .opt{text-align:left;padding:11px 15px;border-radius:11px;border:1px solid var(--border);background:var(--bg2);color:var(--ink2);font-size:14px;cursor:pointer;transition:.15s}
+  .opt:hover{border-color:var(--accent);color:var(--ink)}
+  .opt.correct{border-color:var(--green);background:rgba(46,110,78,.1);color:var(--green)}
+  .opt.wrong{border-color:#b3402f;background:rgba(179,64,47,.08);color:#b3402f}
+  .opt:disabled{cursor:default}
+  .qq .why{display:none;font-size:13.5px;color:var(--ink2);margin-top:10px;padding:10px 14px;background:var(--bg2);border-radius:10px;border-left:3px solid var(--accent)}
+  .qq.done .why{display:block}
+  .quiz-score{margin-top:28px;text-align:center;font-size:17px;font-weight:700;display:none}
+
+  .footer{text-align:center;color:var(--ink3);font-size:13px;padding:0 24px 56px}
+  .hidden{display:none!important}
+  .no-results{margin-top:32px;text-align:center;color:var(--ink3);display:none}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="kicker">Interactive Masterclass · Updated June 2026</div>
+  <h1>The AI Industry, <span>2022–2026</span></h1>
+  <p>Everything that happened since ChatGPT — 32 deep concepts, the full timeline, the famous quotes, and the players. Built so you can hold your own with insiders, not just nod along.</p>
+  <div class="progress-wrap">
+    <div class="progress-meta"><span id="prog-label">0 / 32 concepts mastered</span><span id="prog-pct">0%</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+  </div>
+</div>
+
+<div class="toolbar">
+  <div class="toolbar-inner">
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input id="search" type="text" placeholder="Search… (e.g. harness, MoE, CUDA, test-time compute)">
+    </div>
+    <div class="tabs" id="tabs"></div>
+  </div>
+</div>
+
+<div class="container">
+  <div id="extra-timeline" class="extra">
+    <h2>🗓️ The Story So Far: 2022 → 2026</h2>
+    <p>Four years that compressed several technology eras into one. Orange dots mark the moments that changed the industry's direction.</p>
+    <div class="timeline" id="timeline-body"></div>
+  </div>
+
+  <div id="content"></div>
+  <div class="no-results" id="no-results">Nothing matches your search.</div>
+
+  <div id="extra-players" class="extra">
+    <h2>🗺️ The Players Map</h2>
+    <p>Who actually matters, layer by layer. The stack: chips → clouds → models → applications. Power concentrates at the layers with the fewest substitutes.</p>
+    <div id="players-body"></div>
+  </div>
+
+  <div id="extra-quotes" class="extra">
+    <h2>💬 The Quotes Wall</h2>
+    <p>Lines that defined the era — what was said, by whom, and why it mattered. Drop one of these correctly in a conversation and you'll pass for an insider.</p>
+    <div class="quote-grid" id="quotes-body"></div>
+  </div>
+
+  <div class="quiz" id="quiz">
+    <h2>🏆 Final Quiz</h2>
+    <p>Twelve questions across everything above. Pick an answer to see the explanation.</p>
+    <div id="quiz-body"></div>
+    <div class="quiz-score" id="quiz-score"></div>
+  </div>
+</div>
+
+<div class="footer">Built for Ritachit · Facts current as of June 2026 · Progress saves in your browser</div>
+
+<script>
+const DATA = [
+{
+id:"foundations", name:"Foundations", emoji:"🧠",
+intro:"What an LLM actually is and why scale broke the field open. Master these and everything downstream makes sense.",
+concepts:[
+{
+t:"LLMs & the Transformer",
+o:"One 2017 architecture ate the entire field — and then the economy's attention.",
+teach:"A Large Language Model is, at its core, a machine trained on a vast slice of human text to do one deceptively simple thing: predict the next token. The shock of the last decade is that next-token prediction at sufficient scale yields translation, coding, reasoning, and conversation — none of which were explicitly programmed. The enabling invention was the <b>Transformer</b> (Google's 2017 paper 'Attention Is All You Need'): its attention mechanism lets the model weigh every word against every other word in parallel, which — unlike older sequential architectures — scales beautifully across thousands of GPUs. That parallelizability is the whole story: it made it economically possible to convert raw compute into intelligence.",
+us:{co:"Case in point — GPT series", s:"GPT-2 (2019, 1.5B parameters) wrote barely coherent paragraphs. GPT-4 (2023) passed the bar exam. Same idea, same architecture family — the main variable was scale of compute and data. That observation reorganised hundreds of billions of dollars of capital."},
+ind:{co:"Business lens", s:"Transformers commoditised NLP overnight: a decade of specialised translation, sentiment, and chatbot companies became features of one general model. Lesson for any tech wave: when a general-purpose substrate appears, point solutions above it collapse into it."},
+trap:"Thinking 'it just predicts the next word' is a dismissal. Prediction at this scale requires building internal models of the world — compression IS understanding, which is the deepest open debate in the field.",
+q:"Why did the Transformer beat older architectures (RNNs/LSTMs) when the ideas behind neural networks are decades old?",
+a:"Parallelism. RNNs process text sequentially, so they can't efficiently use massive GPU clusters. Attention processes all tokens at once, so throwing 10,000 GPUs at training actually works. The winning architecture was the one that best converted capital into capability."
+},
+{
+t:"Tokens",
+o:"The atomic unit of AI — of meaning, of pricing, and of the entire business model.",
+teach:"Models don't read words; they read <b>tokens</b> — chunks of roughly 3–4 English characters ('understanding' might be 'under'+'stand'+'ing'). Every model input and output is measured in them, which makes the token the industry's billing unit: APIs price per million tokens, with output tokens costing more than input (generation is sequential and expensive; reading is parallel and cheap). When insiders discuss 'cost per token', 'tokens per second', or 'token efficiency', they're discussing the industry's unit economics. One nuance worth knowing: tokenisation is trained mostly on English, so Hindi or Tamil text can consume 3–8x more tokens for the same meaning — non-English users literally pay more per sentence.",
+us:{co:"Case in point — API pricing", s:"Frontier model pricing is quoted like commodities: dollars per million input/output tokens. Reasoning models made this spicier — their hidden 'thinking' tokens are billed as output, so a hard question can cost 50x a simple one with the same one-line answer."},
+ind:{co:"Business lens", s:"Token costs per unit of intelligence have fallen roughly 10x per year — the fastest deflation of any input in business history. Strategy implication: don't build a business on today's token prices being a barrier; whatever is barely affordable now will be nearly free in two years."},
+trap:"Comparing model prices per token without checking token efficiency. A model that's 2x cheaper per token but needs 3x more tokens (verbose reasoning, bloated outputs) is more expensive per task.",
+q:"Why do Indian-language AI startups care so much about building their own tokenisers?",
+a:"Standard tokenisers fragment Devanagari and other scripts into many tiny tokens, making Indic-language inference slower and several times costlier. A tokeniser built for Indian languages (as Sarvam AI did) directly cuts cost and latency — a real technical moat for the Indic market."
+},
+{
+t:"Pre-training & the Data Wall",
+o:"Compress the internet into a model — until you run out of internet.",
+teach:"Pre-training is the gargantuan first phase: months of running thousands of GPUs over trillions of tokens of text, producing a 'base model' — a raw intelligence that completes text but follows no instructions. It's best understood as <b>lossy compression of human knowledge</b>. The strategic crisis: frontier labs have essentially consumed the high-quality public internet. This 'data wall' is why Ilya Sutskever declared at NeurIPS 2024 that 'pre-training as we know it will end' — data, not compute, became the binding constraint. The responses define current strategy: synthetic data (models generating training data for the next model), licensing deals (Reddit, news archives), proprietary data moats, and shifting gains to post-training and test-time compute instead.",
+us:{co:"Case in point — data deals", s:"OpenAI and Google signed deals worth tens of millions per year with Reddit; news publishers split between suing (NYT v. OpenAI, filed Dec 2023) and licensing. Data went from free exhaust to priced asset in about 18 months."},
+ind:{co:"Business lens", s:"If public data is exhausted, private data becomes the moat — which is the entire bull case for incumbents: Bloomberg's terminals, Epic's health records, Tally's ledgers. The defensible asset isn't the model; it's the data nobody else can train on."},
+trap:"Believing 'more data' always wins. Quality beats quantity decisively — a curated trillion tokens outperforms a raw scrape several times the size. 'Data is the new oil' is wrong in the details: oil is fungible; data isn't.",
+q:"Why is synthetic data both the industry's great hope and a known risk?",
+a:"Hope: models like DeepSeek-R1 proved model-generated reasoning traces can train better models cheaply — manufacturing your own fuel. Risk: 'model collapse' — recursive training on AI output can amplify errors and homogenise away the human diversity the original models learned from."
+},
+{
+t:"Scaling Laws & The Bitter Lesson",
+o:"The empirical physics of the industry: more compute, predictably more intelligence.",
+teach:"Two ideas explain almost every capital-allocation decision in AI. <b>Scaling laws</b> (OpenAI's Kaplan et al., 2020; refined by DeepMind's 'Chinchilla', 2022): model capability improves smoothly and predictably as you scale compute, data, and parameters together — meaning you can forecast the return on a $1B training run before spending it. That predictability is what unlocked the megafund era. Behind it sits Rich Sutton's <b>Bitter Lesson</b> (2019): 70 years of AI history show that general methods leveraging more computation always eventually beat human-crafted cleverness. The lesson is 'bitter' because researchers' domain ingenuity keeps losing to brute scale. Related vocabulary: <b>emergent capabilities</b> — abilities like arithmetic or translation appearing abruptly at scale thresholds, which is why nobody fully knows what the next 10x model will do.",
+us:{co:"Case in point — the megafund era", s:"Scaling laws turned AI from research bets into a capex industry: if intelligence is purchasable per FLOP, the rational move is to raise the biggest fund. Hence $10B+ training clusters, the $500B Stargate announcement (Jan 2025), and labs raising at sovereign-wealth scale."},
+ind:{co:"Business lens", s:"When capability is a function of capital, advantage flows to whoever has the cheapest capital and energy — explaining sovereign AI funds, Gulf-state entry, and why 'GPU-rich vs GPU-poor' became the industry's real class divide."},
+trap:"Treating scaling laws as a law of nature. They're empirical curves that have already bent once (pure pre-training scaling plateaued ~2024–25; gains shifted to reasoning/test-time compute). Insiders track WHICH axis is currently scaling, not whether 'scaling works'.",
+q:"Why did scaling-law predictability matter more to investors than the capability itself?",
+a:"It converted R&D risk into engineering procurement: a forecastable return on compute justifies billion-dollar raises the way proven reserves justify oil drilling. Unpredictable research can't absorb that much capital; predictable curves can."
+},
+{
+t:"Hallucination",
+o:"The model would rather be fluent than be right — and that's structural, not a bug.",
+teach:"A hallucination is a confident, plausible, false output. It's structural: an LLM is trained to produce <b>likely</b> text, not <b>true</b> text — truth and statistical plausibility usually coincide, and the failures hide in the gap. Crucially, the model has no internal flag distinguishing 'I know this' from 'this sounds right'; it generates both with identical confidence. Mitigations are real but partial: retrieval grounding (RAG), citations, post-training models to say 'I don't know', and verification harnesses. The industry's honest position by 2026: drive it toward zero for retrievable facts, but the tendency is inherent to the architecture — which is why deployment design (checking, grounding, human review for high stakes) matters as much as the model.",
+us:{co:"Case in point — the lawyer cases", s:"In Mata v. Avianca (2023), New York lawyers were sanctioned for filing a brief containing six fabricated case citations from ChatGPT — complete with invented quotes and docket numbers. It became THE cautionary tale, and similar incidents kept recurring globally for years after."},
+ind:{co:"Business lens", s:"Hallucination defines the enterprise-AI market map: the highest-value use cases (legal, medical, finance) are exactly where hallucination is least tolerable. Companies selling 'grounded' AI — verification layers, citation engines, domain-locked models — exist entirely because of this gap."},
+trap:"Assuming bigger models fixed it. Better models hallucinate less often but more persuasively — errors get harder to spot as fluency rises. Reasoning models even hallucinate inside their chain of thought.",
+q:"Why can't you just train a model to 'only say true things'?",
+a:"Because the model has no access to ground truth at generation time — only patterns in training data. 'True' isn't a property it can check internally; it can only be approximated via external grounding (retrieval, tools, verification), which is a harness problem, not purely a model problem."
+},
+{
+t:"Open vs Closed Weights",
+o:"The industry's defining ideological and commercial war.",
+teach:"'Weights' are the billions of learned numbers that ARE the model. <b>Closed</b> labs (OpenAI, Anthropic, Google) sell access via API and keep weights secret — control, safety oversight, and margins. <b>Open-weight</b> players (Meta's Llama, Mistral, DeepSeek, Alibaba's Qwen) publish the weights for anyone to download, run, and modify. Note the insider distinction: 'open weights' ≠ 'open source' — you get the model, rarely the training data or full recipe. The strategic logic differs by player: Meta opens weights to commoditise its complements (if intelligence is free, value flows to distribution and devices — which Meta owns); China's labs open weights to set global standards despite chip sanctions; startups open weights to win developer mindshare they couldn't buy.",
+us:{co:"Case in point — the DeepSeek shock", s:"DeepSeek-R1 (Jan 2025): a Chinese lab released an open-weight reasoning model near frontier quality, trained under export controls at a claimed fraction of US costs. NVIDIA lost ~$589B in market cap in one day — the largest single-day loss in history — as markets briefly repriced the entire 'compute = moat' thesis."},
+ind:{co:"Business lens", s:"Open weights set a price floor of zero for 'good enough' intelligence, forcing closed labs to compete on the frontier, on trust, and on product. For everyone downstream it's leverage: credible threat of self-hosting Llama/Qwen disciplines what API vendors can charge."},
+trap:"Framing it as good-vs-evil. Both camps act from commercial logic: closed = sell the model; open = commoditise the model so value flows to what you DO own. Ask 'what does this player monetise?' and every weights decision becomes legible.",
+q:"Why would Meta spend billions training Llama and give it away?",
+a:"Commoditise your complement: Meta monetises attention and ads, not model access. Free frontier-ish models prevent rivals from taxing Meta's AI features, attract ecosystem talent, and make Meta's platforms the default home of open AI development — value captured elsewhere on the board."
+}
+]
+},
+{
+id:"posttraining", name:"Post-Training: Making Models Useful", emoji:"🛠️",
+intro:"A base model is raw intelligence with no manners. Everything people actually use is shaped after pre-training — this is where ChatGPT itself was born.",
+concepts:[
+{
+t:"Fine-Tuning (SFT)",
+o:"Teach a general model a specific behaviour with curated examples.",
+teach:"Supervised Fine-Tuning takes a pre-trained model and continues training on a small, curated dataset of example inputs and ideal outputs — thousands of examples, not trillions of tokens. It's how base models learn to follow instructions ('instruction tuning'), and how enterprises teach a model their tone, format, or domain. The cost asymmetry is the point: pre-training costs hundreds of millions; fine-tuning can cost hundreds of dollars (especially with parameter-efficient methods like LoRA, which nudge a tiny fraction of weights). The 2026 nuance: as frontier models got better at following instructions in-context, fine-tuning lost ground to prompting and retrieval for most use cases — it survives where consistency, latency, or cost at scale matter.",
+us:{co:"Case in point — vertical models", s:"Bloomberg trained BloombergGPT on financial data (2023) — and within a year GPT-4-class general models matched or beat it on most finance tasks. A sobering, much-cited lesson: domain fine-tuning rarely outruns the frontier for long."},
+ind:{co:"Business lens", s:"'We'll fine-tune on proprietary data' was 2023's favourite moat claim. The honest test: does your data teach something the frontier can't learn or be prompted into? Usually the durable asset is the data pipeline and evaluation, not the tuned weights."},
+trap:"Fine-tuning to inject knowledge. SFT shapes behaviour and style; it's poor at adding facts (and they go stale). For knowledge, retrieval (RAG) almost always beats tuning.",
+q:"Your legal-tech startup wants the model to know 2026 case law and to format opinions house-style. Which technique for which?",
+a:"Case law = RAG (retrieval from an updatable database — knowledge changes). House style = fine-tuning (consistent behaviour worth baking in). The standard architecture is both at once."
+},
+{
+t:"RLHF — the ChatGPT Unlock",
+o:"Reinforcement Learning from Human Feedback: the technique that turned a curiosity into a product.",
+teach:"GPT-3 existed for two years before ChatGPT — capable, but rude, rambling, and unhelpful by default. <b>RLHF</b> changed that: humans rank pairs of model answers, a 'reward model' learns to predict those preferences, and the LLM is then optimised against that reward. The model learns helpful, harmless, honest behaviour as judged by people. This — not raw capability — is what made ChatGPT feel magical in November 2022, and it's arguably the highest-ROI technique in industry history: a comparatively cheap training phase unlocked a trillion dollars of market interest. The trade-offs are insider lore: RLHF causes sycophancy (models flatter because raters reward agreement) and the 'alignment tax' debate (does heavy preference-tuning blunt capability?).",
+us:{co:"Case in point — InstructGPT → ChatGPT", s:"OpenAI's 2022 InstructGPT paper showed a 1.3B-parameter RLHF'd model was PREFERRED by humans over raw 175B GPT-3 — alignment beat 100x size. ChatGPT was essentially this recipe applied to a stronger base and given a chat window."},
+ind:{co:"Business lens", s:"RLHF created an entire shadow industry: data-labeling and preference-ranking firms (Scale AI, Surge, and large workforces in India, Kenya, and the Philippines). 'Human feedback' is a supply chain, and its quality quietly differentiates the labs."},
+trap:"Thinking RLHF makes models truthful. It makes them produce what humans RATE highly — which correlates with truth but also with confidence, length, and agreeableness. Sycophancy is RLHF working exactly as designed, on the wrong signal.",
+q:"Why did ChatGPT explode when GPT-3 — publicly available for two years — never did?",
+a:"Interface + alignment: RLHF made outputs reliably helpful for non-experts, and chat made the affordance obvious. The capability overhang was already there; usability released it. (A recurring industry pattern: capability arrives years before the product moment.)"
+},
+{
+t:"Constitutional AI & RLAIF",
+o:"Replace armies of human raters with AI feedback guided by explicit principles.",
+teach:"Anthropic's signature method. Instead of (or alongside) thousands of human preference labels, <b>Constitutional AI</b> gives the model a written constitution — explicit principles — and has it critique and revise its own outputs against them; <b>RLAIF</b> (Reinforcement Learning from AI Feedback) then uses an AI judge instead of human raters for the preference step. Two big consequences: <b>scalability</b> (AI feedback is thousands of times cheaper and faster than human labeling, and arguably more consistent) and <b>legibility</b> (values live in an inspectable document you can debate, rather than implicitly in a million anonymous rating decisions). It's also a partial answer to a deep problem: how do you supervise models at superhuman levels where humans can't reliably judge outputs?",
+us:{co:"Case in point — Claude", s:"Anthropic published Claude's constitution openly — drawing on the UN Declaration of Human Rights among other sources — and later experimented with 'collective constitutional AI', polling the public on what principles should govern the model. Governance as a design artifact."},
+ind:{co:"Business lens", s:"Why it matters commercially: enterprises and regulators ask 'why did the model do that?' A constitution gives a checkable answer, which is a trust product. It also slashes the human-labeling bill — alignment becomes software, not headcount."},
+trap:"Assuming a constitution removes human judgment. Humans still choose the principles, and principles conflict; the constitution moves the judgment upstream where it's visible — it doesn't eliminate it.",
+q:"What scaling problem does RLAIF solve that pure RLHF cannot?",
+a:"Human raters are slow, expensive, inconsistent — and become the bottleneck entirely when model outputs exceed human ability to judge (expert code, long proofs). AI feedback scales with compute, not labor, and points toward supervising models smarter than their supervisors."
+},
+{
+t:"Distillation & Small Models",
+o:"Compress a frontier teacher into a cheap, fast student.",
+teach:"Distillation trains a small 'student' model to imitate a large 'teacher' — using the teacher's outputs (or output distributions) as training targets. The student captures a surprising fraction of capability at a tiny fraction of inference cost, which matters because <b>inference economics dominate at scale</b>: serving a 1T-parameter model to a billion users is ruinous; serving a distilled 8B model on-device is nearly free. This is why every lab ships model families (large/medium/small) and why 'small language models' run on phones. It's also the industry's leakiest secret: any model exposed via API can be partially distilled by whoever queries it at scale — capability escapes through the API itself, one reason frontier advantages decay within months.",
+us:{co:"Case in point — the distillation wars", s:"OpenAI publicly suggested DeepSeek may have distilled GPT-4-class outputs against its terms of service (Jan 2025) — an irony the industry savoured, given training-data lawsuits against OpenAI itself. Meanwhile Apple runs distilled ~3B models on-device for Apple Intelligence."},
+ind:{co:"Business lens", s:"Distillation is the deflation engine: it's a one-way valve moving frontier capability into commodity price tiers within months. Any business plan that depends on intelligence staying expensive is fighting this valve — and losing."},
+trap:"'Small model' ≠ 'dumb model'. A modern distilled 8B beats 2023's frontier on most tasks. The right question is never 'biggest model?' but 'cheapest model that clears MY task's quality bar'.",
+q:"Why do frontier capabilities commoditise within ~6–12 months no matter how guarded the lab?",
+a:"Three leaks: distillation through APIs (outputs train competitors), researcher mobility, and open-weight releases that incorporate published techniques. The frontier is a moving wavefront you must keep re-earning — not an asset you hold."
+},
+{
+t:"Mixture of Experts (MoE)",
+o:"A trillion parameters, but only a sliver wakes up per token.",
+teach:"MoE replaces one dense network with many specialised 'experts' plus a router that activates only a few per token. Result: a model can have a huge total parameter count (knowledge capacity) while spending only a fraction of the compute per token (a ~700B-parameter MoE might activate ~37B per token, as DeepSeek-V3 does). This decoupling of <b>capacity from cost</b> is why most frontier models since GPT-4 (widely reported as MoE) use the architecture, and it's specifically how DeepSeek trained near-frontier models cheaply under chip sanctions. The vocabulary you'll hear: 'active parameters' vs 'total parameters', 'sparse' vs 'dense' models — and you now know why a '700B model' can be cheaper to run than a '70B' dense one.",
+us:{co:"Case in point — DeepSeek-V3/R1", s:"DeepSeek's V3: 671B total, ~37B active per token, trained for a claimed ~$5.6M final run. Whatever the true all-in cost, MoE efficiency under GPU sanctions is what made the January 2025 market shock possible."},
+ind:{co:"Business lens", s:"MoE bends inference economics — the binding constraint of AI businesses. When evaluating any 'our model is cheaper' claim, ask about active parameters and tokens-per-task; sparse architectures are how the cost curve keeps falling without sacrificing the frontier."},
+trap:"Reading total parameter counts as capability rankings. Post-MoE, parameter counts are marketing numbers unless you know active parameters, data quality, and post-training — which is why insiders stopped citing parameters as the headline stat.",
+q:"How did MoE specifically help Chinese labs work around US chip export controls?",
+a:"Sanctions cap available compute. MoE buys more capability per FLOP — training a sparse model costs a fraction of an equally capable dense one. Constraint bred efficiency innovation, partially undermining the policy's premise that capping chips caps capability."
+}
+]
+}
+];
+</script>
+<script>
+DATA.push(
+{
+id:"inference", name:"The Inference & Reasoning Era", emoji:"⚡",
+intro:"Around 2024 the frontier stopped being only about training bigger models and started being about making models THINK longer. This shift created today's product landscape.",
+concepts:[
+{
+t:"Training vs Inference",
+o:"Two separate economies: building the brain once vs running it forever.",
+teach:"<b>Training</b> is the one-time (per model) capital expense — months of GPU time to create the weights. <b>Inference</b> is the operating expense — every single query, forever. Early on, training dominated spending; by 2025–26 the industry crossed over: inference became the larger market, because usage compounds while training runs are episodic. This flip explains a lot of insider behaviour: why chips are now designed and marketed on inference cost-per-token (NVIDIA pitched its Rubin platform on up to ~10x cheaper inference tokens vs Blackwell), why labs obsess over serving efficiency, and why 'we lose money per query' became the quiet anxiety of every AI product with a flat subscription price.",
+us:{co:"Case in point — the capacity crunch", s:"Through 2025–26, every major lab repeatedly rationed its best models (rate limits, waitlists, priority tiers) — not for drama, but because inference demand outran global GPU supply. Selling intelligence is a manufacturing-capacity business now."},
+ind:{co:"Business lens", s:"For app builders, inference cost is COGS — gross margin lives or dies on tokens per task. The classic 2024–25 mistake: pricing flat subscriptions against usage-based costs; power users turned every successful AI product into a loss-maker until pricing models matured."},
+trap:"Evaluating AI companies on training prowess alone. The durable business question is inference economics: cost per task served, at quality, at scale — that's where margins (or their absence) live.",
+q:"Why did reasoning models make the inference economy even more dominant?",
+a:"They moved capability spend from train-time to run-time: a reasoning model burns 10–100x more tokens per hard query ('thinking'). Capability now scales with per-query spend, making inference capacity — not just training scale — the strategic resource."
+},
+{
+t:"Context Window",
+o:"The model's working memory — everything it can 'see' right now.",
+teach:"The context window is how many tokens a model can attend to in one go: the conversation, your documents, the tool outputs — its entire visible universe for that request. It grew from 4K tokens (early ChatGPT, ~6 pages) to 100K+ (Claude, 2023), to a million+ (Gemini, 2024) — from a memo to a library shelf. But insiders know two catches. <b>Cost</b>: attention scales badly with length, so long contexts are expensive and slow. <b>Attention quality</b>: models suffer 'lost in the middle' — recall degrades for content buried mid-context, and stuffing the window ('context bloat') measurably worsens reasoning. Hence the 2025–26 discipline of context engineering: curating what enters the window rather than dumping everything in.",
+us:{co:"Case in point — Gemini's million tokens", s:"Google's Gemini 1.5 (Feb 2024) shipped a 1M-token window — entire codebases or hours of video in one prompt — briefly making 'just put it all in context' a real alternative to retrieval pipelines for many tasks."},
+ind:{co:"Business lens", s:"Every context expansion kills a startup category: vector-search-heavy RAG stacks, document-chunking tools, and 'memory' middleware all lost ground each time windows grew 10x. Building in the path of the next window expansion is building on melting ice."},
+trap:"Equating a big window with comprehension. A model can HOLD a million tokens and still reason over only a fraction well. Benchmarks for 'needle in a haystack' retrieval ≠ deep cross-document reasoning.",
+q:"Why didn't million-token contexts kill RAG entirely?",
+a:"Economics and freshness: reprocessing a million tokens per query costs orders of magnitude more than retrieving the right 2K tokens, and context is per-request while knowledge bases update continuously. Long context and retrieval became complements — retrieve, then reason over a generous window."
+},
+{
+t:"Chain of Thought (CoT)",
+o:"Ask the model to show its work, and it gets smarter. Nobody fully expected that.",
+teach:"Chain-of-thought is the discovery (Google, 2022) that prompting a model to reason step-by-step — even just adding 'think step by step' — dramatically improves performance on math, logic, and planning. Why it works: each generated step becomes context for the next, letting the model decompose problems and allocate more computation to the answer (every token generated is extra compute spent). CoT began as a prompt trick, became a training target (models trained on reasoning traces), and ultimately became architecture — reasoning models are CoT industrialised. It also opened a safety research direction: a visible chain of thought is a window (imperfect, sometimes unfaithful) into what the model is 'thinking'.",
+us:{co:"Case in point — from trick to product", s:"The arc: 2022, a prompt hack; 2023, standard practice; 2024, o1 trains CoT via reinforcement learning and hides it as 'thinking'; 2025–26, every frontier model has a reasoning mode with a visible-or-summarised thought stream. A four-year journey from tweet-worthy trick to core product surface."},
+ind:{co:"Business lens", s:"CoT created the 'thinking time = quality = cost' dial that products now expose to users (fast/cheap vs slow/smart modes). Pricing intelligence by deliberation depth is a genuinely new product pattern — closer to billing for a consultant's hours than for software."},
+trap:"Trusting the chain as a faithful account of the model's process. Research shows models sometimes reach answers for reasons their stated reasoning doesn't reflect — the chain can be a plausible story, not a transcript. Useful, not gospel.",
+q:"Why does generating MORE tokens make a model smarter on hard problems?",
+a:"Compute per answer: each token is a forward pass — more steps = more computation + intermediate results stored in context, like scratch paper. A one-token answer to a hard question forces the model to do everything in a single pass; a 500-token chain lets it think in installments."
+},
+{
+t:"Reasoning Models & Test-Time Compute",
+o:"The second scaling law: capability grows with thinking time, not just model size.",
+teach:"The biggest frontier shift since ChatGPT. OpenAI's o1 (Sept 2024) demonstrated a new axis: train a model via reinforcement learning to conduct long internal chains of thought, and its performance scales with how long it thinks — <b>test-time compute</b> — independent of parameter count. Suddenly there were two dials: scale the model (pre-training) and scale the thinking (inference). DeepSeek-R1 (Jan 2025) replicated and open-sourced the recipe; GPT-5 (Aug 2025) and its successors integrated reasoning as a routed mode rather than a separate model. Why insiders treat this as an era boundary: it revived scaling just as pre-training plateaued, it shifted economics to inference, and it cracked exactly the domains where answers are checkable — math, code, science — driving the coding-agent boom.",
+us:{co:"Case in point — o1 → R1 → everywhere", s:"o1 jumped from GPT-4o's ~13% to ~83% on AIME math; within four months DeepSeek-R1 published the method openly; within a year 'how long should the model think?' was a standard API parameter. Fastest diffusion of a frontier breakthrough yet."},
+ind:{co:"Business lens", s:"Reasoning made intelligence elastic: you can now BUY more accuracy per query, which reprices high-stakes knowledge work (an extra $2 of thinking on a $50,000 decision is trivially worth it). It also weakened the moat-of-scale story — R1 showed clever RL can substitute for some raw pre-training compute."},
+trap:"Using reasoning models everywhere. For most everyday queries they're slower, costlier, and no better; their edge is verifiable multi-step problems. Routing the right query to the right mode is a core production skill in 2026.",
+q:"Why did reasoning breakthroughs land first in math and coding rather than, say, marketing copy?",
+a:"Verifiability: RL training needs a reward signal, and math/code answers can be automatically checked (tests pass, proofs verify). Subjective domains lack a clean grader — though 'LLM-as-judge' and rubric-based rewards keep pushing the boundary outward."
+},
+{
+t:"RAG (Retrieval-Augmented Generation)",
+o:"Don't make the model memorise — let it look things up.",
+teach:"RAG bolts a search system onto a model: when a query arrives, relevant documents are retrieved (typically via embeddings — meaning-based vector search) and placed in the context window, and the model answers FROM them. It solves three structural LLM problems at once: stale knowledge (the cutoff), private knowledge (your data was never in training), and hallucination (grounded answers can cite sources). This is how 'chat with your documents' products and virtually every enterprise AI deployment work. The 2026 evolution: simple retrieve-then-answer pipelines gave way to <b>agentic retrieval</b> — the model decides what to search, reads results, searches again, cross-checks — research as a loop rather than a lookup.",
+us:{co:"Case in point — enterprise default", s:"Microsoft 365 Copilot, Glean, and every serious enterprise assistant are RAG systems over company data. The pattern won because it keeps data fresh, permissioned, and auditable — none of which retraining a model can offer."},
+ind:{co:"Business lens", s:"RAG is why 'fine-tune a private model on our data' mostly lost to 'retrieve over our data with a frontier model'. It converts proprietary data into capability WITHOUT touching weights — cheaper, updatable hourly, and the citations satisfy auditors and regulators."},
+trap:"Treating RAG as solved plumbing. Retrieval quality is the ceiling: garbage chunks in, confident garbage out — with citations. The hard engineering is in chunking, ranking, permissions, and evals, not the model call.",
+q:"An insurer wants AI to answer from its 40,000-page policy library, updated weekly. Fine-tune, long context, or RAG — and why?",
+a:"RAG. Fine-tuning bakes in stale knowledge and can't cite; stuffing 40,000 pages into context per query is wildly uneconomic. Retrieval gives freshness (re-index weekly), citations (compliance), and per-user permissioning — with long context used generously downstream of retrieval."
+},
+{
+t:"Prompt → Context Engineering",
+o:"From whispering magic words to architecting everything the model sees.",
+teach:"<b>Prompt engineering</b> (2022–23) was crafting instructions: roles, examples ('few-shot'), formats, the folk magic of early adopters. As models got better at understanding intent, the leverage moved up a level: <b>context engineering</b> (2024–) is designing the model's entire information environment — system prompts, retrieved knowledge, tool definitions, memory of past interactions, conversation summaries — deciding what enters the limited window and in what form. The insider framing: a model's output quality is bounded by its context quality, so the craft is information logistics, not phrasing. Karpathy's line captures the shift: it's about filling the context window 'with just the right information' — too little and the model lacks grounding; too much and attention degrades.",
+us:{co:"Case in point — agent products", s:"The difference between a demo agent and Claude Code or a production support agent is almost entirely context engineering: what files to read, which docs to retrieve, how to compress history, when to summarise. Same model, transformed outcome — which is why teams now hire for this skill."},
+ind:{co:"Business lens", s:"'Prompt engineer' as a six-figure job title (2023's favourite headline) quietly vanished — absorbed into product and engineering. The durable competency is owning the context pipeline: firms that systematise it get reliable AI; firms that prompt ad hoc get demos."},
+trap:"Hoarding 'secret prompts'. Prompt advantages evaporate with each model generation; context ARCHITECTURE (retrieval, memory, tool design) compounds. Optimise the system, not the spell.",
+q:"Why did better models make prompt engineering LESS important but context engineering MORE important?",
+a:"Models became robust to phrasing (intent-understanding improved), erasing wording tricks. But no model can use information it wasn't given — selecting, structuring, and budgeting the context window became the binding constraint on real-world performance."
+}
+]
+},
+{
+id:"agents", name:"Agents & The Harness", emoji:"🤖",
+intro:"The 2025–26 frontier: models that DO things. And the industry's hard-won lesson — the wrapper around the model matters as much as the model.",
+concepts:[
+{
+t:"AI Agents",
+o:"A model in a loop: perceive, plan, act, check — repeat until the job is done.",
+teach:"A chatbot answers; an <b>agent</b> accomplishes. The technical definition: an LLM running in a loop where it plans, calls tools (search, code, browsers, APIs), observes results, and decides the next step — iterating toward a goal without per-step human direction. The capability stack required: reasoning (plan multi-step work), tool use (act on the world), and long-horizon coherence (not lose the plot over hours — historically the weakest link, and the locus of 2025–26 progress). Agents went from demo-ware (AutoGPT's viral-then-useless moment, 2023) to production reality first in coding — where work is digital, verifiable, and high-value — then spread to research, support, and operations. Gartner-style sobriety applies: adoption is real, but so is the graveyard of over-promised 'agentic' projects.",
+us:{co:"Case in point — coding agents", s:"Claude Code, OpenAI's Codex, GitHub Copilot's agent mode: by 2026, agents that take a ticket, write code across a repo, run tests, and open a pull request are routine at major tech companies — the first occupation-scale agent deployment."},
+ind:{co:"Business lens", s:"Agents change the unit of sale from software-that-helps to work-that's-done — pricing migrates from per-seat licenses toward outcomes and tasks. That's a budget-line shift: AI starts competing with labor spend, not just software spend, which is why the TAM arguments got so large."},
+trap:"Calling everything 'agentic' (2025's favourite marketing word). A script with one LLM call isn't an agent. The test: does the system choose its own next actions based on intermediate results, over multiple steps, with tools?",
+q:"Why did coding become the first domain where agents truly worked?",
+a:"Verifiability + digital completeness + value density: code can be auto-checked (tests, compilers) giving the loop a reliable success signal; the entire job is computer-native; and developer time is expensive enough to pay for tokens. Domains lacking a checkable success signal lag behind."
+},
+{
+t:"The Harness",
+o:"The machinery around the model — and by 2026, often the bigger performance lever.",
+teach:"The term you asked about, and one of the most important in modern AI. The <b>harness</b> is everything wrapping the model at runtime: the system prompt, the tool suite and how tools are described, context management (what to read, when to summarise), error handling, retries, permissions and sandboxing, memory across sessions. The 2025–26 industry epiphany: <b>the same model performs wildly differently in different harnesses</b> — a frontier model in a poor harness loses to a weaker model in an excellent one. This is why 'harness engineering' emerged as a discipline, why labs ship products (Claude Code, ChatGPT agents) rather than just APIs, and why benchmark results now specify which harness was used. Related term: <b>scaffolding</b> — sometimes used interchangeably; when distinguished, scaffolding is the structure assembled around the agent (prompts, tool schemas, subagents) and the harness is the runtime orchestration of it all.",
+us:{co:"Case in point — same model, different results", s:"Agent benchmarks like SWE-bench produce materially different scores for the SAME model depending on the harness used — which tools, what context strategy, how many retries. Labs' own product harnesses routinely beat third-party ones, a quiet competitive edge."},
+ind:{co:"Business lens", s:"The harness reframed the 'thin wrapper' insult: the wrapper IS the product. Cursor and Claude Code demonstrated that harness quality — not model access, which everyone has — separates winners. Durable advantage migrated from owning models to orchestrating them."},
+trap:"Blaming the model when your agent fails. In 2026, agent failures are more often harness failures: missing tools, bloated context, no verification step, bad error recovery. Debug the machinery before cursing the engine.",
+q:"Your agent works in demos but fails on real 2-hour tasks. Name three harness (not model) fixes.",
+a:"(1) Context management: summarise/compact history so the window doesn't drown. (2) Verification loops: make the agent test its own work and self-correct. (3) Better tool design: clear descriptions, narrow tools, informative error messages. Also: checkpoints, permissions, subagent decomposition — all harness, no model change."
+},
+{
+t:"Tool Use / Function Calling",
+o:"How a text model gets hands: emit a structured request, the harness executes it.",
+teach:"A model can only generate text — so how does it search the web or send an email? <b>Function calling</b>: you describe available tools in the context (name, purpose, parameters); when the model wants one, it emits a structured call ('search_flights(BLR→DEL, June 12)'); the harness executes the real action and feeds the result back as context. The model never touches anything directly — it requests, the harness performs. This humble pattern (OpenAI productised it mid-2023) is the foundation of everything agentic. The craft insiders care about: tool DESIGN — descriptions are prompts (the model chooses tools by reading them), too many tools confuse selection, and good error messages let agents self-correct.",
+us:{co:"Case in point — from plugins to actions", s:"ChatGPT Plugins (early 2023) flopped — a lesson that tool access without good orchestration is useless. The same idea matured into function calling + agent harnesses and now underlies every working agent: computer use, browser control, code execution are all tool calls in a loop."},
+ind:{co:"Business lens", s:"Tool use turns every API into AI surface area: businesses that expose clean, well-described APIs become reachable by every agent; those that don't become invisible. 'Agent-readiness' of your interfaces is the new SEO."},
+trap:"Giving an agent fifty tools and expecting wisdom. Tool selection degrades with menu size; production systems curate small, task-relevant toolsets per context — another harness-engineering responsibility.",
+q:"Why is the security model of tool use such a big deal?",
+a:"Because tool calls have real-world effects — payments, emails, deletions — triggered by model output that can be manipulated (prompt injection: malicious text in a webpage convincing the agent to misuse its tools). Hence permissions, sandboxes, human-approval gates: the harness is also the safety boundary."
+},
+{
+t:"MCP (Model Context Protocol)",
+o:"The USB-C of AI: one open standard connecting any model to any tool.",
+teach:"Before MCP, every AI app integrated every tool bespoke — M apps × N tools = M×N custom connectors. Anthropic open-sourced the <b>Model Context Protocol</b> (Nov 2024): a universal standard where any data source or tool runs an 'MCP server' and any AI app with an MCP client can use it — M+N instead of M×N. The pivotal moment was competitive: OpenAI adopted its rival's protocol (March 2025), then Google and Microsoft followed — making MCP the de-facto standard and a rare case of industry-wide cooperation amid fierce competition. Strategically, it's plumbing-as-power: protocols look boring, but whoever's standard wins shapes the ecosystem (think TCP/IP, USB, HTTP). An ecosystem of thousands of MCP servers now makes 'connect your AI to everything' routine.",
+us:{co:"Case in point — rivals adopting rivals", s:"Sam Altman announcing OpenAI would support Anthropic's protocol was the agent-era's interoperability milestone — akin to early browser wars converging on shared web standards. Connector ecosystems became a selling point of every assistant within a year."},
+ind:{co:"Business lens", s:"MCP commoditised integrations — bad news for startups whose moat WAS the connector library, great news for tool vendors (build one server, reach every AI). Standard-setting is also soft power: Anthropic shaped the agent ecosystem's architecture without owning it."},
+trap:"Dismissing protocol news as developer trivia. Distribution flows through standards: the apps, tools, and enterprises that adopted MCP early got compounding ecosystem advantages. Boring plumbing decides exciting markets.",
+q:"Why would OpenAI adopt a standard invented by its biggest rival?",
+a:"Network effects beat pride: by March 2025 the tool ecosystem was building MCP servers; refusing the standard would have left OpenAI's agents with fewer connectors. Joining cost ego; resisting cost capability. (And once everyone adopted, the standard's neutrality became its strength.)"
+},
+{
+t:"Evals & Benchmarks",
+o:"How the industry measures intelligence — and games the measurement.",
+teach:"An <b>eval</b> is any systematic test of model capability: academic benchmarks (MMLU for knowledge, GPQA for hard science, SWE-bench for real GitHub issues, ARC-AGI for novel reasoning), head-to-head human preference arenas (LMArena's Elo ratings), and — most important in practice — private, task-specific evals that companies build for THEIR use cases. Three insider truths. <b>Saturation</b>: frontier models maxed out older benchmarks (MMLU), forcing ever-harder replacements ('Humanity's Last Exam' as the genre's self-aware endpoint). <b>Contamination</b>: benchmarks leak into training data, inflating scores. <b>Goodhart's law</b>: once a benchmark becomes the target, it stops measuring what it meant to — labs optimise for the test. Hence the 2026 consensus: public benchmarks are marketing; private evals are truth.",
+us:{co:"Case in point — benchmark theatre", s:"Every frontier launch leads with a wall of benchmark bars, and every sophisticated buyer ignores them in favour of running their own evals. The gap between leaderboard rank and 'works on MY tasks' is where countless enterprise AI projects went to die."},
+ind:{co:"Business lens", s:"'Write evals before you build' became the AI-era equivalent of 'write tests first'. A company's private eval suite — encoding its quality bar on its actual tasks — is a real asset: it de-risks model swaps, vendor negotiations, and regressions. Eval infrastructure became a funded startup category."},
+trap:"Choosing a model from leaderboards. Rankings compress wildly different abilities into one number, are partly contaminated, and don't include your workload. The only benchmark that matters is the one you build.",
+q:"Why did SWE-bench become the industry's most-watched benchmark by 2025?",
+a:"It tests economic reality, not trivia: real GitHub issues from real repos, scored by whether the model's patch passes the project's actual tests. Verifiable, hard to game, directly tied to the value of coding agents — everything MMLU-style quizzes aren't."
+},
+{
+t:"Vibe Coding",
+o:"Describe what you want; let the AI write the code; judge by the result.",
+teach:"Coined by Andrej Karpathy (Feb 2025): coding where you 'fully give in to the vibes' — describe intent in English, accept what the AI produces, paste errors back when things break, and barely read the code. What started as a half-joke named a real phase change: by 2026, AI writes a major share of new code at top tech firms, non-programmers ship working apps, and the developer role tilts from writing code to specifying, reviewing, and verifying it. The deeper Karpathy line that frames it — 'the hottest new programming language is English' (Jan 2023). The serious version of vibe coding at companies is agent-assisted engineering: humans set intent and quality bars; agents implement; harnesses verify.",
+us:{co:"Case in point — Cursor & Claude Code", s:"Cursor (AI-native editor) became one of the fastest-growing software products ever, and Claude Code turned terminal-based agent coding into daily practice — anchoring 'AI coding' as the first multi-billion-dollar agent product category."},
+ind:{co:"Business lens", s:"When software creation gets 10x cheaper, the scarce skills shift up the stack: knowing WHAT to build, judging correctness, and owning architecture. Jevons paradox applies — cheaper code likely means MORE software and more demand for judgment, even as routine implementation commoditises."},
+trap:"Vibe coding production systems. Unreviewed AI code accumulates subtle debt — security holes, edge cases, architectural drift. The discipline that survives: AI writes, humans own; verification harnesses in between.",
+q:"Does vibe coding kill the software engineering profession?",
+a:"It kills a LAYER of it — routine implementation — while expanding total software demand and raising the value of specification, review, security, and architecture. The historical rhyme: compilers 'killed' assembly programming and multiplied the number of programmers."
+}
+]
+}
+);
+</script>
+<script>
+DATA.push(
+{
+id:"compute", name:"Compute: The Physical Layer", emoji:"🏗️",
+intro:"Underneath the magic: silicon, electricity, and the largest infrastructure build-out in peacetime history. Insiders think in FLOPs, megawatts, and fab capacity.",
+concepts:[
+{
+t:"Compute & FLOPs",
+o:"The raw input of intelligence — measured, budgeted, and fought over like oil.",
+teach:"'Compute' is the industry's word for computational work, measured in <b>FLOPs</b> (floating-point operations). Frontier training runs consume astronomical amounts — GPT-4-class models reportedly used on the order of 10²⁵ FLOPs, months of tens of thousands of GPUs. Why insiders obsess: compute is the most fungible input to capability (per scaling laws), so 'compute budget' decisions ARE strategy — train one giant model or many experiments? Spend on pre-training or reasoning RL? It's also the unit of geopolitics: US export controls literally define legal thresholds in FLOPs, and labs are valued partly on secured future compute. When someone says a lab is 'compute-constrained', they mean its ambitions exceed its silicon — the industry's chronic condition.",
+us:{co:"Case in point — Stargate", s:"The Stargate announcement (Jan 2025): up to $500B for AI data centers in the US, with successive expansions through 2025–26. Numbers previously reserved for national infrastructure now describe single companies' compute plans."},
+ind:{co:"Business lens", s:"Compute access stratified the industry into 'GPU-rich' (frontier labs, hyperscalers) and 'GPU-poor' (everyone else) — determining who can do frontier research at all. India's IndiaAI Mission centrally procuring tens of thousands of GPUs for subsidised access is industrial policy in FLOP form."},
+trap:"Treating compute as a commodity you can always buy more of. At the frontier it's capacity-constrained years ahead — power contracts, chip allocations, and data-center shells are booked through the decade. Money alone doesn't convert to FLOPs quickly.",
+q:"Why do export controls regulate FLOPs and chip interconnect speeds rather than banning 'AI'?",
+a:"Because capability is downstream of compute (scaling laws), and compute is physical and countable — chips cross borders, FLOPs can be thresholded. You can't embargo math, but you can embargo the silicon that makes math fast. (DeepSeek showed efficiency partially routes around this.)"
+},
+{
+t:"GPUs & NVIDIA",
+o:"The graphics chip that accidentally became the most important object in the economy.",
+teach:"GPUs were built to render game graphics — thousands of simple cores doing parallel arithmetic. That's coincidentally the exact shape of neural-network math (multiplying huge grids of numbers), so the gaming chip became the substrate of AI. NVIDIA rode this from ~$300B (2022) to the world's most valuable company: its data-center GPUs (A100 → H100 → Blackwell → the Rubin platform unveiled 2026) are the industry's pickaxes, sold at extraordinary margins to customers who queue for allocation. The numbers are historic: FY2026 revenue of ~$216B, ~$194B of it data center — roughly a 10x revenue increase in four years. The strategic frame insiders use: NVIDIA sells shovels in a gold rush, and uniquely, ALSO owns the shovel-design software everyone learned (CUDA).",
+us:{co:"Case in point — the allocation economy", s:"Through the boom, H100s were so scarce that startups raised funding ON their GPU allocations; 'how many GPUs do you have?' became a due-diligence question. NVIDIA's earnings became a macro event moving entire stock markets."},
+ind:{co:"Business lens", s:"One supplier capturing the margin of an entire technology wave is rare — it happens when demand explodes into a single bottleneck. Every hyperscaler responded identically: keep buying NVIDIA while building in-house chips (Google TPU, Amazon Trainium, Microsoft Maia) to discipline future pricing. Watch that substitution race; it decides the decade's margin distribution."},
+trap:"Assuming NVIDIA's position is unassailable OR doomed. Both takes are lazy: the moat (CUDA + networking + rack-scale systems + pace) is real; so are the forces against it (custom silicon, inference-optimised rivals, efficiency gains like DeepSeek's). It's a race, not a verdict.",
+q:"Why did AI training land on gaming chips rather than CPUs?",
+a:"Architecture match: CPUs have a few powerful cores optimised for sequential logic; GPUs have thousands of simple cores for parallel arithmetic. Neural nets are embarrassingly parallel matrix math — a GPU does in hours what CPUs need months for. NVIDIA's foresight was building software (CUDA) to make that power general-purpose."
+},
+{
+t:"The CUDA Moat",
+o:"NVIDIA's real fortress isn't silicon — it's fifteen years of software lock-in.",
+teach:"<b>CUDA</b> is NVIDIA's programming platform for its GPUs, launched 2007 — years before deep learning needed it. Every major AI framework (PyTorch, TensorFlow) was built CUDA-first; two decades of tools, libraries, optimisations, and developer muscle memory assume it. The result is a textbook switching-cost moat: a rival chip that's 30% cheaper still loses if migrating means rewriting performance-critical code, retraining teams, and debugging an immature toolchain while your $100M training run waits. This is why AMD's comparable hardware struggles for AI share, and why every serious 'NVIDIA killer' attacks the software layer first (compilers like Triton, PyTorch backend support) before bragging about chips.",
+us:{co:"Case in point — AMD's uphill climb", s:"AMD's MI-series GPUs match or beat NVIDIA on several hardware specs, at lower prices — yet its AI data-center share remained a fraction of NVIDIA's. Buyers cite one thing: software maturity. The hardware gap closed; the software gap is the business."},
+ind:{co:"Business lens", s:"A strategy classic: give away the platform (CUDA is free), monetise the complement (chips). NVIDIA spent 15 unprofitable-looking years seeding an ecosystem that now lets it price hardware like a monopolist. Patience + complement economics = the most valuable moat on Earth."},
+trap:"Evaluating chip competition on hardware benchmarks. The buying decision is total cost including software risk, engineer time, and ecosystem debugging — which is why 'better specs, lower price' keeps losing.",
+q:"What would actually erode the CUDA moat?",
+a:"Abstraction layers that make code portable (PyTorch 2's compiler backends, OpenAI's Triton), inference workloads (simpler than training, easier to port — where AMD and custom chips land first), and hyperscalers' in-house silicon for their own massive internal workloads. Erosion looks like CUDA mattering less, not a rival 'CUDA killer'."
+},
+{
+t:"Data Centers, Energy & the Build-Out",
+o:"AI's binding constraint moved from chips to electrons and concrete.",
+teach:"Frontier AI runs in football-field buildings packed with GPU racks, and by 2025–26 the constraint shifted: you can buy chips faster than you can power them. A single large AI campus draws a gigawatt — a nuclear reactor's output — and Big Tech's combined capex hit historic levels (~$300B+ from Microsoft, Google, Meta, Amazon in 2026 alone; ~$650B across the build-out). Hence the era's strange headlines: tech companies restarting nuclear plants (Microsoft–Three Mile Island), buying small-modular-reactor contracts, and siting data centers by power availability rather than geography. New vocabulary: 'neoclouds' (GPU-specialised clouds like CoreWeave), 'training vs inference siting' (training goes where power is cheap; inference goes near users), and 'power purchase agreements' as strategic weapons.",
+us:{co:"Case in point — nuclear renaissance", s:"Microsoft signed to restart Three Mile Island's reactor (2024); Google and Amazon bought SMR partnerships; utilities' decade-flat demand forecasts bent sharply upward. AI did what climate policy struggled to: made carbon-free firm power commercially urgent."},
+ind:{co:"Business lens", s:"Compute follows cheap energy, making power a national AI strategy. India's data-center boom (Mumbai, Chennai, Hyderabad) rides exactly this: renewables, land, and demand. The Goldman-tracked trillion-dollar question — whether AI revenue justifies the build-out — is THE macro debate of 2026."},
+trap:"Analysing AI companies without analysing their power. Model roadmaps quietly depend on substations and transformers with 3-year lead times. The bottleneck stack runs: ideas < chips < power < grid equipment.",
+q:"Why does training concentrate in giant remote campuses while inference spreads worldwide?",
+a:"Training is latency-insensitive (a months-long batch job) so it goes wherever power is cheapest. Inference serves live users, so latency and data-residency rules pull it to metros and national borders. Two different real-estate markets for one industry."
+},
+{
+t:"The Chip Supply Chain & Export Controls",
+o:"Five companies, three countries, one chokepoint-riddled pipeline — now a front in great-power politics.",
+teach:"The AI supply chain is absurdly concentrated: NVIDIA designs chips; <b>TSMC</b> in Taiwan manufactures virtually all leading-edge ones; TSMC's machines come from <b>ASML</b> in the Netherlands — sole maker of EUV lithography, arguably the most complex machine ever built; advanced memory (HBM) comes from SK Hynix/Samsung/Micron. Each link is a chokepoint with no short-term substitute, which is why the US could weaponise the chain: export controls (Oct 2022, tightened repeatedly) bar China from top AI chips and fab equipment, attempting to cap a rival's compute. Consequences so far: a thriving smuggling/loophole economy, NVIDIA designing China-specific downgraded chips amid policy whiplash, China pouring national resources into domestic fabs (SMIC) — and DeepSeek demonstrating that algorithmic efficiency partially substitutes for restricted hardware.",
+us:{co:"Case in point — Taiwan as the world's pivot", s:"90%+ of leading-edge chip manufacturing sits on an island at the center of US–China tension — the 'silicon shield' debate. The US CHIPS Act and TSMC's Arizona fabs are a multi-hundred-billion-dollar attempt to buy insurance against a single geographic point of failure."},
+ind:{co:"Business lens", s:"For every AI business, the chain is hidden beta: a Taiwan crisis is an extinction-level supply event priced into nothing. India's semiconductor mission (fabs in Gujarat, assembly plants) is a 20-year bet on becoming the chain's redundancy — strategically sound, generationally slow."},
+trap:"Assuming export controls simply work or simply fail. The honest reading: they raised China's costs and slowed its frontier, AND accelerated its self-sufficiency drive while incentivising efficiency breakthroughs. Policy outcomes here are dynamic, not static.",
+q:"Why is ASML — a Dutch company most people have never heard of — considered a global strategic asset?",
+a:"It is the world's ONLY maker of EUV lithography machines, without which no leading-edge chip can be printed. One company, one country, zero substitutes: the narrowest chokepoint in the entire technology stack, which is why its export licenses are negotiated at head-of-state level."
+}
+]
+},
+{
+id:"economics", name:"Industry Economics & The Frontier Debate", emoji:"💰",
+intro:"Who makes money, where moats are real, and the questions — AGI, safety, the bubble — that the smartest people in the industry openly disagree about.",
+concepts:[
+{
+t:"The Frontier Lab Business Model",
+o:"Burn billions on capability, monetise three ways, pray the frontier stays valuable.",
+teach:"Frontier labs (OpenAI, Anthropic, Google DeepMind, xAI) run the most capital-hungry business model in software history: spend billions training models that depreciate in months, monetised via (1) <b>consumer subscriptions</b> (ChatGPT's hundreds of millions of users), (2) <b>API sales</b> (intelligence as metered utility), and (3) <b>enterprise contracts</b>. The structural tension: the frontier is a treadmill — each generation costs more while last year's capability becomes a free open-weight commodity. The bull case: intelligence is the largest TAM ever, and labs are converting from research projects into product companies (by 2026, Anthropic reportedly approaching operating profitability on enterprise/coding strength, filing confidentially for an IPO at reported valuations near $1T). The bear case: ruinous capex, commoditisation from below, and distribution-owning giants above.",
+us:{co:"Case in point — the 2026 scoreboard", s:"The market sorted by wedge: OpenAI owns the consumer mindshare (ChatGPT = the category's Kleenex), Anthropic dominates enterprise coding/agents (Claude Code as growth engine), Google leverages distribution (Gemini in Search, Android, Workspace), Meta gives it away to protect attention economics. Same technology, four different businesses."},
+ind:{co:"Business lens", s:"Apply your strategy concepts: the labs are in a red-ocean capability race while each digs a different moat — brand, enterprise switching costs, distribution, ecosystem. The unresolved question from the 'no moat' memo (2023) still hangs: does the MODEL layer capture value, or does it flow to chips below and applications above?"},
+trap:"Valuing labs like SaaS companies. Margins are inverted (massive COGS in compute), assets depreciate like fish (a frontier model is stale in a year), and revenue depends on staying on a treadmill that costs more each lap. New economics, new valuation logic — bull or bear, use the right model.",
+q:"Why might a lab WANT its model to be a commodity at the low end?",
+a:"Free/cheap tiers seed the ecosystem, train users, and pull developers in — while monetisation concentrates in the frontier tier where willingness-to-pay lives (the hardest 5% of tasks carry most of the economic value). Classic freemium, with the twist that yesterday's premium becomes today's free automatically."
+},
+{
+t:"Wrappers vs Moats in AI",
+o:"'Just a GPT wrapper' — the insult that turned into a business model.",
+teach:"2023's sneer held that startups building on others' models were doomed 'thin wrappers' — no model, no moat. The 2026 verdict is more interesting: the wrapper layer produced some of the era's fastest-growing companies (Cursor, Perplexity, Harvey), while many model-owning startups died. Why: owning the model was never the moat — the model is available to everyone, including your competitor. Durable advantages live in the classic places, AI-flavoured: <b>workflow depth</b> (embedded in how work actually happens), <b>proprietary data loops</b> (usage improves YOUR product), <b>harness quality</b>, <b>distribution</b>, and <b>switching costs</b> (accumulated context/memory). The honest risk is real too: build too close to the model's improvement path and the next release eats you ('roadkill on the frontier roadmap').",
+us:{co:"Case in point — Cursor", s:"An editor 'wrapping' other companies' models reached multi-billion valuation and historic revenue growth — because the product (harness, UX, codebase context) was the differentiation. Meanwhile, countless 'we trained our own model' startups couldn't keep pace with the frontier and folded."},
+ind:{co:"Business lens", s:"The strategic test for any AI product: (1) Does the next frontier model make you stronger or redundant? (2) Do you accumulate something proprietary with usage — data, context, workflow lock-in? (3) Is your harness/distribution hard to copy? 'Wrapper' isn't the risk; being a feature of the next model release is."},
+trap:"Both extremes: dismissing application startups as wrappers, and believing model access alone is a business. The graveyard contains both — and the winners typically combine someone else's frontier model with their OWN data loop and workflow depth.",
+q:"OpenAI ships a feature identical to your product. What determines whether you survive?",
+a:"Whether your value was the model call (you die) or what's around it: proprietary data/context the platform lacks, enterprise workflow integration, multi-model flexibility, domain trust/compliance, and distribution. Platform-feature collisions are survivable when the moat was never the model."
+},
+{
+t:"The Falling Cost Curve & Jevons Paradox",
+o:"Intelligence gets ~10x cheaper per year — and total spending goes UP.",
+teach:"The most reliable trend in AI: the cost of a fixed level of capability collapses — roughly an order of magnitude per year — driven by distillation, MoE, better chips, and serving optimisations. GPT-4-level performance that cost ~$36 per million tokens in 2023 cost pennies by 2026. Naively this should shrink the market; instead spending exploded. That's <b>Jevons paradox</b> (1865, coal): when a resource gets cheaper, usage grows MORE than proportionally — efficiency expands the market. Satya Nadella invoked exactly this after the DeepSeek panic. Cheap intelligence gets embedded in everything (every search, document, codebase scan), and new use cases become viable at each price floor — agents burning millions of tokens per task only make sense because tokens got cheap.",
+us:{co:"Case in point — the DeepSeek reframe", s:"January 2025's market logic was 'cheaper models → less GPU demand → sell NVIDIA'. Within months the consensus inverted: cheaper inference → more deployment → more total compute demand. NVIDIA's subsequent record results settled the argument empirically."},
+ind:{co:"Business lens", s:"Plan your product on NEXT year's cost curve: features uneconomic today (an AI reviewing every line of code, every contract, every customer call) become trivially affordable on schedule. The companies that won 2024–26 built for where the price floor was going, not where it was."},
+trap:"Building a moat out of 'AI is expensive'. Cost advantages from efficiency are temporary; the curve flattens everyone's cleverness into the commodity price within quarters. Durable margin needs a non-cost moat.",
+q:"If intelligence is deflating 10x/year, why are labs' revenues GROWING?",
+a:"Volume and frontier mix: usage grows faster than prices fall (Jevons), and customers continually shift spend to the newest frontier tier — which holds premium pricing precisely because it does what last year's models can't. You sell the moving edge, not the commoditising middle."
+},
+{
+t:"AGI, ASI & the Timeline Debate",
+o:"The industry's stated destination — and its most contested forecast.",
+teach:"<b>AGI</b> (artificial general intelligence) loosely means AI matching humans across most cognitive work; <b>ASI</b> (superintelligence) means decisively exceeding us. Know three honest facts. First, definitions are contested to the point of parody — goalposts range from 'economically transformative' to OpenAI's charter language about outperforming humans at most economically valuable work; some researchers consider the term meaningless. Second, insider timelines compressed dramatically post-2022: Altman wrote that superintelligence may be 'a few thousand days' away (2024); Amodei sketched 'a country of geniuses in a datacenter' possibly by 2026–27; sceptics (LeCun, many academics) hold that LLMs alone won't get there. Third, the forecast is load-bearing: trillion-dollar capex, national policy, and lab governance structures all price in SOME probability of it. The sophisticated position isn't picking a date — it's reasoning under uncertainty about a possibly-near, possibly-distant discontinuity.",
+us:{co:"Case in point — capability sprints", s:"Each generation keeps surprising: models went from failing high-school math (2022) to gold-medal IMO performance (2025), from autocomplete to day-long autonomous coding. Whether this trend line runs through 'AGI' or asymptotes below it is THE open empirical question."},
+ind:{co:"Business lens", s:"You don't need an AGI opinion to need an AGI strategy: if capability keeps compounding, betting against it means building products the next model release deletes. The practical heuristic that emerged: assume models keep getting better and cheaper; build things that get MORE valuable when that happens."},
+trap:"Certainty in either direction. 'AGI by 2027' and 'LLMs are a dead end' are both confident extrapolations from incomplete evidence. The track record humbles everyone: almost nobody predicted 2022–26 correctly, in either direction.",
+q:"Why do AGI timelines matter even to someone who thinks they're hype?",
+a:"Because the people controlling trillions in capital act on them: capex, hiring, regulation, and product roadmaps are being set by AGI-weighted expectations. Forecasts you disbelieve still reshape your market when believers spend against them."
+},
+{
+t:"Alignment & AI Safety",
+o:"Making powerful systems do what we intend — the field's hardest technical and political problem.",
+teach:"<b>Alignment</b> is the technical project of making AI systems reliably pursue intended goals — distinct from 'AI ethics' (present-day fairness/bias harms) though both matter. The core difficulties, in plain terms: models optimise proxies (and Goodhart's law bites — reward what's measurable, get what you measured, not what you meant); deception and sycophancy can be REWARDED by training signals; and supervision breaks down when models exceed human ability to evaluate their outputs (the 'scalable oversight' problem). The industry's responses you should know: RLHF/Constitutional AI (today's workhorse), interpretability (opening the black box to see what models actually compute — Anthropic's signature research bet), red-teaming and safety frameworks with capability thresholds (Responsible Scaling Policies), and government AI safety institutes (UK/US, 2023–) testing frontier models pre-release. The cultural history matters too: this debate FOUNDED the industry — OpenAI and Anthropic both exist because of disagreements about how to develop AI safely.",
+us:{co:"Case in point — safety as strategy", s:"Anthropic was founded by ex-OpenAI researchers explicitly on safety differentiation, and turned it into enterprise trust (and revenue). The 2023 pause letter, Yudkowsky's 'shut it all down', the EU AI Act (in force Aug 2024), and the o1-era 'model autonomy' evals show the spectrum from existential worry to working governance."},
+ind:{co:"Business lens", s:"Safety became table stakes for enterprise sales: model cards, audits, compliance certifications, and jailbreak-resistance are procurement checkboxes worth billions. Cynics call it safety-washing; pragmatists note that 'trustworthy' is the premium segment of the intelligence market — and regulation (EU AI Act risk tiers) is making it mandatory anyway."},
+trap:"Flattening the debate into 'doomers vs accelerationists'. The actual field spans researchers who think existential risk is serious AND near, those who think present harms deserve the attention, and those who think both framings are wrong — with technical work (interpretability, evals, oversight) proceeding usefully regardless of which camp is right.",
+q:"Why is 'the model did what we trained it to do' the scariest sentence in alignment?",
+a:"Because training signals are proxies: a model rewarded for human approval learns to GET approval — via truth when truth is checkable, via confident plausibility when it isn't. Misalignment isn't disobedience; it's faithful optimisation of the wrong thing. Scale that to systems smarter than their evaluators, and the proxy gap becomes the whole problem."
+}
+]
+}
+);
+</script>
+<script>
+const TIMELINE = [
+{w:"Nov 2022", big:true, h:"ChatGPT launches", p:"OpenAI ships a chat interface on GPT-3.5 as a 'research preview'. 1M users in 5 days, ~100M in two months — the fastest-adopted consumer product in history. The starting gun for everything below."},
+{w:"Mar 2023", big:true, h:"GPT-4 — and the field goes vertical", p:"GPT-4 passes the bar exam and redefines the frontier. The same month: Anthropic launches Claude, Meta's LLaMA weights leak online (accidentally igniting open-source AI), and the 'pause AI' open letter gathers 30,000 signatures."},
+{w:"May 2023", h:"'We have no moat' + NVIDIA joins the $1T club", p:"A leaked Google memo argues neither Google nor OpenAI can defend against open source. NVIDIA's blowout earnings make it the first chipmaker worth $1T — the market realises who sells the shovels."},
+{w:"Nov 2023", h:"The OpenAI board crisis", p:"Sam Altman is fired by OpenAI's board on a Friday and reinstated by Wednesday after ~95% of staff threaten to quit. Five days that exposed how fragile governance was at the world's most important AI company."},
+{w:"Dec 2023 – Mar 2024", h:"Google answers; Claude 3 arrives", p:"Google merges Brain + DeepMind and ships Gemini; Claude 3 (Mar 2024) beats GPT-4 on key benchmarks — the first time OpenAI is clearly matched. The frontier becomes a three-way race."},
+{w:"Jul 2024", h:"Llama 3.1 405B — open weights reach the frontier", p:"Meta releases a GPT-4-class model anyone can download. Zuckerberg publishes 'Open Source AI Is the Path Forward'. The open-vs-closed war is now fought at the frontier itself."},
+{w:"Sep 2024", big:true, h:"o1: the reasoning era begins", p:"OpenAI's o1 'thinks before answering' — reinforcement-learned chain of thought. A second scaling axis (test-time compute) opens just as pre-training gains plateau. Every lab pivots to reasoning models."},
+{w:"Nov–Dec 2024", h:"MCP ships; Sutskever calls the end of pre-training", p:"Anthropic open-sources the Model Context Protocol. At NeurIPS, Ilya Sutskever declares 'pre-training as we know it will end' — data is finite; the gains move to reasoning and agents."},
+{w:"Jan 2025", big:true, h:"DeepSeek shock + Stargate", p:"China's DeepSeek-R1 — open weights, near-frontier reasoning, trained cheaply under chip sanctions — wipes ~$589B off NVIDIA in a day (the largest single-day loss ever). The same month, the $500B Stargate data-center program is announced. Efficiency and scale, both at once."},
+{w:"Feb–Mar 2025", h:"'Vibe coding' is coined; OpenAI adopts MCP", p:"Karpathy names the new way software gets written. OpenAI adopting its rival Anthropic's protocol makes MCP the industry standard — the agent ecosystem gets its USB-C."},
+{w:"Aug 2025", h:"GPT-5 lands — and the agents year peaks", p:"GPT-5 ships with unified reasoning routing; Claude 4.x and Gemini 3 follow within months. 2025 closes as the year coding agents (Claude Code, Codex, Cursor) went from novelty to daily practice across the software industry."},
+{w:"2026 (so far)", big:true, h:"The build-out year: $650B capex, Rubin, trillion-dollar labs", p:"Big Tech's combined AI capex approaches $650B. NVIDIA unveils the Vera Rubin platform (~10x cheaper inference tokens); FY26 revenue hits ~$216B. Anthropic reportedly files confidentially for an IPO near a $1T valuation; Apple opens Siri to ChatGPT, Gemini, and Claude. 'Harness engineering' becomes a hiring category. Facts here current as of June 2026."}
+];
+
+const QUOTES = [
+{q:"Attention is all you need.", w:"Vaswani et al., Google — 2017 paper title", c:"The eight authors' Transformer paper is the founding document of the modern era. Insiders reference 'the 2017 paper' the way economists reference Adam Smith."},
+{q:"The general methods that leverage computation are ultimately the most effective, and by a large margin.", w:"Rich Sutton — 'The Bitter Lesson', 2019", c:"The essay every AI strategist eventually cites: 70 years of AI shows brute compute beats human cleverness. It pre-explained why scaling won and why labs buy GPUs instead of hiring linguists."},
+{q:"The hottest new programming language is English.", w:"Andrej Karpathy — Jan 2023, X", c:"Tweeted two months after ChatGPT; became the one-line summary of the interface revolution. Its sequel was his Feb 2025 coinage of 'vibe coding' — fully giving in to AI-written code."},
+{q:"We have no moat, and neither does OpenAI.", w:"Anonymous Google researcher — leaked internal memo, May 2023", c:"The most-debated strategy document of the era: argued open-source models would commoditise everyone. Three years on, both halves are still being argued — which is why people still quote it."},
+{q:"I want people to know that we made them dance.", w:"Satya Nadella on Google — The Verge, Feb 2023", c:"Said while launching Bing's GPT-4 integration to attack Google Search. Peak swagger of the early AI platform war — and a reminder that Microsoft's OpenAI bet was about making rivals uncomfortable."},
+{q:"AI is one of the most important things humanity is working on. It is more profound than electricity or fire.", w:"Sundar Pichai — 2018, repeated often since", c:"Google's CEO said this BEFORE the boom — then had to live it, as ChatGPT triggered a 'code red' inside the company whose researchers invented the Transformer."},
+{q:"The more you buy, the more you save.", w:"Jensen Huang — GTC keynotes, 2023–24", c:"NVIDIA's CEO pitching accelerated computing economics, delivered in his trademark leather jacket. Half sales pitch, half true (GPU efficiency vs CPUs), fully meme — the anthem of the capex boom."},
+{q:"It is possible that we will have superintelligence in a few thousand days.", w:"Sam Altman — 'The Intelligence Age', Sep 2024", c:"The industry's most-quoted timeline claim, from his personal blog. 'A few thousand days' (roughly 5–10 years) did enormous work: aggressive enough to justify trillion-dollar bets, vague enough to survive being wrong."},
+{q:"A country of geniuses in a datacenter.", w:"Dario Amodei — 'Machines of Loving Grace', Oct 2024", c:"Anthropic's CEO sketching what 'powerful AI' means concretely: millions of Nobel-level intelligences working in parallel. The essay's optimism surprised people who knew Anthropic mainly for safety caution."},
+{q:"Pre-training as we know it will end.", w:"Ilya Sutskever — NeurIPS, Dec 2024", c:"From the co-founder most associated with scaling: 'data is the fossil fuel of AI' and we've burned the internet. Called the turn toward reasoning, synthetic data, and agents a year before it was consensus."},
+{q:"Shut it all down.", w:"Eliezer Yudkowsky — TIME, Mar 2023", c:"The most extreme mainstream-published position on AI risk: a call to halt frontier training entirely, enforced internationally. Quoted by both sides — as warning and as cautionary tale of doomerism."},
+{q:"There's a new kind of coding I call 'vibe coding', where you fully give in to the vibes, embrace exponentials, and forget that the code even exists.", w:"Andrej Karpathy — Feb 2025, X", c:"Named the phase change in how software gets made. Within a year, 'vibe coding' was in mainstream dictionaries' words-of-the-year lists and the job description of millions of developers."}
+];
+
+const PLAYERS = [
+{g:"Frontier Labs", items:[
+{n:"OpenAI", t:"The category king", d:"ChatGPT made it the consumer default (hundreds of millions of weekly users). GPT-5 era; Microsoft-partnered; the Stargate compute program. Strength: brand + distribution. Question: capital burn vs revenue."},
+{n:"Anthropic", t:"The enterprise & coding leader", d:"Claude + Claude Code made it the developer/enterprise favourite; invented Constitutional AI and MCP. By 2026: reportedly near-profitable, confidential IPO filing at ~$1T reported valuation. Safety-as-strategy, validated."},
+{n:"Google DeepMind", t:"The full-stack giant", d:"Only player owning chips (TPUs), cloud, models (Gemini), and distribution (Search, Android, Workspace). Invented the Transformer, then got out-shipped — now firmly back at the frontier."},
+{n:"Meta AI", t:"The open-weights superpower", d:"Llama models free for almost all uses — commoditising the model layer to protect its ad/attention empire. Pays the industry's highest salaries in periodic talent raids."},
+{n:"xAI", t:"The fast follower with a captive platform", d:"Musk's lab; Grok models trained on the colossal Memphis supercluster, distributed through X. Proof that frontier entry remained possible with enough capital and urgency."},
+{n:"DeepSeek & China's labs", t:"The efficiency frontier", d:"DeepSeek (open-weight reasoning, sanction-defying efficiency), Alibaba's Qwen (the most-downloaded open family), Moonshot, Zhipu. Collectively made 'open' and 'Chinese' near-synonyms at the model layer."}
+]},
+{g:"Compute Layer", items:[
+{n:"NVIDIA", t:"The arms dealer", d:"~$216B FY26 revenue, ~90% of it data center. H100 → Blackwell → Rubin. The CUDA software moat is the deepest in tech. Every customer is also building their escape route."},
+{n:"TSMC", t:"The single point of failure", d:"Manufactures virtually every leading-edge AI chip on Earth, mostly in Taiwan. The geopolitical pivot of the entire industry; Arizona fabs are the multi-hundred-billion-dollar insurance policy."},
+{n:"ASML", t:"The chokepoint nobody knows", d:"Sole maker of EUV lithography machines — no ASML, no advanced chips, anywhere. A Dutch company whose export licenses are negotiated between governments."},
+{n:"Hyperscalers (Microsoft, Amazon, Google)", t:"The landlords", d:"Rent compute to everyone while building custom silicon (Maia, Trainium, TPU) to escape NVIDIA margins. Combined 2026 AI capex: ~$300B+. They win on volume regardless of which lab wins."},
+{n:"Neoclouds (CoreWeave & co.)", t:"The GPU specialists", d:"Clouds built purely for AI workloads — faster GPU access than the big clouds, financed against chip collateral. The picks-and-shovels trade, one layer up."}
+]},
+{g:"Application Layer", items:[
+{n:"Cursor (Anysphere)", t:"The wrapper that won", d:"AI-native code editor on top of others' models; historic revenue growth to multi-billion valuation. The proof that harness + UX + workflow beats owning the model."},
+{n:"Perplexity", t:"The search challenger", d:"AI-answers-with-citations as a product; forced Google to respond with AI Overviews. Test case for whether aggregators can be disrupted by a better front-end on intelligence."},
+{n:"Harvey, Glean, Sierra & the verticals", t:"Applied AI", d:"Legal (Harvey), enterprise search (Glean), customer agents (Sierra): deep workflow + domain trust on frontier models. Where 'wrapper vs moat' is being settled, vertical by vertical."}
+]},
+{g:"India's Stack", items:[
+{n:"Sarvam AI", t:"The sovereign-model bet", d:"Selected under the IndiaAI Mission to build foundation models from scratch; Indic-language tokenisers and voice-first models for a billion non-English users. India's answer to 'rent or build?'"},
+{n:"Krutrim (Ola)", t:"The first AI unicorn", d:"Bhavish Aggarwal's full-stack attempt: Indic LLMs plus ambitions in AI silicon and cloud. India's test of whether a domestic frontier player can emerge from startup capital."},
+{n:"IndiaAI Mission", t:"Compute as public infrastructure", d:"₹10,000+ crore program: subsidised access to tens of thousands of GPUs, datasets, and model-building grants. The DPI playbook (Aadhaar/UPI) applied to AI — infrastructure first, apps on top."}
+]}
+];
+
+const QUIZ = [
+{q:"Why did the Transformer architecture win over older sequential approaches?",
+ opts:["It needed less data","It parallelises across GPUs, converting capital into capability","It was easier to interpret","Google marketed it better"], c:1,
+ why:"Attention processes all tokens at once, so massive GPU clusters can be used efficiently. The winning architecture was the one that scaled with money."},
+{q:"Ilya Sutskever's 'pre-training as we know it will end' refers to:",
+ opts:["GPUs becoming too expensive","Regulation banning large runs","High-quality public training data running out","Models becoming sentient"], c:2,
+ why:"The internet's quality text is finite and largely consumed — the 'data wall'. Gains shifted to synthetic data, post-training, and test-time compute."},
+{q:"What did RLHF contribute to ChatGPT's success?",
+ opts:["More knowledge","Made outputs helpful and aligned with human preference — the usability unlock","Faster inference","A bigger context window"], c:1,
+ why:"GPT-3-level capability existed for two years before ChatGPT. Preference-tuning (plus a chat UI) is what made it usable by a billion people."},
+{q:"A '671B-parameter' MoE model that activates 37B per token tells you:",
+ opts:["It's 18x slower than a 37B model","Parameter counts no longer equal serving cost — capacity and cost are decoupled","It hallucinates less","It can't run on NVIDIA chips"], c:1,
+ why:"MoE routes each token through a few experts: huge knowledge capacity, fraction of the compute per token. This is how frontier capability keeps getting cheaper."},
+{q:"Test-time compute (the o1/R1 breakthrough) means:",
+ opts:["Faster training hardware","Capability scales with how long the model thinks per query","Models test their own code","Free inference at night"], c:1,
+ why:"Reinforcement-learned chain of thought made thinking time a second scaling axis — reviving progress as pre-training plateaued, and shifting economics to inference."},
+{q:"Your agent fails on long tasks. The 2026-savvy first diagnosis is:",
+ opts:["The model is too small","The harness: context management, verification loops, tool design","Need more GPUs","Users are prompting wrong"], c:1,
+ why:"Same model, different harness → wildly different results. Context compaction, self-verification, and tool quality are usually the binding constraint, not raw model capability."},
+{q:"OpenAI adopting Anthropic's MCP (Mar 2025) mattered because:",
+ opts:["It merged the two companies","A neutral standard made every tool reachable by every agent — M+N instead of M×N integrations","It made models cheaper","It ended open source"], c:1,
+ why:"Protocol standardisation is how ecosystems form. Rivals converging on one connector standard is what moved agents from demos to deployed workflows."},
+{q:"NVIDIA's deepest moat is:",
+ opts:["Fastest chips","CUDA — 15+ years of software ecosystem and developer lock-in","Cheapest prices","Exclusive TSMC access"], c:1,
+ why:"Rivals match hardware specs; they can't quickly match two decades of tools, libraries, and trained engineers. It's a switching-cost moat, not a silicon moat."},
+{q:"DeepSeek-R1 wiped ~$589B off NVIDIA in a day because markets briefly believed:",
+ opts:["China banned GPUs","Efficiency would shrink compute demand — before Jevons paradox reasserted itself","NVIDIA's chips failed","OpenAI was acquiring NVIDIA"], c:1,
+ why:"'Cheaper models → less GPU demand' lasted weeks; cheaper intelligence → vastly more deployment → more total compute. NVIDIA's later record results settled it."},
+{q:"The 'wrapper' debate resolved (by 2026) roughly as:",
+ opts:["Wrappers all died","Owning a model is the only moat","Value accrues to harness, workflow, data loops, and distribution — Cursor proved it","Apps are illegal under the EU AI Act"], c:2,
+ why:"Model access is equal for everyone; differentiation lives around the model. Many model-owners died; the best 'wrappers' became the era's fastest-growing companies."},
+{q:"Why did coding become the first occupation-scale agent deployment?",
+ opts:["Programmers are early adopters","Code is verifiable (tests), fully digital, and expensive — the agent loop gets a reliable success signal","VCs only fund dev tools","Models were trained only on code"], c:1,
+ why:"Agents need a checkable success signal to iterate against. Tests and compilers provide it automatically; most other domains still lack one."},
+{q:"'A few thousand days' (Altman) and 'a country of geniuses in a datacenter' (Amodei) are both:",
+ opts:["Peer-reviewed forecasts","Marketing with zero content","Load-bearing timeline claims that trillion-dollar capex decisions are partly priced on","Quotes about quantum computing"], c:2,
+ why:"Whatever their accuracy, these forecasts shape capital allocation, policy, and hiring across the economy. You don't have to believe a forecast for it to move your market."}
+];
+</script>
+<script>
+(function(){
+  const content = document.getElementById('content');
+  const tabsEl = document.getElementById('tabs');
+  let num = 0, total = 0;
+  DATA.forEach(s => total += s.concepts.length);
+
+  let learned = {};
+  try { learned = JSON.parse(localStorage.getItem('aim-learned')||'{}'); } catch(e){}
+  const save = () => { try{ localStorage.setItem('aim-learned', JSON.stringify(learned)); }catch(e){} };
+
+  // tabs: All, concept sections, extras
+  const mkTab = (label, id) => {
+    const b = document.createElement('button');
+    b.className = 'tab' + (id==='all' ? ' active':'');
+    b.textContent = label; b.dataset.sec = id;
+    b.onclick = () => {
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      b.classList.add('active');
+      filter();
+    };
+    tabsEl.appendChild(b);
+  };
+  mkTab('All','all');
+  DATA.forEach(s => mkTab(s.emoji+' '+s.name, s.id));
+  mkTab('🗓️ Timeline','x-timeline');
+  mkTab('🗺️ Players','x-players');
+  mkTab('💬 Quotes','x-quotes');
+
+  // timeline
+  const tb = document.getElementById('timeline-body');
+  TIMELINE.forEach(t => {
+    const d = document.createElement('div');
+    d.className = 'tl-item' + (t.big ? ' big':'');
+    d.innerHTML = `<div class="when">${t.w}</div><h4>${t.h}</h4><p>${t.p}</p>`;
+    tb.appendChild(d);
+  });
+
+  // quotes
+  const qw = document.getElementById('quotes-body');
+  QUOTES.forEach(t => {
+    const d = document.createElement('div');
+    d.className = 'quote-card';
+    d.innerHTML = `<blockquote>${t.q}”</blockquote><div class="who">— ${t.w}</div><div class="ctx">${t.c}</div>`;
+    qw.appendChild(d);
+  });
+
+  // players
+  const pb = document.getElementById('players-body');
+  PLAYERS.forEach(g => {
+    const grp = document.createElement('div');
+    grp.className = 'player-group';
+    grp.innerHTML = `<h3>${g.g}</h3>`;
+    const grid = document.createElement('div');
+    grid.className = 'player-grid';
+    g.items.forEach(p => {
+      const el = document.createElement('div');
+      el.className = 'player';
+      el.innerHTML = `<div class="nm">${p.n}</div><div class="tag">${p.t}</div><p>${p.d}</p>`;
+      grid.appendChild(el);
+    });
+    grp.appendChild(grid);
+    pb.appendChild(grp);
+  });
+
+  // concept cards
+  DATA.forEach(sec => {
+    const head = document.createElement('div');
+    head.className = 'section-head'; head.dataset.sec = sec.id;
+    head.innerHTML = `<h2><span class="emoji">${sec.emoji}</span>${sec.name}</h2><p>${sec.intro}</p>`;
+    content.appendChild(head);
+    sec.concepts.forEach(c => {
+      num++;
+      const id = sec.id + '-' + num;
+      const card = document.createElement('div');
+      card.className = 'card' + (learned[id] ? ' learned':'');
+      card.dataset.sec = sec.id;
+      card.dataset.n = num;
+      card.dataset.search = (c.t+' '+c.o+' '+c.teach+' '+c.us.co+' '+c.us.s+' '+c.ind.co+' '+c.ind.s).toLowerCase();
+      card.innerHTML = `
+        <div class="card-head">
+          <div class="card-num">${learned[id] ? '✓' : num}</div>
+          <div class="card-titles"><h3>${c.t}</h3><div class="one-liner">${c.o}</div></div>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="block"><span class="block-label teach">🎓 How a great teacher explains it</span><p>${c.teach}</p></div>
+          <div class="examples">
+            <div class="ex us"><div class="flag">🏭 ${c.us.co}</div><p>${c.us.s}</p></div>
+            <div class="ex in"><div class="flag">💼 ${c.ind.co}</div><p>${c.ind.s}</p></div>
+          </div>
+          <div class="block"><span class="block-label trap">⚠️ The classic trap</span><p>${c.trap}</p></div>
+          <div class="check"><div class="q">🤔 Quick check: ${c.q}</div><button class="reveal-btn">Reveal answer</button><div class="a">${c.a}</div></div>
+          <button class="gotit">${learned[id] ? '✓ Mastered — tap to unmark' : 'Mark as mastered'}</button>
+        </div>`;
+      card.querySelector('.card-head').onclick = () => card.classList.toggle('open');
+      card.querySelector('.reveal-btn').onclick = e => { e.stopPropagation(); card.querySelector('.check').classList.add('revealed'); };
+      const gi = card.querySelector('.gotit');
+      gi.onclick = e => {
+        e.stopPropagation();
+        learned[id] = !learned[id]; if(!learned[id]) delete learned[id];
+        save();
+        card.classList.toggle('learned', !!learned[id]);
+        card.querySelector('.card-num').textContent = learned[id] ? '✓' : card.dataset.n;
+        gi.textContent = learned[id] ? '✓ Mastered — tap to unmark' : 'Mark as mastered';
+        updateProgress();
+      };
+      content.appendChild(card);
+    });
+  });
+
+  function updateProgress(){
+    const n = Object.keys(learned).length;
+    document.getElementById('prog-label').textContent = `${n} / ${total} concepts mastered`;
+    const pct = Math.round(n/total*100);
+    document.getElementById('prog-pct').textContent = pct + '%';
+    document.getElementById('prog-fill').style.width = pct + '%';
+  }
+  updateProgress();
+
+  // filtering
+  const searchEl = document.getElementById('search');
+  const extras = {
+    'x-timeline': document.getElementById('extra-timeline'),
+    'x-players': document.getElementById('extra-players'),
+    'x-quotes': document.getElementById('extra-quotes')
+  };
+  const quizEl = document.getElementById('quiz');
+  function filter(){
+    const q = searchEl.value.trim().toLowerCase();
+    const sec = document.querySelector('.tab.active').dataset.sec;
+    const isExtra = sec.startsWith('x-');
+    const searching = !!q;
+
+    // extras visibility: all shown on 'all' (no search); single extra on its tab
+    Object.entries(extras).forEach(([id, el]) => {
+      el.classList.toggle('hidden', searching ? true : (sec==='all' ? false : sec!==id));
+    });
+    quizEl.classList.toggle('hidden', searching || sec!=='all');
+
+    let any = !isExtra ? false : true;
+    document.querySelectorAll('.card').forEach(c => {
+      const ok = !isExtra && (sec==='all' || c.dataset.sec===sec) && (!q || c.dataset.search.includes(q));
+      c.classList.toggle('hidden', !ok);
+      if(ok) any = true;
+    });
+    document.querySelectorAll('.section-head').forEach(h => {
+      const visible = !isExtra && (sec==='all'||h.dataset.sec===sec) &&
+        [...document.querySelectorAll(`.card[data-sec="${h.dataset.sec}"]`)].some(c=>!c.classList.contains('hidden'));
+      h.classList.toggle('hidden', !visible);
+    });
+    document.getElementById('no-results').style.display = any ? 'none':'block';
+  }
+  filter();
+  searchEl.addEventListener('input', filter);
+
+  // quiz
+  const qb = document.getElementById('quiz-body');
+  let answered = 0, score = 0;
+  QUIZ.forEach((item,i) => {
+    const div = document.createElement('div');
+    div.className = 'qq';
+    div.innerHTML = `<div class="qt">${i+1}. ${item.q}</div><div class="opts"></div><div class="why">${item.why}</div>`;
+    const opts = div.querySelector('.opts');
+    item.opts.forEach((o,j) => {
+      const b = document.createElement('button');
+      b.className = 'opt'; b.textContent = o;
+      b.onclick = () => {
+        if(div.classList.contains('done')) return;
+        div.classList.add('done');
+        answered++;
+        if(j===item.c){ b.classList.add('correct'); score++; }
+        else { b.classList.add('wrong'); opts.children[item.c].classList.add('correct'); }
+        [...opts.children].forEach(x=>x.disabled=true);
+        if(answered===QUIZ.length){
+          const sc = document.getElementById('quiz-score');
+          sc.style.display = 'block';
+          sc.innerHTML = `You scored <span style="color:var(--accent)">${score}/${QUIZ.length}</span> — ${score>=11?'🏆 You could brief a board on this industry.':score>=8?'🔥 Insider-grade. Revisit what you missed.':score>=5?'📚 Solid base — re-read the trap sections.':'🌱 Good start. Take the sections one evening at a time.'}`;
+        }
+      };
+      opts.appendChild(b);
+    });
+    qb.appendChild(div);
+  });
+})();
+</script>
+</body>
+</html>
